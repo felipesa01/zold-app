@@ -1,0 +1,19 @@
+<!-- <div class="backdrop" (click)="handleClose()"></div> -->
+
+<div
+  class="sheet"
+  [style.transform]="transform()"
+  (pointerdown)="startDrag($event)"
+>
+
+  <div class="handle"></div>
+
+  <button class="close-btn" (click)="handleClose()">✕</button>
+
+  <div class="content" (scroll)="onScroll($event)">
+    <ng-container
+      *ngComponentOutlet="childComponent; injector: injector">
+    </ng-container>
+  </div>
+
+</div>

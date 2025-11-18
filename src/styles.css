@@ -1,0 +1,79 @@
+/* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+
+.cdk-overlay-pane.mat-mdc-dialog-panel {
+  max-width: none !important;
+  min-width: 0 !important;
+}
+
+.box-resizeble-container {
+  width: min-content !important;
+}
+
+.box-resizeble {
+  resize: both;
+  overflow: auto;
+  background: #fff;
+  height: fit-content;
+}
+
+.box-heigth-limit {
+  max-height: 80vh;
+  overflow: auto;
+}
+
+.box-width-limit {
+  width: 500px;
+  /* min-width: 350px; */
+  max-width: 100%;
+}
+
+@media (max-width: 480px) {
+  .box-width-limit {
+    width: 350px;
+    min-width: 0px;
+    max-width: 100%;
+  }
+}
+
+/* ############################### */
+/* Configurações gerais dos modais */
+/* ############################### */
+
+.modal-header {
+  background: rgb(139, 154, 170);
+  color: #fff;
+  text-align: center;
+  box-shadow: 0 3px 4px #00000033;
+  font-size: 1.1em;
+  line-height: normal;
+  z-index: 1;
+}
+
+.modal-header-focus {
+  background: #369;
+}
+
+.modal-title {
+  margin-right: 2.5em !important;
+  padding: 0.5em 0px;
+}
+
+.modal-close-button {
+  padding: 1px;
+  position: absolute;
+  right: 10px;
+}
+
+.modal-close-icon {
+  font-size: 1em;
+  color: rgb(255, 255, 255);
+}
+
+.mdc-dialog__surface,
+.mat-mdc-dialog-surface {
+  border-radius: 0 !important;
+}

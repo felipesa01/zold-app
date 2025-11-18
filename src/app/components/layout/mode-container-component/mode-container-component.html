@@ -1,0 +1,16 @@
+<mat-drawer-container [hasBackdrop]="false" class="content">
+    <mat-drawer #drawer [mode]="isMobile() ? 'over' : 'side'" [opened]="expandableSidebarOpened()"
+        (openedChange)="expandableSidebarOpened.set($event)">
+        <app-sidebar-expandable-component></app-sidebar-expandable-component>
+    </mat-drawer>
+    <mat-drawer-content>
+
+        <button class="qr-code-button" matMiniFab color="primary" (click)="abrirLeitor()">
+            <mat-icon>qr_code_scanner</mat-icon>
+        </button>
+
+        
+        <img class="logo-map" src="assets/logos/logo_preta.png">
+        <app-map-component></app-map-component>
+    </mat-drawer-content>
+</mat-drawer-container>

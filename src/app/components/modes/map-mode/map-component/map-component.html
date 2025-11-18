@@ -1,0 +1,18 @@
+<!-- <button class="btn btn-sm" (click)="changeTileLayer()">Mudar</button>
+
+<div class="toolbox">
+    <button draggable="true" (dragstart)="onDragStart($event)" (dragend)="onDragEnd($event)">
+        ➕ Adicionar ponto
+    </button>
+</div> -->
+
+<div id="map" style="width: 100%; height: 100%;">
+
+    <div class="overlay-map toggle-container" style="top: 10px; right: 10px;" [class.active]="modoMapa === 'mapa'"
+        (click)="trocarCamada()">
+        <span class="option">Satélite</span>
+        <span class="option">Mapa</span>
+        <div class="slider"></div>
+    </div>
+
+</div>

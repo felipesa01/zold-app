@@ -1,0 +1,7 @@
+.topbar {
+    display: flex;
+    background: #414141;
+    width: 100%;
+    height: 3em;
+    justify-content: center;
+}

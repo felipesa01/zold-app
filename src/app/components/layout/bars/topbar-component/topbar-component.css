@@ -1,0 +1,19 @@
+.topbar {
+    width: 100%;
+    height: 56px;
+    background: white;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0px 4px;
+}
+
+.button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    background: transparent;
+    border-left: transparent solid 3px;
+}

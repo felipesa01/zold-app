@@ -1,0 +1,39 @@
+<div class="sidenav">
+  <div style="display: flex;background: #414141;width: 100%;justify-content: center;height: 3em; position: relative;">
+    @if (fixedSidebarOpened() && isMobile()) {
+    <button class="btn d-flex p-0"
+      style="position: absolute;top: 50%;right: 10px;transform: translateY(-50%); color: white;"
+      (click)="closeFixedSidebar()">
+      <mat-icon>close</mat-icon>
+    </button>
+    }
+    <img style="width: 100%; max-width: 4em; height: 100%;  background: #414141;" src="assets/logos/logo-zold-tec.png"
+      alt="">
+  </div>
+
+  <nav>
+    <button *ngFor="let item of menuItems" class="button" [class.mobile]="isMobile()" [class.computer]="!isMobile()" (click)="setActive(item.label)"
+      [class.active]="item.label===actived">
+      <mat-icon>{{ item.icon }}</mat-icon>
+      @if (fixedSidebarOpened() && isMobile()) {
+      <span class="span">{{item.label}}</span>
+      }
+
+    </button>
+  </nav>
+
+  <div class="my-auto"></div>
+
+  <nav>
+    @for (item of configItems; track item) {
+    <button class="button" [class.mobile]="isMobile()" [class.computer]="!isMobile()">
+      <mat-icon>{{ item.icon }}</mat-icon>
+      @if (fixedSidebarOpened() && isMobile()) {
+      <span class="span">{{item.label}}</span>
+      }
+    </button>
+    }
+  </nav>
+
+
+</div>

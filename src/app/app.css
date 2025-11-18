@@ -1,0 +1,17 @@
+mat-bottom-sheet-container {
+  transform: translateY(100%);
+  animation: slideUp 250ms ease-out forwards;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+
+
