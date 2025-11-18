@@ -42,7 +42,7 @@ export class LayersService {
 
     constructor(private http: HttpClient) {
 
-        this.http.get('/assets/vetores/fases.json').pipe(take(1)).subscribe(e => {
+        this.http.get('assets/vetores/fases.json').pipe(take(1)).subscribe(e => {
             let features: Feature[] = new GeoJSON({ dataProjection: "EPSG:4326", featureProjection: 'EPSG:4326', }).readFeatures(e);
             this.fasesLayer.setSource(new VectorSource({
                 features: features,
@@ -55,7 +55,7 @@ export class LayersService {
             this.fasesLayer.setStyle(this.styleFases)
         });
 
-        this.http.get('/assets/vetores/arvores.json').pipe(take(1)).subscribe(e => {
+        this.http.get('assets/vetores/arvores.json').pipe(take(1)).subscribe(e => {
             let features: Feature[] = new GeoJSON({ dataProjection: "EPSG:4326", featureProjection: 'EPSG:4326', }).readFeatures(e);
             this.arvoresLayer.setSource(new VectorSource({
                 features: features,
@@ -166,7 +166,7 @@ export class LayersService {
 
     tileSources = [
         new TileLayer(
-            { source: new OsmSource(), properties: { name: 'OSM', imgThumb: './assets/images/tileThumbs/osm.png', categoria: 'OSM' } }
+            { source: new OsmSource(), properties: { name: 'OSM', imgThumb: '.assets/images/tileThumbs/osm.png', categoria: 'OSM' } }
         ),
         new TileLayer({
             source: new XYZ({ url: 'http://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}', attributions: '© Google' }),

@@ -1,7 +1,7 @@
 .sidenav-container {
   background-color: #f5f5f5;
   transition: all 0.3s ease;
-  height: 100vh;
+  height: 100dvh;
 }
 
 .sidenav {
