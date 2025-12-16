@@ -10,7 +10,7 @@ import { NgbCarouselModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-exemplar-info-component',
-  imports: [MatSelectModule, MatButtonModule, MatIconModule, NgFor, NgIf, NgOptimizedImage, DatePipe, NgbCarouselModule],
+  imports: [MatSelectModule, MatButtonModule, MatIconModule, NgFor, NgIf, DatePipe, NgbCarouselModule],
   templateUrl: './exemplar-info-component.html',
   styleUrl: './exemplar-info-component.css',
 })

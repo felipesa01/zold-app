@@ -1,14 +1,8 @@
-import { AfterViewInit, Component, computed, inject } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, Component, computed, inject, OnDestroy } from '@angular/core';
 import { MapService } from '../../../../services/map-service';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import TileLayer from 'ol/layer/Tile';
-import { GeoTIFF, TileDebug } from 'ol/source';
-import { Feature } from 'ol';
-import { Point } from 'ol/geom';
-import VectorLayer from 'ol/layer/Vector';
-import VectorSource from 'ol/source/Vector';
-import Icon from 'ol/style/Icon';
-import Style from 'ol/style/Style';
+import { TileDebug } from 'ol/source';
 import { LayersService } from '../../../../services/layers-service';
 import { ResponsiveService } from '../../../../services/responsive-service';
 
@@ -18,23 +12,31 @@ import { ResponsiveService } from '../../../../services/responsive-service';
   templateUrl: './map-component.html',
   styleUrl: './map-component.css',
 })
-export class MapComponent implements AfterViewInit {
+export class MapComponent implements AfterViewInit, OnDestroy {
   private responsive = inject(ResponsiveService);
   isMobile = computed(() => this.responsive.isSmallScreen());
 
   constructor(private mapService: MapService, private layerService: LayersService) { }
-
+  
+  ngOnDestroy(): void {
+    this.mapService.detach();
+  }
 
   ngAfterViewInit(): void {
     this.startMap();
   }
 
-
   startMap() {
-
+    console.log('startMap')
     this.mapService.updateView();
     this.mapService.setTileSource();
-    this.mapService.updateSize('map');
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        this.mapService.attach('map');
+      });
+    });
+
 
     setTimeout(() => {
       this.fitTrees();

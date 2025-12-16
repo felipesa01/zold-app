@@ -5,6 +5,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { ResponsiveService } from '../../../../services/responsive-service';
 import { LayoutService } from '../../../../services/layout-service';
+import { appModes, ModeService } from '../../../../services/mode-service';
+import { MapService } from '../../../../services/map-service';
 
 @Component({
   selector: 'app-sidebar-fixed-component',
@@ -20,6 +22,11 @@ export class SidebarFixedComponent {
   fixedSidebarOpened = this.sidebarControls.fixedSidebarOpened;
   expandableSidebarOpened = this.sidebarControls.expandableSidebarOpened;
 
+  private modeControl = inject(ModeService);
+  modeTurn = this.modeControl.modeTurn;
+
+  constructor(private mapService: MapService) { }
+
 
   expanded = signal(true);
   actived: string | undefined;
@@ -31,7 +38,7 @@ export class SidebarFixedComponent {
   ];
 
   configItems = [
-    { icon: 'space_dashboard', label: 'Alternar modo' },
+    { icon: this.modeTurn() == appModes.Map ? 'space_dashboard' : 'map', label: 'Alternar modo', onClick: () => this.changeMode() },
     { icon: 'account_circle', label: 'Conta' }
   ];
 
@@ -47,11 +54,25 @@ export class SidebarFixedComponent {
     else {
       this.expandableSidebarOpened.set(false);
     }
-    if (this.isMobile()) {this.fixedSidebarOpened.set(false)}
+    if (this.isMobile()) { this.fixedSidebarOpened.set(false) }
   }
 
   closeFixedSidebar() {
     this.sidebarControls.fixedSidebarOpened.set(false)
   }
+
+  changeMode() {
+    if (this.modeTurn() == appModes.Map) {
+
+      this.modeTurn.set(appModes.Workspace)
+    }
+    else {
+      
+      this.modeTurn.set(appModes.Map)
+    }
+
+  }
+
+
 
 }

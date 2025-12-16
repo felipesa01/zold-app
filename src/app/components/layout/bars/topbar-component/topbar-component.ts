@@ -6,7 +6,7 @@ import { LayoutService } from '../../../../services/layout-service';
 
 @Component({
   selector: 'app-topbar-component',
-  imports: [MatIconModule, MatButtonModule, NgFor],
+  imports: [MatIconModule, MatButtonModule],
   templateUrl: './topbar-component.html',
   styleUrl: './topbar-component.css',
 })

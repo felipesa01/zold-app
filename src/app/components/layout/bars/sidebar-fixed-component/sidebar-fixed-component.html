@@ -26,7 +26,7 @@
 
   <nav>
     @for (item of configItems; track item) {
-    <button class="button" [class.mobile]="isMobile()" [class.computer]="!isMobile()">
+    <button class="button" [class.mobile]="isMobile()" [class.computer]="!isMobile()" (click)="item.onClick?.()">
       <mat-icon>{{ item.icon }}</mat-icon>
       @if (fixedSidebarOpened() && isMobile()) {
       <span class="span">{{item.label}}</span>

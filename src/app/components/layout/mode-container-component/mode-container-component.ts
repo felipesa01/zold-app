@@ -10,10 +10,12 @@ import { SidebarExpandableComponent } from './sidebar-expandable-component/sideb
 import { QrReaderService } from '../../../services/qr-reader.service';
 import { MatButton, MatButtonModule } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
+import { appModes, ModeService } from '../../../services/mode-service';
+import { WorkspaceComponent } from '../../modes/workspace-mode/workspace-component/workspace-component';
 
 @Component({
   selector: 'app-mode-container-component',
-  imports: [MapComponent, MatSidenavModule, SidebarExpandableComponent, MatButtonModule, MatIcon],
+  imports: [MapComponent, WorkspaceComponent, MatSidenavModule, SidebarExpandableComponent, MatButtonModule, MatIcon],
   templateUrl: './mode-container-component.html',
   styleUrl: './mode-container-component.css',
 })
@@ -25,7 +27,11 @@ export class ModeContainerComponent {
   private sidebarControls = inject(LayoutService);
   fixedSidebarOpened = this.sidebarControls.fixedSidebarOpened;
   expandableSidebarOpened = this.sidebarControls.expandableSidebarOpened;
+  
 
+  private modeControl = inject(ModeService);
+  modeTurn = this.modeControl.modeTurn;
+  
   constructor(private sheet: BottomSheetService, private qr: QrReaderService) {
 
   }
@@ -44,6 +50,10 @@ export class ModeContainerComponent {
       .subscribe(value => {
         console.log('Fechou com:', value);
       });
+  }
+
+  mapMode(): boolean {
+    return this.modeTurn() == appModes.Map
   }
 
   

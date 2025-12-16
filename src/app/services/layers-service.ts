@@ -81,7 +81,7 @@ export class LayersService {
 
         return new Style({
             stroke: new Stroke({
-                color: '#ffd900ff',
+                color: '#ca980eff',
                 width: 2
             }),
             fill: new Fill({
@@ -92,7 +92,7 @@ export class LayersService {
                     text: nome || '',
                     font: 'bold 15px sans-serif',
                     fill: new Fill({ color: '#000000ff' }),
-                    stroke: new Stroke({ color: '#ffd900ff', width: 3 }),
+                    stroke: new Stroke({ color: '#ca980eff', width: 3 }),
                     placement: "point",
                     textAlign: "center"
                 })

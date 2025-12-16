@@ -9,11 +9,12 @@ import { ResponsiveService } from '../../../services/responsive-service';
 import { TopbarComponent } from '../bars/topbar-component/topbar-component';
 import { LayoutService } from '../../../services/layout-service';
 import { textHeights } from 'ol/render/canvas';
+import { ModeService } from '../../../services/mode-service';
 
 
 @Component({
   selector: 'app-app-shell-component',
-  imports: [MatSidenavModule, MatIconModule, MatButtonModule, NgFor, SidebarFixedComponent, ModeContainerComponent, TopbarComponent],
+  imports: [MatSidenavModule, MatIconModule, MatButtonModule, SidebarFixedComponent, ModeContainerComponent, TopbarComponent],
   templateUrl: './app-shell-component.html',
   styleUrl: './app-shell-component.css',
 })
@@ -24,6 +25,8 @@ export class AppShellComponent {
   private sidebarControls = inject(LayoutService);
   fixedSidebarOpened = this.sidebarControls.fixedSidebarOpened;
   expandableSidebarOpened = this.sidebarControls.expandableSidebarOpened;
+
+
 
   // referênica para o componente do material
   @ViewChild('sidenav') sidenav!: MatSidenav;

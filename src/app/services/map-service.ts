@@ -112,9 +112,21 @@ export class MapService {
     this.map.getView().setCenter(fromLonLat(center, 'EPSG:4326'));
   }
 
-
-  updateSize(target: string | HTMLElement | undefined): void {
+  setTarget(target: string | HTMLElement | undefined): void {
     this.map.setTarget(target);
+  }
+
+  updateSize(): void {
+    this.map.updateSize();
+  }
+
+  detach() {
+    this.map.setTarget(undefined);
+  }
+
+  attach(target: string | HTMLElement) {
+    this.map.setTarget(target);
+    this.map.updateSize();
   }
 
   setTileSource(source: TileLayer<any> = this.selectedTileSource): void {
