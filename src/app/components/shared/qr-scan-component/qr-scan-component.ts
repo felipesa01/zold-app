@@ -26,7 +26,7 @@ export class QrScanComponent {
 
     // Reseta a URL voltando para o root
     // replaceUrl evita poluir o histórico
-    this.router.navigate(['/'], { replaceUrl: true });
+    this.router.navigate(['/map'], { replaceUrl: true });
   }
 
   processarCodigo(codigo: string) {

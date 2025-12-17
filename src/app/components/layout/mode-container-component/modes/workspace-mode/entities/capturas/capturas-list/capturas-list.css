@@ -1,0 +1,32 @@
+.page {
+      padding: 24px;
+    }
+
+    h1 {
+      font-weight: 500;
+      margin-bottom: 16px;
+    }
+
+    .search {
+      width: 320px;
+      margin-bottom: 12px;
+    }
+
+    table {
+      width: 100%;
+      background: #fff;
+    }
+
+    tr:hover {
+      background: #f5f7fa;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 4px;
+    }
+
+    mat-chip {
+      font-size: 12px;
+    }

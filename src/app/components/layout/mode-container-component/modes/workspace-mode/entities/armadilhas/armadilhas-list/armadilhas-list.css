@@ -1,0 +1,50 @@
+.page {
+  padding: 24px;
+}
+
+h1 {
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+.search {
+  width: 320px;
+  margin-bottom: 12px;
+}
+
+table {
+  width: 100%;
+  table-layout: fixed;
+  background: #fff;
+}
+
+th.mat-header-cell {
+  font-weight: 500;
+  color: #4a4a4a;
+  background: #fafafa;
+}
+
+td.mat-cell {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+tr.mat-row:hover {
+  background-color: #f4f6f9;
+}
+
+/* Colunas */
+.mat-column-armadilha { width: 180px; }
+.mat-column-data { width: 120px; }
+.mat-column-status { width: 110px; }
+.mat-column-situacao { width: 140px; }
+.mat-column-total { width: 80px; text-align: center; }
+.mat-column-acoes { width: 72px; }
+
+.actions-cell {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 4px;
+}

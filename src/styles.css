@@ -77,3 +77,19 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .mat-mdc-dialog-surface {
   border-radius: 0 !important;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+canvas[baseChart] {
+  display: block;
+  height: 360px !important;
+}

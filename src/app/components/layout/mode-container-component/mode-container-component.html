@@ -7,19 +7,16 @@
 
     <mat-drawer-content>
 
-        @if (mapMode()) {
-            
-        <button class="qr-code-button" matMiniFab color="primary" (click)="abrirLeitor()">
-            <mat-icon>qr_code_scanner</mat-icon>
-        </button>
-        <img class="logo-map" src="assets/logos/logo_preta.png">
+        <!-- @if (mapMode()) {
+
         <app-map-component></app-map-component>
         
         }
         @else {
         <app-workspace-component></app-workspace-component>
-        }
+        } -->
 
+        <router-outlet></router-outlet>
 
 
     </mat-drawer-content>

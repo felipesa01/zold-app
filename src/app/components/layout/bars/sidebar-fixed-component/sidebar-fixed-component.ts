@@ -5,8 +5,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { ResponsiveService } from '../../../../services/responsive-service';
 import { LayoutService } from '../../../../services/layout-service';
-import { appModes, ModeService } from '../../../../services/mode-service';
+import { ModeService } from '../../../../services/mode-service';
 import { MapService } from '../../../../services/map-service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-sidebar-fixed-component',
@@ -23,9 +24,15 @@ export class SidebarFixedComponent {
   expandableSidebarOpened = this.sidebarControls.expandableSidebarOpened;
 
   private modeControl = inject(ModeService);
-  modeTurn = this.modeControl.modeTurn;
+  modeTurn = this.modeControl.mode;
 
-  constructor(private mapService: MapService) { }
+  private router = inject(Router);
+
+  constructor(private mapService: MapService) {
+    this.router.events.subscribe(() => {
+      this.modeIcon = this.router.url.startsWith('/map') ? 'space_dashboard' : 'map';
+    });
+  }
 
 
   expanded = signal(true);
@@ -37,8 +44,10 @@ export class SidebarFixedComponent {
     { icon: 'ballot', label: 'Itens' },
   ];
 
+  modeIcon: 'map' | 'space_dashboard' = this.modeTurn() === 'map' ? 'space_dashboard' : 'map';
+
   configItems = [
-    { icon: this.modeTurn() == appModes.Map ? 'space_dashboard' : 'map', label: 'Alternar modo', onClick: () => this.changeMode() },
+    { icon: undefined, label: 'Alternar modo', onClick: () => this.changeMode() },
     { icon: 'account_circle', label: 'Conta' }
   ];
 
@@ -62,13 +71,14 @@ export class SidebarFixedComponent {
   }
 
   changeMode() {
-    if (this.modeTurn() == appModes.Map) {
+    if (this.modeTurn() == 'map') {
+      this.modeIcon = 'map'
+      this.router.navigate(['/workspace']);
 
-      this.modeTurn.set(appModes.Workspace)
     }
     else {
-      
-      this.modeTurn.set(appModes.Map)
+      this.modeIcon = 'space_dashboard'
+      this.router.navigate(['/map']);
     }
 
   }

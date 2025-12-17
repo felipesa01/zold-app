@@ -6,6 +6,7 @@ import { registerMaterialSymbols } from './material-symbols.config';
 import { provideHttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { Overlay, OverlayContainer, OverlayModule } from '@angular/cdk/overlay';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 
 export const appConfig: ApplicationConfig = {
@@ -15,5 +16,6 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     registerMaterialSymbols(),
     provideHttpClient(),
+    provideCharts(withDefaultRegisterables())
   ]
 };

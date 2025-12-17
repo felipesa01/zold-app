@@ -1,14 +1,17 @@
 import { AfterViewChecked, AfterViewInit, Component, computed, inject, OnDestroy } from '@angular/core';
-import { MapService } from '../../../../services/map-service';
+import { MapService } from '../../../../../../services/map-service';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import TileLayer from 'ol/layer/Tile';
 import { TileDebug } from 'ol/source';
-import { LayersService } from '../../../../services/layers-service';
-import { ResponsiveService } from '../../../../services/responsive-service';
+import { LayersService } from '../../../../../../services/layers-service';
+import { ResponsiveService } from '../../../../../../services/responsive-service';
+import { MatIcon } from '@angular/material/icon';
+import { QrReaderService } from '../../../../../../services/qr-reader.service';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-map-component',
-  imports: [NgbModule],
+  imports: [NgbModule, MatIcon, MatButtonModule],
   templateUrl: './map-component.html',
   styleUrl: './map-component.css',
 })
@@ -16,8 +19,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   private responsive = inject(ResponsiveService);
   isMobile = computed(() => this.responsive.isSmallScreen());
 
-  constructor(private mapService: MapService, private layerService: LayersService) { }
-  
+  constructor(private mapService: MapService, private layerService: LayersService, private qr: QrReaderService) { }
+
   ngOnDestroy(): void {
     this.mapService.detach();
   }
@@ -27,7 +30,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   }
 
   startMap() {
-    console.log('startMap')
     this.mapService.updateView();
     this.mapService.setTileSource();
 
@@ -62,5 +64,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   trocarCamada() {
     this.modoMapa = this.modoMapa === 'satelite' ? 'mapa' : 'satelite';
     this.mapService.changeTileSource(this.modoMapa);
+  }
+
+
+  abrirLeitor() {
+    this.qr.abrirLeitor();
   }
 }

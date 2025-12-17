@@ -1,0 +1,24 @@
+<div class="page" *ngIf="armadilha()">
+
+  <div class="page-header">
+    <button mat-button class="back-btn" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+      Armadilhas
+    </button>
+
+    <h1>Armadilha {{ armadilha()?.nome }}</h1>
+  </div>
+
+  <div class="meta">
+    <div><strong>Região:</strong> {{ armadilha()?.regiao }}</div>
+    <div><strong>Referência:</strong> {{ armadilha()?.referencia }}</div>
+  </div>
+
+  <section class="chart-section">
+    <h2>Capturas ao longo do tempo</h2>
+
+    <canvas baseChart [data]="chartData" [options]="chartOptions" [type]="chartType">
+    </canvas>
+  </section>
+
+</div>

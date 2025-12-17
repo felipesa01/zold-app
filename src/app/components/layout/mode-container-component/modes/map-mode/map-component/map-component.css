@@ -60,3 +60,19 @@
 .toggle-container:not(.active) .option:first-child {
     color: #fff;
 }
+
+
+.qr-code-button {
+    position: absolute;
+    z-index: 1;
+    bottom: 15px;
+    left: 15px;
+}
+
+.logo-map {
+    position: absolute;
+    z-index: 1;
+    bottom: 15px;
+    right: 15px;
+    width: 6em;
+}
