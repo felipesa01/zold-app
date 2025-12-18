@@ -3,10 +3,13 @@
 }
 
 .page-header {
+  display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: space-between;
+  gap: 16px;
   margin-bottom: 16px;
 }
+
 
 .back-btn {
   min-width: auto;
@@ -40,4 +43,11 @@ td.mat-cell {
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 12px;
   margin-bottom: 16px;
+}
+
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }

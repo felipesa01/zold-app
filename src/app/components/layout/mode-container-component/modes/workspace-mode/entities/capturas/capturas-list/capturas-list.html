@@ -1,11 +1,23 @@
 <div class="page">
 
+  <button mat-button class="back-btn" (click)="goBack()">
+    <mat-icon>arrow_back</mat-icon>
+    Workspace
+  </button>
+
   <div class="page-header">
-    <button mat-button class="back-btn" (click)="goBack()">
-      <mat-icon>arrow_back</mat-icon>
-      Workspace
+    <div class="header-left">
+
+      <h1>Capturas</h1>
+    </div>
+
+    <button mat-flat-button color="primary" (click)="create()">
+      <mat-icon>add</mat-icon>
+      Nova captura
     </button>
-    <h1>Capturas</h1>
+
+
+
   </div>
 
   <div class="filters">

@@ -163,4 +163,8 @@ export class CapturasList {
     this.pageSize.set(e.pageSize);
   }
 
+  create() {
+    this.router.navigate(['/workspace/entities/capturas/new']);
+  }
+
 }

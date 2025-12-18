@@ -8,7 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { Armadilha } from '../armadilha.model';
-import {  MatSortModule, Sort } from '@angular/material/sort';
+import { MatSortModule, Sort } from '@angular/material/sort';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSelectModule } from '@angular/material/select';
 
@@ -18,7 +18,7 @@ import { MatSelectModule } from '@angular/material/select';
     MatTableModule,
     MatInputModule,
     MatButtonModule,
-    MatIconModule, MatPaginatorModule, MatSelectModule, MatDatepickerModule, MatSortModule ],
+    MatIconModule, MatPaginatorModule, MatSelectModule, MatDatepickerModule, MatSortModule],
   templateUrl: './armadilhas-list.html',
   styleUrl: './armadilhas-list.css',
 })
@@ -131,6 +131,10 @@ export class ArmadilhasList {
   onPage(e: PageEvent) {
     this.pageIndex.set(e.pageIndex);
     this.pageSize.set(e.pageSize);
+  }
+
+  create() {
+    this.router.navigate(['/workspace/entities/armadilhas/new']);
   }
 
 }

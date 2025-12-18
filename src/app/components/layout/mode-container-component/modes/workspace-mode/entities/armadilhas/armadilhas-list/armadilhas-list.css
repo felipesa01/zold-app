@@ -3,9 +3,10 @@
  }
 
  .page-header {
-   /* display: flex; */
+   display: flex;
    align-items: center;
-   gap: 12px;
+   justify-content: space-between;
+   gap: 16px;
    margin-bottom: 16px;
  }
 
@@ -72,4 +73,9 @@
  }
 
 
- 
+
+ .header-left {
+   display: flex;
+   align-items: center;
+   gap: 12px;
+ }

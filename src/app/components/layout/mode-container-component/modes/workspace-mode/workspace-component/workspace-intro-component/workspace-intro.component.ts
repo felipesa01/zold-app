@@ -102,6 +102,8 @@ import { MatIconModule } from '@angular/material/icon';
 
     .card mat-icon {
       font-size: 32px;
+      height: 32px;
+      width: 32px;
       color: #555;
     }
 
