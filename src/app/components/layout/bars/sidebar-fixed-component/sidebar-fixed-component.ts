@@ -9,10 +9,11 @@ import { ModeService } from '../../../../services/mode-service';
 import { MapService } from '../../../../services/map-service';
 import { Router } from '@angular/router';
 import { FixedFeature } from '../../../../types/layout.types';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-sidebar-fixed-component',
-  imports: [MatSidenavModule, MatIconModule, MatButtonModule, NgFor],
+  imports: [MatSidenavModule, MatIconModule, MatButtonModule, NgFor, MatTooltipModule],
   templateUrl: './sidebar-fixed-component.html',
   styleUrl: './sidebar-fixed-component.css',
 })

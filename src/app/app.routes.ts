@@ -25,7 +25,7 @@ export const routes: Routes = [
             {
                 path: '',
                 loadComponent: () =>
-                    import('./components/layout/mode-container-component/modes/workspace-mode/workspace-component/workspace-intro.component')
+                    import('./components/layout/mode-container-component/modes/workspace-mode/workspace-component/workspace-intro-component/workspace-intro.component')
                         .then(m => m.WorkspaceIntroComponent)
             },
             {
