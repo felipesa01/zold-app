@@ -1,0 +1,19 @@
+.workspace {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.workspace-toolbar {
+  height: 48px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  border-bottom: 1px solid #e0e0e0;
+  background: #fafafa;
+}
+
+.workspace-content {
+  flex: 1;
+  overflow: auto;
+}

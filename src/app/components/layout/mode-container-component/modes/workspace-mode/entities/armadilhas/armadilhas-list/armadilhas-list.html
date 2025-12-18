@@ -5,23 +5,53 @@
       <mat-icon>arrow_back</mat-icon>
       Workspace
     </button>
+    <h1>Armadilhas</h1>
+  </div>
 
-  <h1>Armadilhas</h1>
+  <div class="filters">
+    <!-- Busca -->
+    <mat-form-field appearance="outline">
+      <mat-label>Buscar</mat-label>
+      <input matInput (input)="onSearch($event)" />
+    </mat-form-field>
 
-  <mat-form-field appearance="outline" class="search">
-    <mat-label>Buscar</mat-label>
-    <input matInput (input)="onSearch($event)" />
-  </mat-form-field>
+    <!-- Região -->
+    <mat-form-field appearance="outline">
+      <mat-label>Região</mat-label>
+      <mat-select (selectionChange)="onRegiao($event.value)">
+        <mat-option value="">Todas</mat-option>
+        <mat-option *ngFor="let r of regioes" [value]="r">
+          {{ r }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
 
-  <table mat-table [dataSource]="filtered()">
+    <!-- Data início -->
+    <mat-form-field appearance="outline">
+      <mat-label>Criada a partir de</mat-label>
+      <input matInput [matDatepicker]="ini" (dateChange)="onInicio($event.value)" />
+      <mat-datepicker-toggle matSuffix [for]="ini"></mat-datepicker-toggle>
+      <mat-datepicker #ini></mat-datepicker>
+    </mat-form-field>
+
+    <!-- Data fim -->
+    <mat-form-field appearance="outline">
+      <mat-label>Criada até</mat-label>
+      <input matInput [matDatepicker]="fim" (dateChange)="onFim($event.value)" />
+      <mat-datepicker-toggle matSuffix [for]="fim"></mat-datepicker-toggle>
+      <mat-datepicker #fim></mat-datepicker>
+    </mat-form-field>
+  </div>
+
+  <table mat-table [dataSource]="pagedData()" matSort (matSortChange)="onSort($event)">
 
     <ng-container matColumnDef="nome">
-      <th mat-header-cell *matHeaderCellDef>Nome</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Nome</th>
       <td mat-cell *matCellDef="let a">{{ a.nome }}</td>
     </ng-container>
 
     <ng-container matColumnDef="regiao">
-      <th mat-header-cell *matHeaderCellDef>Região</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Região</th>
       <td mat-cell *matCellDef="let a">{{ a.regiao }}</td>
     </ng-container>
 
@@ -32,12 +62,9 @@
 
     <ng-container matColumnDef="acoes">
       <th mat-header-cell *matHeaderCellDef></th>
-      <td mat-cell *matCellDef="let c" class="actions-cell">
-        <button mat-icon-button aria-label="Editar" (click)="edit(c, $event)">
-          <mat-icon>edit</mat-icon>
-        </button>
-        <button mat-icon-button aria-label="Excluir" (click)="remove(c, $event)">
-          <mat-icon>delete</mat-icon>
+      <td mat-cell *matCellDef="let a" class="actions-cell">
+        <button mat-icon-button (click)="open(a, $event)">
+          <mat-icon>open_in_new</mat-icon>
         </button>
       </td>
     </ng-container>
@@ -47,5 +74,9 @@
     </tr>
 
   </table>
+
+  <mat-paginator [length]="filtered().length" [pageSize]="pageSize()" [pageIndex]="pageIndex()"
+    [pageSizeOptions]="[10, 25, 50]" (page)="onPage($event)">
+  </mat-paginator>
 
 </div>

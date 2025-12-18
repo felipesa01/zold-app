@@ -16,3 +16,7 @@
     right: 15px;
     width: 6em;
 }
+
+mat-drawer {
+    border-radius: 0px;
+}

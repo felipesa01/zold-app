@@ -7,6 +7,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { Overlay, OverlayContainer, OverlayModule } from '@angular/cdk/overlay';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
+import { provideNativeDateAdapter } from '@angular/material/core';
 
 
 export const appConfig: ApplicationConfig = {
@@ -16,6 +17,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     registerMaterialSymbols(),
     provideHttpClient(),
-    provideCharts(withDefaultRegisterables())
+    provideCharts(withDefaultRegisterables()),
+    provideNativeDateAdapter()
   ]
 };

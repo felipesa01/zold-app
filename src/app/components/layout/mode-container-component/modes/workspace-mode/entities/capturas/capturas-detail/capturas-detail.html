@@ -1,0 +1,83 @@
+<div class="page" *ngIf="captura()">
+
+    <!-- Header -->
+    <div class="page-header">
+        <button mat-button class="back-btn" (click)="goBack()">
+            <mat-icon>arrow_back</mat-icon>
+            Capturas
+        </button>
+
+        <h1>
+            Captura
+        </h1>
+
+        <p class="subtitle">
+            Armadilha <strong>{{ armadilha()?.nome }}</strong>
+            — {{ captura()?.data }}
+        </p>
+    </div>
+
+    <!-- Meta -->
+    <section class="meta">
+
+        <div>
+            <strong>Armadilha:</strong>
+            {{ armadilha()?.nome }} – {{ armadilha()?.referencia }}
+        </div>
+
+        <div class="chips">
+            <mat-chip [color]="statusColor(captura()!.status)" selected>
+                {{ captura()?.status }}
+            </mat-chip>
+
+            <mat-chip [color]="situacaoColor(captura()!.situacaoFisica)" selected>
+                {{ captura()?.situacaoFisica }}
+            </mat-chip>
+        </div>
+
+    </section>
+
+    <!-- Contagem -->
+    <section class="counts">
+
+        <div class="count">
+            <span class="label">Aedes</span>
+            <span class="value">{{ captura()?.numAedes }}</span>
+        </div>
+
+        <div class="count">
+            <span class="label">Culex</span>
+            <span class="value">{{ captura()?.numCulex }}</span>
+        </div>
+
+        <div class="count">
+            <span class="label">Outras</span>
+            <span class="value">{{ captura()?.numOutras }}</span>
+        </div>
+
+        <div class="count total">
+            <span class="label">Total</span>
+            <span class="value">{{ captura()?.numTotal }}</span>
+        </div>
+
+    </section>
+
+    <!-- Operacional -->
+    <section class="operacional">
+
+        <h2>Operacional</h2>
+
+        <ul>
+            <li>
+                <strong>Troca de refil:</strong>
+                {{ captura()?.trocaRefil ? 'Sim' : 'Não' }}
+            </li>
+            <li>
+                <strong>Troca de atrativo:</strong>
+                {{ captura()?.trocaAtrativo ? 'Sim' : 'Não' }}
+            </li>
+        </ul>
+
+    </section>
+
+</div>

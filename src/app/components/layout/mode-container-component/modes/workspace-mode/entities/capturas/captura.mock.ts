@@ -1,84 +1,54 @@
 import { Captura } from './captura.model';
+import { ARMADILHAS_MOCK } from '../armadilhas/armadilhas.mock';
+import { uuid } from '../../../../../../../utils/uuid.util';
 
-export const CAPTURAS_MOCK: Captura[] = [
+export const CAPTURAS_MOCK: Captura[] = ARMADILHAS_MOCK.flatMap((armadilha, armIndex) => {
 
-  // 🔹 ARM-001 — situação normal
-  {
-    id: '1db8b471-3ce9-4e00-bd3e-3868440f2b12',
-    data: '2025-01-10',
-    status: 'ATIVA',
+  return Array.from({ length: 100 }).map((_, i) => {
 
-    numAedes: 4,
-    numCulex: 2,
-    numOutras: 1,
-    numTotal: 7,
+    const globalIndex = armIndex * 100 + i;
 
-    trocaRefil: true,
-    trocaAtrativo: false,
+    const situacaoFisica =
+      i % 25 === 0
+        ? 'EXTRAVIADA'
+        : i % 12 === 0
+        ? 'DERRUBADA'
+        : 'REGULAR';
 
-    situacaoFisica: 'REGULAR',
+    const status =
+      situacaoFisica === 'EXTRAVIADA' ? 'INATIVA' : 'ATIVA';
 
-    userId: '1d6429ae-130c-4500-b602-9b70bbad17c6',
-    armadilhaId: '0cff5ff2-019d-4500-a2bc-fa1b41aff0a8'
-  },
+    const numAedes =
+      situacaoFisica === 'REGULAR' ? (i % 6) + 1 : 0;
 
-  // 🔹 ARM-001 — armadilha derrubada, mas ainda ativa
-  {
-    id: 'b7c3c5a4-8d7a-4f1c-9c3f-4ad2d88a8a11',
-    data: '2025-01-17',
-    status: 'ATIVA',
+    const numCulex =
+      situacaoFisica === 'REGULAR' ? (i % 4) : 0;
 
-    numAedes: 1,
-    numCulex: 0,
-    numOutras: 0,
-    numTotal: 1,
+    const numOutras =
+      situacaoFisica === 'REGULAR' ? (i % 3) : 0;
 
-    trocaRefil: false,
-    trocaAtrativo: false,
+    const numTotal = numAedes + numCulex + numOutras;
 
-    situacaoFisica: 'DERRUBADA',
+    return {
+      id: uuid(),
+      data: `2025-${((i % 12) + 1).toString().padStart(2, '0')}-${((i % 28) + 1)
+        .toString()
+        .padStart(2, '0')}`,
 
-    userId: '1d6429ae-130c-4500-b602-9b70bbad17c6',
-    armadilhaId: '0cff5ff2-019d-4500-a2bc-fa1b41aff0a8'
-  },
+      status,
+      numAedes,
+      numCulex,
+      numOutras,
+      numTotal,
 
-  // 🔹 ARM-002 — situação regular
-  {
-    id: 'a2f7f9d1-34c1-4d8e-8d21-42b9dff2c9c4',
-    data: '2025-01-11',
-    status: 'ATIVA',
+      trocaRefil: i % 3 === 0,
+      trocaAtrativo: i % 4 === 0,
 
-    numAedes: 0,
-    numCulex: 3,
-    numOutras: 0,
-    numTotal: 3,
+      situacaoFisica,
 
-    trocaRefil: true,
-    trocaAtrativo: true,
+      userId: 'user-001',
+      armadilhaId: armadilha.id
+    };
+  });
 
-    situacaoFisica: 'REGULAR',
-
-    userId: '1d6429ae-130c-4500-b602-9b70bbad17c6',
-    armadilhaId: 'b3f71d91-3d87-4c25-8a3c-9fdac4c9e123'
-  },
-
-  // 🔹 ARM-002 — armadilha EXTRAVIADA (obrigatoriamente INATIVA)
-  {
-    id: 'f3b4e1a7-1c1d-42a2-9c8f-4c11e9b8c771',
-    data: '2025-01-18',
-    status: 'INATIVA', // ⚠ regra respeitada
-
-    numAedes: 0,
-    numCulex: 0,
-    numOutras: 0,
-    numTotal: 0,
-
-    trocaRefil: false,
-    trocaAtrativo: false,
-
-    situacaoFisica: 'EXTRAVIADA',
-
-    userId: '1d6429ae-130c-4500-b602-9b70bbad17c6',
-    armadilhaId: 'b3f71d91-3d87-4c25-8a3c-9fdac4c9e123'
-  }
-];
+});

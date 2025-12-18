@@ -1,5 +1,4 @@
 import { Component, computed, inject } from '@angular/core';
-import { MapComponent } from "./modes/map-mode/map-component/map-component";
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { ResponsiveService } from '../../../services/responsive-service';
 import { BottomSheetService } from '../../../services/bottom-sheet-service';
@@ -7,12 +6,11 @@ import { TopbarComponent } from '../bars/topbar-component/topbar-component';
 import { LayoutService } from '../../../services/layout-service';
 import { SidebarExpandableComponent } from './sidebar-expandable-component/sidebar-expandable-component';
 import { ModeService } from '../../../services/mode-service';
-import { WorkspaceComponent } from './modes/workspace-mode/workspace-component/workspace-component';
 import { Router, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-mode-container-component',
-  imports: [MapComponent, WorkspaceComponent, MatSidenavModule, SidebarExpandableComponent, RouterOutlet],
+  imports: [ MatSidenavModule, SidebarExpandableComponent, RouterOutlet],
   templateUrl: './mode-container-component.html',
   styleUrl: './mode-container-component.css',
 })

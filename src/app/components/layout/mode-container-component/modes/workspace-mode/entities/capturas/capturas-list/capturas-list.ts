@@ -10,6 +10,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { MatChip } from '@angular/material/chips';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatSortModule, Sort } from '@angular/material/sort';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 
 @Component({
   selector: 'app-capturas-list',
@@ -17,7 +21,7 @@ import { MatChip } from '@angular/material/chips';
     MatTableModule,
     MatInputModule,
     MatButtonModule,
-    MatIconModule, MatChip],
+    MatIconModule, MatChip, MatPaginatorModule, MatSelectModule, MatDatepickerModule, MatSortModule],
   templateUrl: './capturas-list.html',
   styleUrl: './capturas-list.css',
 })
@@ -25,48 +29,23 @@ export class CapturasList {
 
   cols = ['armadilha', 'data', 'status', 'situacao', 'total', 'acoes'];
 
-  private search = signal('');
   private capturas = signal<Captura[]>(CAPTURAS_MOCK);
-  private armadilhas = signal<Armadilha[]>(ARMADILHAS_MOCK);
-
-  filtered = computed(() =>
-    this.capturas().filter(c => {
-      const arm = this.getArmadilha(c.armadilhaId);
-      const text = `
-        ${arm?.nome ?? ''}
-        ${arm?.regiao ?? ''}
-        ${c.status}
-        ${c.situacaoFisica}
-      `.toLowerCase();
-
-      return text.includes(this.search());
-    })
-  );
+  armadilhas = signal<Armadilha[]>(ARMADILHAS_MOCK);
 
   constructor(private router: Router) { }
 
-  onSearch(e: Event) {
-    this.search.set((e.target as HTMLInputElement).value.toLowerCase());
-  }
 
   getArmadilha(id: string): Armadilha | undefined {
-    return this.armadilhas().find(a => a.id === id);
+    return this.armadilhaMap().get(id);
   }
-
-  open(c: Captura) {
+  open(c: Captura, e?: Event) {
+    e?.stopPropagation();
     this.router.navigate(['/workspace/entities/capturas', c.id]);
   }
 
-  edit(c: Captura, e: Event) {
-    e.stopPropagation();
-    this.open(c);
+  goBack() {
+    this.router.navigate(['/workspace']);
   }
-
-  remove(c: Captura, e: Event) {
-    e.stopPropagation();
-    console.log('delete', c);
-  }
-
 
   statusColor(status: Captura['status']) {
     return status === 'ATIVA' ? 'primary' : 'warn';
@@ -80,8 +59,108 @@ export class CapturasList {
     }
   }
 
-  goBack() {
-    this.router.navigate(['/workspace']);
+  armadilhaMap = computed(() =>
+    new Map(this.armadilhas().map(a => [a.id, a]))
+  );
+
+  // filtros
+  search = signal('');
+  armadilhaId = signal<string | null>(null);
+  dataInicio = signal<Date | null>(null);
+  dataFim = signal<Date | null>(null);
+
+  // ordenação
+  sort = signal<Sort>({ active: 'data', direction: 'desc' });
+
+  // paginação
+  pageIndex = signal(0);
+  pageSize = signal(10);
+
+  // 🔹 FILTROS
+  filtered = computed(() => {
+    return this.capturas().filter(c => {
+
+      // texto
+      if (this.search()) {
+        const arm = this.getArmadilha(c.armadilhaId);
+        const text = `${arm?.nome} ${c.status} ${c.situacaoFisica}`.toLowerCase();
+        if (!text.includes(this.search())) return false;
+      }
+
+      // armadilha
+      if (this.armadilhaId() && c.armadilhaId !== this.armadilhaId()) {
+        return false;
+      }
+
+      // período
+      const d = new Date(c.data + 'T00:00:00');
+      if (this.dataInicio() && d < this.dataInicio()!) return false;
+      if (this.dataFim() && d > this.dataFim()!) return false;
+
+      return true;
+    });
+  });
+
+  // 🔹 ORDENAÇÃO
+  sorted = computed(() => {
+    const { active, direction } = this.sort();
+    if (!direction) return this.filtered();
+
+    return [...this.filtered()].sort((a, b) => {
+      let v1: any;
+      let v2: any;
+
+      switch (active) {
+        case 'data':
+          v1 = new Date(a.data).getTime();
+          v2 = new Date(b.data).getTime();
+          break;
+        case 'total':
+          v1 = a.numTotal;
+          v2 = b.numTotal;
+          break;
+        default:
+          return 0;
+      }
+
+      return direction === 'asc' ? v1 - v2 : v2 - v1;
+    });
+  });
+
+  // 🔹 PAGINAÇÃO
+  pagedData = computed(() => {
+    const start = this.pageIndex() * this.pageSize();
+    return this.sorted().slice(start, start + this.pageSize());
+  });
+
+
+  onSearch(e: Event) {
+    this.search.set((e.target as HTMLInputElement).value.toLowerCase());
+    this.pageIndex.set(0);
+  }
+
+  onArmadilha(id: string) {
+    this.armadilhaId.set(id || null);
+    this.pageIndex.set(0);
+  }
+
+  onInicio(d: Date | null) {
+    this.dataInicio.set(d);
+    this.pageIndex.set(0);
+  }
+
+  onFim(d: Date | null) {
+    this.dataFim.set(d);
+    this.pageIndex.set(0);
+  }
+
+  onSort(sort: Sort) {
+    this.sort.set(sort);
+  }
+
+  onPage(e: PageEvent) {
+    this.pageIndex.set(e.pageIndex);
+    this.pageSize.set(e.pageSize);
   }
 
 }
