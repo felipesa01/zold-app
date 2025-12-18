@@ -29,11 +29,7 @@
    white-space: nowrap;
    overflow: hidden;
    text-overflow: ellipsis;
- }
-
- .actions-cell {
-   display: flex;
-   justify-content: flex-end;
+   vertical-align: middle;
  }
 
  .filters {
@@ -42,3 +38,38 @@
    gap: 12px;
    margin-bottom: 16px;
  }
+
+
+
+ /* células */
+ td.mat-cell,
+ th.mat-header-cell {
+   white-space: nowrap;
+   overflow: hidden;
+   text-overflow: ellipsis;
+   vertical-align: middle;
+   padding-top: 4px;
+   padding-bottom: 4px;
+ }
+
+ /* coluna ações */
+ .mat-column-acoes {
+   width: 48px;
+   min-width: 48px;
+   max-width: 48px;
+   text-align: center;
+ }
+
+ /* botão centralizado */
+ .mat-column-acoes button {
+   margin: 0 auto;
+ }
+
+ /* altura compacta */
+ tr.mat-row,
+ tr.mat-header-row {
+   height: 40px;
+ }
+
+
+ 

@@ -13,7 +13,7 @@
 
   <nav>
     <button *ngFor="let item of menuItems" class="button" [class.mobile]="isMobile()" [class.computer]="!isMobile()" (click)="setActive(item.label)"
-      [class.active]="item.label===actived">
+      [class.active]="item.label===actived" [matTooltip]="item.label" matTooltipPosition="after" [matTooltipDisabled]="isMobile()">
       <mat-icon>{{ item.icon }}</mat-icon>
       @if (fixedSidebarOpened() && isMobile()) {
       <span class="span">{{item.label}}</span>
@@ -26,7 +26,7 @@
 
   <nav>
     @for (item of configItems; track item) {
-    <button class="button" [class.mobile]="isMobile()" [class.computer]="!isMobile()" (click)="item.onClick?.()">
+    <button class="button" [class.mobile]="isMobile()" [class.computer]="!isMobile()" (click)="item.onClick?.()" [matTooltip]="item.label" matTooltipPosition="after" [matTooltipDisabled]="isMobile()">
       <mat-icon>{{ item.icon ?? modeIcon }}</mat-icon>
       @if (fixedSidebarOpened() && isMobile()) {
       <span class="span">{{item.label}}</span>

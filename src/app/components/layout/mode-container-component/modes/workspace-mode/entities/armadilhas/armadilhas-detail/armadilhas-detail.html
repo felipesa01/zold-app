@@ -1,24 +1,68 @@
 <div class="page" *ngIf="armadilha()">
 
+  <!-- Header -->
   <div class="page-header">
     <button mat-button class="back-btn" (click)="goBack()">
       <mat-icon>arrow_back</mat-icon>
       Armadilhas
     </button>
 
-    <h1>Armadilha {{ armadilha()?.nome }}</h1>
+    <div class="title">
+      <h1>Armadilha {{ armadilha()?.nome }}</h1>
+      <span class="subtitle">
+        {{ armadilha()?.regiao }} · {{ armadilha()?.referencia }}
+      </span>
+    </div>
   </div>
 
-  <div class="meta">
-    <div><strong>Região:</strong> {{ armadilha()?.regiao }}</div>
-    <div><strong>Referência:</strong> {{ armadilha()?.referencia }}</div>
-  </div>
+  <!-- Meta -->
+  <section class="meta">
+    <div>
+      <strong>Latitude:</strong> {{ armadilha()?.lat }}
+    </div>
+    <div>
+      <strong>Longitude:</strong> {{ armadilha()?.lon }}
+    </div>
+    <div>
+      <strong>Criada em:</strong> {{ armadilha()?.createdAt }}
+    </div>
+  </section>
 
+  <!-- Visual section -->
+  <section class="visual-grid">
+
+    <!-- Mapa -->
+    <div class="map-container">
+      <div class="placeholder">
+        <mat-icon>map</mat-icon>
+        <div class="placeholder-title">Mapa da armadilha</div>
+        <div class="placeholder-subtitle">
+          Localização geográfica da armadilha
+        </div>
+      </div>
+    </div>
+
+    <!-- Foto -->
+    <div class="photo-container">
+      <div class="placeholder">
+        <mat-icon>photo_camera</mat-icon>
+        <div class="placeholder-title">Foto da armadilha</div>
+        <div class="placeholder-subtitle">
+          Registro visual da instalação
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Gráfico -->
   <section class="chart-section">
-    <h2>Capturas ao longo do tempo</h2>
+    <h2>Capturas</h2>
 
-    <canvas baseChart [data]="chartData" [options]="chartOptions" [type]="chartType">
-    </canvas>
+    <div class="chart-wrapper">
+      <canvas baseChart [data]="chartData" [options]="chartOptions" [type]="chartType">
+      </canvas>
+    </div>
   </section>
 
 </div>

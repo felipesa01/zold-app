@@ -34,10 +34,6 @@ td.mat-cell {
   text-align: center;
 }
 
-.actions-cell {
-  display: flex;
-  justify-content: flex-end;
-}
 
 .filters {
   display: grid;

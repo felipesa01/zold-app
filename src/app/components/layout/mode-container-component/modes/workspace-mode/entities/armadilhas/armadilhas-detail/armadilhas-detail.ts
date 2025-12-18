@@ -9,6 +9,8 @@ import { ARMADILHAS_MOCK } from '../armadilhas.mock';
 import { CommonModule } from '@angular/common';
 import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-armadilhas-detail',
@@ -20,15 +22,21 @@ export class ArmadilhasDetail {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
-  armadilhaId = this.route.snapshot.paramMap.get('id')!;
-
-  armadilha = computed<Armadilha | undefined>(() =>
-    ARMADILHAS_MOCK.find(a => a.id === this.armadilhaId)
+  armadilhaId = toSignal(
+    this.route.paramMap.pipe(
+      map(params => params.get('id'))
+    )
   );
+
+  armadilha = computed(() => {
+    const id = this.armadilhaId();
+    if (!id) return undefined;
+    return ARMADILHAS_MOCK.find(a => a.id === id);
+  });
 
   capturas = computed<Captura[]>(() =>
     CAPTURAS_MOCK
-      .filter(c => c.armadilhaId === this.armadilhaId)
+      .filter(c => c.armadilhaId === this.armadilhaId())
       .sort((a, b) => a.data.localeCompare(b.data))
   );
 
@@ -40,23 +48,39 @@ export class ArmadilhasDetail {
       {
         label: 'Aedes',
         data: this.capturas().map(c => c.numAedes),
-        tension: 0.3
+        tension: 0.3,
+        borderWidth: 1,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+        hitRadius: 8,
+
       },
       {
         label: 'Culex',
         data: this.capturas().map(c => c.numCulex),
-        tension: 0.3
+        tension: 0.3,
+        borderWidth: 1,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+        hitRadius: 8
       },
       {
         label: 'Outras',
         data: this.capturas().map(c => c.numOutras),
-        tension: 0.3
+        tension: 0.3,
+        borderWidth: 1,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+        hitRadius: 8
       },
       {
         label: 'Total',
         data: this.capturas().map(c => c.numTotal),
         borderWidth: 2,
-        tension: 0.3
+        tension: 0.3,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+        hitRadius: 10,
       }
     ]
   };
@@ -64,7 +88,15 @@ export class ArmadilhasDetail {
   chartOptions: ChartConfiguration['options'] = {
     responsive: true,
     maintainAspectRatio: false,
+    interaction: {
+      mode: 'point',
+      intersect: true
+    },
     plugins: {
+      tooltip: {
+        mode: 'point',
+        intersect: true
+      },
       legend: {
         position: 'bottom'
       }
