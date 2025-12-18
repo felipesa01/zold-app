@@ -1,6 +1,5 @@
 @if (!isMobile()) {
-<div class="topbar">
-</div>
+<div class="topbar"></div>
 } @else {
 <div class="w-100 position-relative">
     <button class="btn d-flex position-absolute p-0 m-2" style="top: 0.1em; right: 0.1em;" (click)="close()">
@@ -9,5 +8,46 @@
 </div>
 }
 
+<div class="content">
 
-<p>Em construção!</p>
+    @switch (activeFeature()) {
+
+    @case ('layers') {
+    <!-- <app-map-layers-panel /> -->
+    <p>app-map-layers-panel</p>
+    }
+
+    @case ('modules') {
+    <!-- <app-map-modules-panel /> -->
+    <p>app-map-modules-panel</p>
+    }
+
+    @case ('lists') {
+    <!-- <app-map-lists-panel /> -->
+    <p>app-map-lists-panel</p>
+    }
+
+    @case ('entities') {
+    <!-- <app-workspace-entities-panel /> -->
+    <p>app-workspace-entities-panel</p>
+    }
+
+    @case ('reports') {
+    <!-- <app-workspace-reports-panel /> -->
+    <p>app-workspace-reports-panel</p>
+    }
+
+    @case ('dashboards') {
+    <!-- <app-workspace-dashboards-panel /> -->
+    <p>app-workspace-dashboards-panel</p>
+    }
+
+    @default {
+    <div class="empty">
+        Selecione uma opção
+    </div>
+    }
+
+    }
+
+</div>

@@ -8,6 +8,7 @@ import { LayoutService } from '../../../../services/layout-service';
 import { ModeService } from '../../../../services/mode-service';
 import { MapService } from '../../../../services/map-service';
 import { Router } from '@angular/router';
+import { FixedFeature } from '../../../../types/layout.types';
 
 @Component({
   selector: 'app-sidebar-fixed-component',
@@ -36,13 +37,25 @@ export class SidebarFixedComponent {
 
 
   expanded = signal(true);
-  actived: string | undefined;
+  actived = signal<FixedFeature | null>(null);
 
-  menuItems = [
-    { icon: 'layers', label: 'Camadas' },
-    { icon: 'view_module', label: 'Módulos' },
-    { icon: 'ballot', label: 'Itens' },
-  ];
+  menuItems = computed<{
+    icon: string;
+    label: string;
+    feature: FixedFeature;
+  }[]>(() => {
+    return this.modeTurn() === 'map'
+      ? [
+        { icon: 'layers', label: 'Camadas', feature: 'layers' },
+        { icon: 'view_module', label: 'Módulos', feature: 'modules' },
+        { icon: 'list', label: 'Listas', feature: 'lists' },
+      ]
+      : [
+        { icon: 'ballot', label: 'Listas', feature: 'entities' },
+        { icon: 'assessment', label: 'Relatórios', feature: 'reports' },
+        { icon: 'space_dashboard', label: 'Dashboards', feature: 'dashboards' },
+      ];
+  });
 
   modeIcon: 'map' | 'space_dashboard' = this.modeTurn() === 'map' ? 'space_dashboard' : 'map';
 
@@ -55,22 +68,23 @@ export class SidebarFixedComponent {
     this.expanded.set(!this.expanded());
   }
 
-  setActive(button: string) {
-    this.actived = this.actived === button ? undefined : button;
-    if (this.actived) {
-      this.expandableSidebarOpened.set(true);
-    }
-    else {
-      this.expandableSidebarOpened.set(false);
-    }
-    if (this.isMobile()) { this.fixedSidebarOpened.set(false) }
-  }
+  // setActive(button: string) {
+  //   this.actived = this.actived === button ? undefined : button;
+  //   if (this.actived) {
+  //     this.expandableSidebarOpened.set(true);
+  //   }
+  //   else {
+  //     this.expandableSidebarOpened.set(false);
+  //   }
+  //   if (this.isMobile()) { this.fixedSidebarOpened.set(false) }
+  // }
 
   closeFixedSidebar() {
     this.sidebarControls.fixedSidebarOpened.set(false)
   }
 
   changeMode() {
+    this.sidebarControls.closeExpandable();
     if (this.modeTurn() == 'map') {
       this.modeIcon = 'map'
       this.router.navigate(['/workspace']);
@@ -81,6 +95,20 @@ export class SidebarFixedComponent {
       this.router.navigate(['/map']);
     }
 
+  }
+
+  setActive(feature: FixedFeature) {
+    if (this.actived() === feature) {
+      this.actived.set(null);
+      this.sidebarControls.closeExpandable();
+    } else {
+      this.actived.set(feature);
+      this.sidebarControls.openFeature(feature);
+    }
+
+    if (this.isMobile()) {
+      this.fixedSidebarOpened.set(false);
+    }
   }
 
 

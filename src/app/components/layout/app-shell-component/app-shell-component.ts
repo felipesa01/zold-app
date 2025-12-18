@@ -36,17 +36,6 @@ export class AppShellComponent {
 
   actived: string | undefined;
 
-  menuItems = [
-    { icon: 'inbox', label: 'Caixa de entrada' },
-    { icon: 'send', label: 'Enviados' },
-    { icon: 'drafts', label: 'Rascunhos' },
-    { icon: 'delete', label: 'Lixeira' }
-  ];
-
-  configItems = [
-    { icon: 'inbox', label: 'Caixa de entrada' },
-    { icon: 'send', label: 'Enviados' }
-  ];
 
 
 }

@@ -16,6 +16,9 @@ export class SidebarExpandableComponent {
   private sidebarControls = inject(LayoutService);
   expandableSidebarOpened = this.sidebarControls.expandableSidebarOpened;
 
+  private layout = inject(LayoutService);
+  activeFeature = this.layout.activeFeature;
+
 
   close() {
     this.expandableSidebarOpened.set(false)

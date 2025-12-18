@@ -12,8 +12,8 @@
   </div>
 
   <nav>
-    <button *ngFor="let item of menuItems" class="button" [class.mobile]="isMobile()" [class.computer]="!isMobile()" (click)="setActive(item.label)"
-      [class.active]="item.label===actived">
+    <button *ngFor="let item of menuItems()" class="button" [class.mobile]="isMobile()" [class.computer]="!isMobile()" (click)="setActive(item.feature)"
+      [class.active]="item.feature === actived()">
       <mat-icon>{{ item.icon }}</mat-icon>
       @if (fixedSidebarOpened() && isMobile()) {
       <span class="span">{{item.label}}</span>
