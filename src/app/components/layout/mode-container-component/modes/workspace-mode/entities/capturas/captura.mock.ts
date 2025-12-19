@@ -2,9 +2,29 @@ import { Captura } from './captura.model';
 import { ARMADILHAS_MOCK } from '../armadilhas/armadilhas.mock';
 import { uuid } from '../../../../../../../utils/uuid.util';
 
+function nextValue(
+  prev: number,
+  maxDelta: number,
+  min = 0
+): number {
+  const delta = Math.floor((Math.random() * 2 - 1) * maxDelta);
+  return Math.max(min, prev + delta);
+}
+
 export const CAPTURAS_MOCK: Captura[] = ARMADILHAS_MOCK.flatMap((armadilha, armIndex) => {
 
+  let aedes = 5;
+  let culex = 8;
+  let outras = 2;
+
+  let lastRefil = false;
+  let lastAtrativo = false;
+
+
   return Array.from({ length: 100 }).map((_, i) => {
+
+    let trocaRefil = Math.random() < 0.05 && !lastRefil;
+    let trocaAtrativo = Math.random() < 0.03 && !lastAtrativo;
 
     const globalIndex = armIndex * 100 + i;
 
@@ -12,20 +32,20 @@ export const CAPTURAS_MOCK: Captura[] = ARMADILHAS_MOCK.flatMap((armadilha, armI
       i % 25 === 0
         ? 'EXTRAVIADA'
         : i % 12 === 0
-        ? 'DERRUBADA'
-        : 'REGULAR';
+          ? 'DERRUBADA'
+          : 'REGULAR';
 
     const status =
       situacaoFisica === 'EXTRAVIADA' ? 'INATIVA' : 'ATIVA';
 
     const numAedes =
-      situacaoFisica === 'REGULAR' ? (i % 6) + 1 : 0;
+      situacaoFisica === 'REGULAR' ? nextValue(aedes, 2) : 0;
 
     const numCulex =
-      situacaoFisica === 'REGULAR' ? (i % 4) : 0;
+      situacaoFisica === 'REGULAR' ? nextValue(culex, 3) : 0;
 
     const numOutras =
-      situacaoFisica === 'REGULAR' ? (i % 3) : 0;
+      situacaoFisica === 'REGULAR' ? nextValue(outras, 1) : 0;
 
     const numTotal = numAedes + numCulex + numOutras;
 
@@ -41,8 +61,8 @@ export const CAPTURAS_MOCK: Captura[] = ARMADILHAS_MOCK.flatMap((armadilha, armI
       numOutras,
       numTotal,
 
-      trocaRefil: i % 3 === 0,
-      trocaAtrativo: i % 4 === 0,
+      trocaRefil: trocaRefil,
+      trocaAtrativo: trocaAtrativo,
 
       situacaoFisica,
 

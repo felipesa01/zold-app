@@ -1,7 +1,7 @@
 <mat-sidenav-container class="sidenav-container" [hasBackdrop]="isMobile()">
 
   <mat-sidenav #sidenav class="sidenav" [class]="{'computer': !isMobile(), 'mobile': isMobile()}" fixedInViewport="true"
-    [opened]="!isMobile() || fixedSidebarOpened()" (openedChange)="fixedSidebarOpened.set($event)"
+    [opened]="!isMobile() ? true : fixedSidebarOpened()" (openedChange)="fixedSidebarOpened.set($event)"
     [mode]="isMobile() ? 'over' : 'side'">
     <app-sidebar-fixed-component></app-sidebar-fixed-component>
   </mat-sidenav>

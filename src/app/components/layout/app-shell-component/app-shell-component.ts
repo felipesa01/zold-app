@@ -32,6 +32,11 @@ export class AppShellComponent {
   @ViewChild('sidenav') sidenav!: MatSidenav;
 
   constructor() {
+    effect(() => {
+      if (this.isMobile()) {
+        this.sidebarControls.fixedSidebarOpened.set(false);
+      }
+    });
   }
 
   actived: string | undefined;

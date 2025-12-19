@@ -32,14 +32,14 @@
   <section class="visual-grid">
 
     <!-- Mapa -->
-    <div class="map-container">
-      <div class="placeholder">
+    <div id="map-armadilha-detail" class="map-container">
+      <!-- <div class="placeholder">
         <mat-icon>map</mat-icon>
         <div class="placeholder-title">Mapa da armadilha</div>
         <div class="placeholder-subtitle">
           Localização geográfica da armadilha
         </div>
-      </div>
+      </div> -->
     </div>
 
     <!-- Foto -->
@@ -59,8 +59,24 @@
   <section class="chart-section">
     <h2>Capturas</h2>
 
+    <div class="chart-controls">
+      <mat-checkbox [checked]="showRefil()" (change)="showRefil.set($event.checked)">
+        Mostrar troca de refil
+      </mat-checkbox>
+
+      <mat-checkbox [checked]="showAtrativo()" (change)="showAtrativo.set($event.checked)">
+        Mostrar troca de atrativo
+      </mat-checkbox>
+
+      <button class="ms-auto" mat-stroked-button (click)="resetZoom()">
+        Resetar zoom
+      </button>
+    </div>
+
+
+
     <div class="chart-wrapper">
-      <canvas baseChart [data]="chartData" [options]="chartOptions" [type]="chartType">
+      <canvas baseChart [data]="chartData()" [options]="chartOptions()" [type]="chartType">
       </canvas>
     </div>
   </section>

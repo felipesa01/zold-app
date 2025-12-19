@@ -45,9 +45,9 @@ import { MatIconModule } from '@angular/material/icon';
         <h2>Resumo</h2>
 
         <ul>
-          <li><strong>Armadilhas cadastradas:</strong> 2</li>
-          <li><strong>Capturas registradas:</strong> 4</li>
-          <li><strong>Armadilhas inativas:</strong> 1</li>
+          <li><strong>Armadilhas cadastradas:</strong> 50</li>
+          <li><strong>Capturas registradas:</strong> 5.000</li>
+          <li><strong>Média de capturas por armadilha:</strong> 100</li>
         </ul>
 
         <p class="hint">
@@ -59,8 +59,10 @@ import { MatIconModule } from '@angular/material/icon';
   `,
   styles: [`
     .workspace-intro {
-      padding: 32px;
-      max-width: 1100px;
+     padding: 24px;
+     max-width: 1200px;
+     margin-right: auto;
+     margin-left: auto;
     }
 
     .intro-header {
@@ -142,7 +144,7 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class WorkspaceIntroComponent {
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) { }
 
   go(target: 'armadilhas' | 'capturas') {
     this.router.navigate([`/workspace/entities/${target}`]);
