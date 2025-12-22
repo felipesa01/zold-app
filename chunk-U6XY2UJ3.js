@@ -1,0 +1,1 @@
+import{Ib as a,Jb as r,ic as s,nb as o}from"./chunk-CUARONR7.js";import"./chunk-FDERIQAA.js";var n=class e{static \u0275fac=function(t){return new(t||e)};static \u0275cmp=o({type:e,selectors:[["app-capturas-form"]],decls:2,vars:0,template:function(t,p){t&1&&(a(0,"p"),s(1,"capturas-form works!"),r())},encapsulation:2})};export{n as CapturasForm};
