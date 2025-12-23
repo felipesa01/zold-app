@@ -1,0 +1,23 @@
+<table class="ranking-table">
+  <thead>
+    <tr>
+      <th>Armadilha</th>
+      <th>Dias sem refil</th>
+      <th>Dias sem atrativo</th>
+      <th>Extravios</th>
+      <th>Derrubadas</th>
+      <th class="score-col">Score</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr *ngFor="let r of ranking()">
+      <td class="name">{{ r.nome }}</td>
+      <td class="num">{{ r.diasSemRefil ?? '-' }}</td>
+      <td class="num">{{ r.diasSemAtrativo ?? '-' }}</td>
+      <td class="num">{{ r.qtdExtravios }}</td>
+      <td class="num">{{ r.qtdDerrubadas }}</td>
+      <td class="score">{{ r.scoreCriticidade }}</td>
+    </tr>
+  </tbody>
+</table>

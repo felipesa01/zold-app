@@ -1,28 +1,28 @@
 import { AfterViewInit, Component, computed, inject, signal, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ChartType, ChartConfiguration, ChartDataset } from 'chart.js';
+import { ChartType, ChartConfiguration, ChartDataset, ScatterDataPoint } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { CAPTURAS_MOCK } from '../../capturas/captura.mock';
 import { Captura } from '../../capturas/captura.model';
 import { Armadilha } from '../armadilha.model';
 import { ARMADILHAS_MOCK } from '../armadilhas.mock';
 import { CommonModule } from '@angular/common';
-import { MatIcon, MatIconModule } from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { Feature, Map, View } from 'ol';
-import { defaults as defaultInteractions, Draw, PinchZoom } from 'ol/interaction';
-import { defaults as defaultControls, ScaleLine } from 'ol/control';
+import { defaults as defaultInteractions } from 'ol/interaction';
+import { defaults as defaultControls } from 'ol/control';
 import TileLayer from 'ol/layer/Tile';
-import OsmSource from 'ol/source/OSM';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import { Circle, Fill, Stroke, Style } from 'ol/style';
 import { Point } from 'ol/geom';
 import { XYZ } from 'ol/source';
+import { ptBR } from 'date-fns/locale';
 
 @Component({
   selector: 'app-armadilhas-detail',
@@ -30,8 +30,6 @@ import { XYZ } from 'ol/source';
   templateUrl: './armadilhas-detail.html',
   styleUrl: './armadilhas-detail.css',
 })
-
-
 
 
 export class ArmadilhasDetail implements AfterViewInit {
@@ -85,10 +83,10 @@ export class ArmadilhasDetail implements AfterViewInit {
   createLayer(armadilha?: Armadilha) {
     if (!armadilha) return
 
-    const geom = new Feature({geometry: new Point([armadilha.lon, armadilha.lat])})
+    const geom = new Feature({ geometry: new Point([armadilha.lon, armadilha.lat]) })
 
     const armadilhaLayer = new VectorLayer({
-      source: new VectorSource({features: [geom] }),
+      source: new VectorSource({ features: [geom] }),
       style: new Style({
         image: new Circle({
           radius: 10,
@@ -101,7 +99,7 @@ export class ArmadilhasDetail implements AfterViewInit {
       zIndex: 99999
     })
     this.map.addLayer(armadilhaLayer)
-    this.map.getView().fit(geom.getGeometry()!, {maxZoom: 18})
+    this.map.getView().fit(geom.getGeometry()!, { maxZoom: 18 })
   }
 
   capturas = computed<Captura[]>(() =>
@@ -116,45 +114,57 @@ export class ArmadilhasDetail implements AfterViewInit {
   }
 
 
-  refilDataset = computed<ChartDataset | null>(() => {
-    if (!this.showRefil()) return null;
+  refilDataset = computed<ChartDataset<'line', { x: number; y: number }[]>>(() => {
 
     return {
       label: 'Troca de refil',
-      data: this.capturas().map(c =>
-        c.trocaRefil ? c.numTotal : null
-      ),
+      data: this.capturas()
+        .filter(c => c.trocaRefil)
+        .map(c => ({
+          x: new Date(c.data).getTime(),
+          y: c.numTotal
+        })),
       showLine: false,
-      pointRadius: 6,
+      hidden: !this.showRefil(),
+      animation: false ,
+      pointRadius: 10,
       pointHoverRadius: 8,
-      PointBackgroundColor: '#rgba(255, 255, 255, 0)',
-      borderColor: '#d6b600ff',
-      borderWidth: 3,
+      backgroundColor: 'rgba(255, 255, 255, 0)',
+      borderColor: '#000000ff',
+      borderWidth: 2,
       borderDash: [0.3, 0.3],
     }
   });
 
-  atrativoDataset = computed<ChartDataset | null>(() => {
-    if (!this.showAtrativo()) return null;
+  atrativoDataset = computed<ChartDataset<'line', { x: number; y: number }[]>>(() => {
 
     return {
       label: 'Troca de atrativo',
-      data: this.capturas().map(c =>
-        c.trocaAtrativo ? c.numTotal : null
-      ),
+      data: this.capturas()
+        .filter(c => c.trocaAtrativo)
+        .map(c => ({
+          x: new Date(c.data).getTime(),
+          y: c.numTotal
+        })),
       showLine: false,
-      pointRadius: 6,
+      hidden: !this.showAtrativo(),
+      animation: false ,
+      pointStyle: 'rectRot',
+      pointRadius: 10,
       pointHoverRadius: 8,
-      PointBackgroundColor: '#rgba(255, 255, 255, 0)',
-      borderColor: '#0026cfff',
-      borderWidth: 3
+      backgroundColor: 'rgba(255, 255, 255, 0)',
+      borderColor: '#000000ff',
+      borderWidth: 2
     };
   });
 
-  baseDataset = computed<ChartDataset[]>(() => [
+  baseDataset = computed<ChartDataset<'line', { x: number; y: number }[]>[]>(() => [
     {
       label: 'Aedes',
-      data: this.capturas().map(c => c.numAedes),
+      data: this.capturas().map(c => ({
+        x: new Date(c.data).getTime(),
+        y: c.numAedes
+      })),
       borderColor: '#1e88e5',
       backgroundColor: 'rgba(30, 136, 229, 0.5)',
       tension: 0.3,
@@ -162,12 +172,15 @@ export class ArmadilhasDetail implements AfterViewInit {
       borderWidth: 1,
       pointRadius: 4,
       pointHoverRadius: 6,
-      hitRadius: 8,
+      hitRadius: 4,
 
     },
     {
       label: 'Culex',
-      data: this.capturas().map(c => c.numCulex),
+      data: this.capturas().map(c => ({
+        x: new Date(c.data).getTime(),
+        y: c.numCulex
+      })),
       borderColor: '#8e24aa',
       backgroundColor: 'rgba(141, 36, 170, 0.5)',
       tension: 0.3,
@@ -175,11 +188,14 @@ export class ArmadilhasDetail implements AfterViewInit {
       borderWidth: 1,
       pointRadius: 4,
       pointHoverRadius: 6,
-      hitRadius: 8
+      hitRadius: 4
     },
     {
       label: 'Outras',
-      data: this.capturas().map(c => c.numOutras),
+      data: this.capturas().map(c => ({
+        x: new Date(c.data).getTime(),
+        y: c.numOutras
+      })),
       borderColor: '#546e7a',
       backgroundColor: 'rgba(84, 110, 122, 0.5)',
       tension: 0.3,
@@ -191,7 +207,10 @@ export class ArmadilhasDetail implements AfterViewInit {
     },
     {
       label: 'Total',
-      data: this.capturas().map(c => c.numTotal),
+      data: this.capturas().map(c => ({
+        x: new Date(c.data).getTime(),
+        y: c.numTotal
+      })),
       borderColor: '#d32f2f',
       backgroundColor: 'rgba(211, 47, 47, 0.5)',
       borderWidth: 2,
@@ -203,9 +222,9 @@ export class ArmadilhasDetail implements AfterViewInit {
     }
   ])
 
-  chartType: ChartType = 'line';
+  chartType: 'line' = 'line';
 
-  chartData = computed<ChartConfiguration['data']>(() => {
+  chartData = computed<ChartConfiguration<'line', { x: number; y: number }[]>['data']>(() => {
     const datasets = [...this.baseDataset()];
 
     if (this.refilDataset()) {
@@ -216,12 +235,15 @@ export class ArmadilhasDetail implements AfterViewInit {
       datasets.push(this.atrativoDataset()!);
     }
 
-    return { labels: this.capturas().map(c => c.data), datasets }
+    return { datasets }
+
+
+    
 
   })
 
 
-  chartOptions = computed<ChartConfiguration['options']>(() => {
+  chartOptions = computed<ChartConfiguration<'line', ScatterDataPoint[]>['options']>(() => {
     return {
       responsive: true,
       maintainAspectRatio: false,
@@ -232,14 +254,28 @@ export class ArmadilhasDetail implements AfterViewInit {
       plugins: {
         tooltip: {
           callbacks: {
-            label: (ctx: any) => {
-              if (ctx.dataset.label === 'Troca de refil') {
-                return 'Troca de refil realizada';
+            label: (ctx) => {
+              const label = ctx.dataset.label ?? '';
+              const point = ctx.raw as { x: number; y: number };
+
+              // Séries contínuas (Aedes, Culex, Total, etc.)
+              if (label !== 'Troca de refil' && label !== 'Troca de atrativo') {
+                return `${label}: ${point.y}`;
               }
-              if (ctx.dataset.label === 'Troca de atrativo') {
-                return 'Troca de atrativo realizada';
+
+              // Datasets de troca (baseados nas flags da Captura)
+              const dataset = ctx.dataset.data as { x: number; y: number }[];
+              const index = ctx.dataIndex;
+
+              // Primeira troca registrada
+              if (index === 0) {
+                return `${label}: primeira troca registrada`;
               }
-              return `${ctx.dataset.label}: ${ctx.parsed.y}`;
+
+              const prevPoint = dataset[index - 1];
+              const days = this.diffInDays(point.x, prevPoint.x);
+
+              return `${label}: última troca há ${days} dia${days !== 1 ? 's' : ''}`;
             }
           }
         },
@@ -269,10 +305,48 @@ export class ArmadilhasDetail implements AfterViewInit {
       },
       scales: {
         x: {
-          title: { display: true, text: 'Data' }
+          type: 'time',
+          adapters: {
+            date: {
+              locale: ptBR
+            }
+          },
+
+          time: {
+            round: 'day',
+
+            // Deixa o Chart decidir o melhor intervalo conforme zoom
+            displayFormats: {
+              day: 'dd/MM',
+              week: 'dd/MM',
+              month: 'MMM yyyy',
+              year: 'yyyy'
+            }
+          },
+
+          ticks: {
+            autoSkip: true,
+            maxTicksLimit: 6,        // controla densidade máxima
+            maxRotation: 0,          // evita texto inclinado
+            minRotation: 0,
+            padding: 8,
+          },
+
+          grid: {
+            drawTicks: true,
+            tickLength: 6
+          },
+
+          title: {
+            display: true,
+            text: 'Data'
+          }
         },
         y: {
-          title: { display: true, text: 'Quantidade de mosquitos' }
+          title: {
+            display: true,
+            text: 'Quantidade de mosquitos'
+          }
         }
       }
     }
@@ -280,6 +354,12 @@ export class ArmadilhasDetail implements AfterViewInit {
 
   goBack() {
     this.router.navigate(['/workspace/entities/armadilhas']);
+  }
+
+
+  private diffInDays(current: number, previous: number): number {
+    const ONE_DAY = 1000 * 60 * 60 * 24;
+    return Math.round((current - previous) / ONE_DAY);
   }
 
 

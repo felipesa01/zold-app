@@ -1,0 +1,44 @@
+<section class="dashboard">
+
+  <!-- KPIs -->
+  <header class="dashboard-section kpis">
+    <app-kpi-cards />
+  </header>
+
+  <!-- Série temporal principal -->
+  <section class="dashboard-section timeseries">
+    <div class="chart-container">
+      <app-time-series-chart />
+    </div>
+  </section>
+
+  <!-- Blocos analíticos -->
+  <section class="dashboard-section analytics">
+
+    <!-- Intervalos -->
+    <div class="analytics-block">
+      <div class="section-header">
+        <h3>Intervalos de troca</h3>
+        <span class="section-subtitle">
+          Análise de regularidade operacional
+        </span>
+      </div>
+
+      <app-interval-stats />
+    </div>
+
+    <!-- Ranking -->
+    <div class="analytics-block">
+      <div class="section-header">
+        <h3>Armadilhas críticas</h3>
+        <span class="section-subtitle">
+          Prioridade operacional
+        </span>
+      </div>
+
+      <app-ranking-table />
+    </div>
+
+  </section>
+
+</section>

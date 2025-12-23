@@ -1,0 +1,37 @@
+.ranking-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.ranking-table th {
+  text-align: left;
+  font-weight: 600;
+  padding: 8px;
+  border-bottom: 1px solid #e5e7eb;
+  color: #374151;
+}
+
+.ranking-table td {
+  padding: 6px 8px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.ranking-table .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.ranking-table .name {
+  font-weight: 500;
+}
+
+.ranking-table .score-col,
+.ranking-table .score {
+  text-align: right;
+}
+
+.ranking-table .score {
+  font-weight: 600;
+  font-family: monospace;
+}

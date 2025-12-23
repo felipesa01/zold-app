@@ -9,4 +9,4 @@ export type FixedFeature =
   // workspace
   | 'entities'
   | 'reports'
-  | 'dashboards';
+  | 'dashboard';

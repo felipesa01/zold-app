@@ -41,7 +41,7 @@ export const routes: Routes = [
                         .then(m => m.CapturasDetail)
             },
             {
-                path: 'workspace/entities/capturas/new',
+                path: 'entities/capturas/new',
                 loadComponent: () =>
                     import('./components/layout/mode-container-component/modes/workspace-mode/entities/capturas/capturas-form/capturas-form')
                         .then(m => m.CapturasForm)
@@ -59,10 +59,16 @@ export const routes: Routes = [
                         .then(m => m.ArmadilhasDetail)
             },
             {
-                path: 'workspace/entities/armadilhas/new',
+                path: 'entities/armadilhas/new',
                 loadComponent: () =>
                     import('./components/layout/mode-container-component/modes/workspace-mode/entities/armadilhas/armadilhas-form/armadilhas-form')
                         .then(m => m.ArmadilhasForm)
+            },
+            {
+                path: 'dashboard',
+                loadComponent: () =>
+                    import('./components/layout/mode-container-component/modes/workspace-mode/dashboard/dashboard-component')
+                        .then(m => m.DashboardComponent)
             },
         ]
     },

@@ -54,7 +54,7 @@ export class SidebarFixedComponent {
       : [
         { icon: 'ballot', label: 'Listas', feature: 'entities' },
         { icon: 'assessment', label: 'Relatórios', feature: 'reports' },
-        { icon: 'space_dashboard', label: 'Dashboards', feature: 'dashboards' },
+        { icon: 'space_dashboard', label: 'Dashboard', feature: 'dashboard' },
       ];
   });
 

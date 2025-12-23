@@ -1,0 +1,31 @@
+<div class="interval-stats">
+
+  <div class="interval-card" *ngFor="let s of stats()">
+    <div class="interval-header">
+      <span class="interval-title">
+        {{ s.tipo === 'REFIL' ? 'Troca de refil' : 'Troca de atrativo' }}
+      </span>
+    </div>
+
+    <div class="interval-metrics">
+      <div class="metric">
+        <span class="label">Média</span>
+        <span class="value">{{ s.media }}</span>
+        <span class="unit">dias</span>
+      </div>
+
+      <div class="metric">
+        <span class="label">Menor</span>
+        <span class="value">{{ s.min }}</span>
+        <span class="unit">dias</span>
+      </div>
+
+      <div class="metric">
+        <span class="label">Maior</span>
+        <span class="value">{{ s.max }}</span>
+        <span class="unit">dias</span>
+      </div>
+    </div>
+  </div>
+
+</div>

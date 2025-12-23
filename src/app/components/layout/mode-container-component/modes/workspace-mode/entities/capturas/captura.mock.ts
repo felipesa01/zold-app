@@ -1,6 +1,8 @@
 import { Captura } from './captura.model';
 import { ARMADILHAS_MOCK } from '../armadilhas/armadilhas.mock';
 import { uuid } from '../../../../../../../utils/uuid.util';
+import { AplicacaoInseticida } from '../aplicacoes/aplicacoes.model';
+import { APLICACOES_MOCK } from '../aplicacoes/aplicacoes.mock';
 
 function nextValue(
   prev: number,
@@ -35,26 +37,42 @@ export const CAPTURAS_MOCK: Captura[] = ARMADILHAS_MOCK.flatMap((armadilha, armI
           ? 'DERRUBADA'
           : 'REGULAR';
 
+    const data = `2025-${((i % 12) + 1).toString().padStart(2, '0')}-${((i % 28) + 1)
+      .toString()
+      .padStart(2, '0')}`;
+
+    const ts = new Date(data).getTime();
+    const fator = fatorInseticida(ts, APLICACOES_MOCK);
+
     const status =
       situacaoFisica === 'EXTRAVIADA' ? 'INATIVA' : 'ATIVA';
 
     const numAedes =
-      situacaoFisica === 'REGULAR' ? nextValue(aedes, 2) : 0;
+      situacaoFisica === 'REGULAR'
+        ? Math.round(nextValue(aedes, 2) * fator)
+        : 0;
 
     const numCulex =
-      situacaoFisica === 'REGULAR' ? nextValue(culex, 3) : 0;
+      situacaoFisica === 'REGULAR'
+        ? Math.round(nextValue(culex, 3) * fator)
+        : 0;
 
     const numOutras =
-      situacaoFisica === 'REGULAR' ? nextValue(outras, 1) : 0;
+      situacaoFisica === 'REGULAR'
+        ? Math.round(nextValue(outras, 1) * fator)
+        : 0;
 
     const numTotal = numAedes + numCulex + numOutras;
 
+    if (situacaoFisica === 'REGULAR') {
+      aedes = numAedes;
+      culex = numCulex;
+      outras = numOutras;
+    }
+
     return {
       id: uuid(),
-      data: `2025-${((i % 12) + 1).toString().padStart(2, '0')}-${((i % 28) + 1)
-        .toString()
-        .padStart(2, '0')}`,
-
+      data: data,
       status,
       numAedes,
       numCulex,
@@ -70,5 +88,27 @@ export const CAPTURAS_MOCK: Captura[] = ARMADILHAS_MOCK.flatMap((armadilha, armI
       armadilhaId: armadilha.id
     };
   });
+
+
+  function fatorInseticida(
+    dataCaptura: number,
+    aplicacoes: AplicacaoInseticida[]
+  ): number {
+
+    const DURACAO = 15 * 24 * 60 * 60 * 1000; // 15 dias
+    let fator = 1;
+
+    aplicacoes.forEach(a => {
+      const ts = new Date(a.data).getTime();
+      const diff = dataCaptura - ts;
+
+      if (diff > 0 && diff < DURACAO) {
+        const progress = 1 - diff / DURACAO;
+        fator *= 1 - (1 - a.fatorReducao) * progress;
+      }
+    });
+
+    return fator;
+  }
 
 });
