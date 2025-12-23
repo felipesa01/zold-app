@@ -1,1 +1,0 @@
-import{Ib as t,Jb as m,ic as r,nb as o}from"./chunk-CUARONR7.js";import"./chunk-FDERIQAA.js";var s=class a{static \u0275fac=function(e){return new(e||a)};static \u0275cmp=o({type:a,selectors:[["app-armadilhas-form"]],decls:2,vars:0,template:function(e,n){e&1&&(t(0,"p"),r(1,"armadilhas-form works!"),m())},encapsulation:2})};export{s as ArmadilhasForm};
