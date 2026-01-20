@@ -1,1 +1,88 @@
-<p>capturas-form works!</p>
+<div class="page">
+
+    <button mat-button class="back-btn" (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+        Capturas
+    </button>
+
+    <form [formGroup]="form" class="form-card">
+
+        <h2>Nova Captura</h2>
+
+        <!-- ARMADILHA -->
+        <div class="field full">
+            <label>Armadilha</label>
+            <input type="text" class="form-control" [ngbTypeahead]="search" [inputFormatter]="formatter"
+                [resultFormatter]="formatter" (selectItem)="onSelect($event)"
+                (focus)="focus$.next($any($event.target).value)" (click)="click$.next($any($event.target).value)"
+                #instance="ngbTypeahead" placeholder="Buscar armadilha" />
+        </div>
+
+        <!-- Data -->
+        <div class="field">
+            <label>Data</label>
+            <input type="date" class="form-control" formControlName="data" />
+        </div>
+
+        <!-- Situação Física -->
+        <div class="field">
+            <label>Situação Física</label>
+            <select class="form-control" formControlName="situacaoFisica">
+                <option value="REGULAR">REGULAR</option>
+                <option value="DERRUBADA">DERRUBADA</option>
+                <option value="EXTRAVIADA">EXTRAVIADA</option>
+            </select>
+        </div>
+
+        <!-- Status -->
+        <div class="field">
+            <label>Status</label>
+            <select class="form-control" formControlName="status">
+                <option value="ATIVA">ATIVA</option>
+                <option value="INATIVA">INATIVA</option>
+            </select>
+        </div>
+
+        <!-- Números -->
+        <div class="numbers">
+            <div class="field">
+                <label>Aedes</label>
+                <input type="number" class="form-control" formControlName="numAedes" />
+            </div>
+
+            <div class="field">
+                <label>Culex</label>
+                <input type="number" class="form-control" formControlName="numCulex" />
+            </div>
+
+            <div class="field">
+                <label>Outras</label>
+                <input type="number" class="form-control" formControlName="numOutras" />
+            </div>
+
+            <div class="field">
+                <label>Total</label>
+                <input type="number" class="form-control" formControlName="numTotal" [disabled]="true" />
+            </div>
+        </div>
+
+        <!-- Checks -->
+        <div class="checks">
+            <label>
+                <input type="checkbox" formControlName="trocaRefil" />
+                Troca Refil
+            </label>
+            <label>
+                <input type="checkbox" formControlName="trocaAtrativo" />
+                Troca Atrativo
+            </label>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-primary" [disabled]="form.invalid">
+                Salvar Captura
+            </button>
+        </div>
+
+    </form>
+</div>

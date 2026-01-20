@@ -35,16 +35,16 @@ export const routes: Routes = [
                         .then(m => m.CapturasList)
             },
             {
-                path: 'entities/capturas/:id',
-                loadComponent: () =>
-                    import('./components/layout/mode-container-component/modes/workspace-mode/entities/capturas/capturas-detail/capturas-detail')
-                        .then(m => m.CapturasDetail)
-            },
-            {
                 path: 'entities/capturas/new',
                 loadComponent: () =>
                     import('./components/layout/mode-container-component/modes/workspace-mode/entities/capturas/capturas-form/capturas-form')
                         .then(m => m.CapturasForm)
+            },
+            {
+                path: 'entities/capturas/:id',
+                loadComponent: () =>
+                    import('./components/layout/mode-container-component/modes/workspace-mode/entities/capturas/capturas-detail/capturas-detail')
+                        .then(m => m.CapturasDetail)
             },
             {
                 path: 'entities/armadilhas',
