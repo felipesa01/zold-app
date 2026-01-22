@@ -63,6 +63,7 @@
               "buildTarget": "zold-app:build:production"
             },
             "development": {
+              "proxyConfig": "proxy.conf.json",
               "buildTarget": "zold-app:build:development"
             }
           },
