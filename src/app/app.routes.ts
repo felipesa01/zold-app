@@ -32,7 +32,8 @@ export const routes: Routes = [
                 path: 'entities/capturas',
                 loadComponent: () =>
                     import('./components/layout/mode-container-component/modes/workspace-mode/entities/capturas/capturas-list/capturas-list')
-                        .then(m => m.CapturasList)
+                        .then(m => m.CapturasList),
+                data: { reuse: true }
             },
             {
                 path: 'entities/capturas/new',
@@ -50,7 +51,8 @@ export const routes: Routes = [
                 path: 'entities/armadilhas',
                 loadComponent: () =>
                     import('./components/layout/mode-container-component/modes/workspace-mode/entities/armadilhas/armadilhas-list/armadilhas-list')
-                        .then(m => m.ArmadilhasList)
+                        .then(m => m.ArmadilhasList),
+                data: { reuse: true }
             },
             {
                 path: 'entities/armadilhas/:id',

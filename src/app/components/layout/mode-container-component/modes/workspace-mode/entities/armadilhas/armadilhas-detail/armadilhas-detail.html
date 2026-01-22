@@ -8,7 +8,7 @@
     </button>
 
     <div class="title">
-      <h1>Armadilha {{ armadilha()?.nome }}</h1>
+      <h1>Armadilha {{ armadilha()?.nome || ''}}</h1>
       <span class="subtitle">
         {{ armadilha()?.regiao }} · {{ armadilha()?.referencia }}
       </span>

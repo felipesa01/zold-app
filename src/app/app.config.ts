@@ -1,5 +1,5 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, RouteReuseStrategy } from '@angular/router';
 
 import { routes } from './app.routes';
 import { registerMaterialSymbols } from './material-symbols.config';
@@ -8,6 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Overlay, OverlayContainer, OverlayModule } from '@angular/cdk/overlay';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { provideNativeDateAdapter } from '@angular/material/core';
+import { WorkspaceReuseStrategy } from './components/layout/mode-container-component/modes/workspace-mode/workspace-reuse.strategy';
 
 
 export const appConfig: ApplicationConfig = {
@@ -18,6 +19,7 @@ export const appConfig: ApplicationConfig = {
     registerMaterialSymbols(),
     provideHttpClient(),
     provideCharts(withDefaultRegisterables()),
-    provideNativeDateAdapter()
+    provideNativeDateAdapter(),
+    { provide: RouteReuseStrategy, useClass: WorkspaceReuseStrategy }
   ]
 };

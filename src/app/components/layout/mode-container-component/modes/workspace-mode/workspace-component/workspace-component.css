@@ -11,6 +11,7 @@
   padding: 0 16px;
   border-bottom: 1px solid #e0e0e0;
   background: #fafafa;
+  justify-content: space-between;
 }
 
 .workspace-content {
@@ -18,3 +19,17 @@
   overflow: auto;
 }
 
+.project-select select {
+  height: 32px;
+  padding: 0 8px;
+}
+
+.workspace-empty {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #777;
+  font-size: 14px;
+  text-align: center;
+}

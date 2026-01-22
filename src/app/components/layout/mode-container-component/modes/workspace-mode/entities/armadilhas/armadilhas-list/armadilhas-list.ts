@@ -1,5 +1,5 @@
-import { Component, computed, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Router, RouterOutlet } from '@angular/router';
 import { ARMADILHAS_MOCK } from '../armadilhas.mock';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
@@ -11,6 +11,9 @@ import { Armadilha } from '../armadilha.model';
 import { MatSortModule, Sort } from '@angular/material/sort';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSelectModule } from '@angular/material/select';
+import { ProjectContextService } from '../../../../../../../../services/project-context.service';
+import { ApiConnectionService } from '../../../../../../../../services/api-connection-service';
+import { MatProgressSpinnerModule, MatSpinner } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-armadilhas-list',
@@ -18,14 +21,20 @@ import { MatSelectModule } from '@angular/material/select';
     MatTableModule,
     MatInputModule,
     MatButtonModule,
-    MatIconModule, MatPaginatorModule, MatSelectModule, MatDatepickerModule, MatSortModule],
+    MatIconModule, MatPaginatorModule, MatSelectModule, MatDatepickerModule, MatSortModule, MatProgressSpinnerModule, RouterOutlet],
   templateUrl: './armadilhas-list.html',
   styleUrl: './armadilhas-list.css',
 })
 export class ArmadilhasList {
   cols = ['nome', 'regiao', 'referencia', 'acoes'];
 
-  private armadilhas = signal<Armadilha[]>(ARMADILHAS_MOCK);
+  private projectContext = inject(ProjectContextService);
+  selectedProject = this.projectContext.selected;
+
+  private api = inject(ApiConnectionService);
+
+  // private armadilhas = signal<Armadilha[]>(ARMADILHAS_MOCK);
+  private armadilhas = signal<Armadilha[]>([]);
 
   filtered = computed(() => {
     return this.armadilhas().filter(a => {
@@ -90,9 +99,33 @@ export class ArmadilhasList {
   pageIndex = signal(0);
   pageSize = signal(10);
 
+  loading = signal(false);
+
   regioes = ['Centro', 'Zona Norte', 'Zona Sul', 'Zona Leste'];
 
-  constructor(private router: Router) { }
+  constructor(private router: Router) {
+    effect(() => {
+      const project = this.selectedProject();
+
+      if (!project) {
+        this.armadilhas.set([]);
+        return;
+      }
+
+      this.loading.set(true);
+      this.api.listarArmadilhas(project.id).subscribe({
+        next: data => {
+          this.armadilhas.set([...data]);
+          this.loading.set(false);
+        },
+          error: () => {
+            this.armadilhas.set([]);
+            this.loading.set(false);
+          }
+      });
+    });
+  }
+
 
   open(a: Armadilha, e?: Event) {
     e?.stopPropagation();

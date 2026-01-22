@@ -5,6 +5,14 @@
     Workspace
   </button>
 
+  @if (loading()) {
+  <div class="workspace-loading">
+    <mat-spinner diameter="40"></mat-spinner>
+    <span>Carregando armadilhas...</span>
+  </div>
+  }
+  @else {
+
   <div class="page-header">
     <div class="header-left">
 
@@ -52,40 +60,50 @@
     </mat-form-field>
   </div>
 
-  <table mat-table [dataSource]="pagedData()" matSort (matSortChange)="onSort($event)">
+    @if (pagedData().length === 0) {
+    <div class="workspace-empty">
+      Nenhuma armadilha encontrada.
+    </div>
+    }
+    @else {
+    <table mat-table [dataSource]="pagedData()" matSort (matSortChange)="onSort($event)">
 
-    <ng-container matColumnDef="nome">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Nome</th>
-      <td mat-cell *matCellDef="let a">{{ a.nome }}</td>
-    </ng-container>
+      <ng-container matColumnDef="nome">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Nome</th>
+        <td mat-cell *matCellDef="let a">{{ a.nome }}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="regiao">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Região</th>
-      <td mat-cell *matCellDef="let a">{{ a.regiao }}</td>
-    </ng-container>
+      <ng-container matColumnDef="regiao">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Região</th>
+        <td mat-cell *matCellDef="let a">{{ a.regiao }}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="referencia">
-      <th mat-header-cell *matHeaderCellDef>Referência</th>
-      <td mat-cell *matCellDef="let a">{{ a.referencia }}</td>
-    </ng-container>
+      <ng-container matColumnDef="referencia">
+        <th mat-header-cell *matHeaderCellDef>Referência</th>
+        <td mat-cell *matCellDef="let a">{{ a.referencia }}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="acoes">
-      <th mat-header-cell *matHeaderCellDef></th>
-      <td mat-cell *matCellDef="let a" class="actions-cell">
-        <button mat-icon-button (click)="open(a, $event)">
-          <mat-icon>open_in_new</mat-icon>
-        </button>
-      </td>
-    </ng-container>
+      <ng-container matColumnDef="acoes">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let a" class="actions-cell">
+          <button mat-icon-button (click)="open(a, $event)">
+            <mat-icon>open_in_new</mat-icon>
+          </button>
+        </td>
+      </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="cols"></tr>
-    <tr mat-row *matRowDef="let row; columns: cols" (click)="open(row)">
-    </tr>
+      <tr mat-header-row *matHeaderRowDef="cols"></tr>
+      <tr mat-row *matRowDef="let row; columns: cols" (click)="open(row)">
+      </tr>
 
-  </table>
+    </table>
 
-  <mat-paginator [length]="filtered().length" [pageSize]="pageSize()" [pageIndex]="pageIndex()"
-    [pageSizeOptions]="[10, 25, 50]" (page)="onPage($event)">
-  </mat-paginator>
+    <mat-paginator [length]="filtered().length" [pageSize]="pageSize()" [pageIndex]="pageIndex()"
+      [pageSizeOptions]="[10, 25, 50]" (page)="onPage($event)">
+    </mat-paginator>
+
+    }
+  }
+
 
 </div>

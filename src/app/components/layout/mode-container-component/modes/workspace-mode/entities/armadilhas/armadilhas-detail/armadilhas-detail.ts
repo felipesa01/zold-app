@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, computed, inject, signal, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, computed, effect, inject, signal, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ChartType, ChartConfiguration, ChartDataset, ScatterDataPoint } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
@@ -23,6 +23,7 @@ import { Circle, Fill, Stroke, Style } from 'ol/style';
 import { Point } from 'ol/geom';
 import { XYZ } from 'ol/source';
 import { ptBR } from 'date-fns/locale';
+import { ApiConnectionService } from '../../../../../../../../services/api-connection-service';
 
 @Component({
   selector: 'app-armadilhas-detail',
@@ -58,7 +59,28 @@ export class ArmadilhasDetail implements AfterViewInit {
     controls: defaultControls({ attribution: false, zoom: false, rotate: false }),
   })
 
-  constructor() { }
+  constructor(private api: ApiConnectionService) {
+    effect((onCleanup) => {
+      const id = this.armadilhaId();
+
+      if (!id) {
+        this.armadilha.set(undefined);
+        return;
+      }
+
+      const sub = this.api.findArmadilha(id).subscribe({
+        next: armadilha => {
+          this.armadilha.set(armadilha);
+          this.createLayer(armadilha);
+        },
+        error: () => {
+          this.armadilha.set(undefined);
+        }
+      });
+
+      onCleanup(() => sub.unsubscribe());
+    });
+  }
 
   ngAfterViewInit() {
     this.defineMap()
@@ -71,14 +93,23 @@ export class ArmadilhasDetail implements AfterViewInit {
     )
   );
 
-  armadilha = computed(() => {
-    const id = this.armadilhaId();
-    if (!id) return undefined;
+  armadilha = signal<Armadilha | undefined>(undefined);
+  // armadilha = computed(() => {
+  //   const id = this.armadilhaId();
+  //   if (!id) return undefined;
 
-    this.createLayer(ARMADILHAS_MOCK.find(a => a.id === id))
-
-    return ARMADILHAS_MOCK.find(a => a.id === id);
-  });
+  //   this.api.findArmadilha(id).subscribe(armadilha => {
+  //     next: () => {
+  //       this.createLayer(armadilha)
+  //       return armadilha
+  //     }
+  //     error: () => {
+  //       return undefined
+  //     }
+  //   }
+  //   )
+  // return ARMADILHAS_MOCK.find(a => a.id === id);
+  // });
 
   createLayer(armadilha?: Armadilha) {
     if (!armadilha) return
@@ -126,7 +157,7 @@ export class ArmadilhasDetail implements AfterViewInit {
         })),
       showLine: false,
       hidden: !this.showRefil(),
-      animation: false ,
+      animation: false,
       pointRadius: 10,
       pointHoverRadius: 8,
       backgroundColor: 'rgba(255, 255, 255, 0)',
@@ -148,7 +179,7 @@ export class ArmadilhasDetail implements AfterViewInit {
         })),
       showLine: false,
       hidden: !this.showAtrativo(),
-      animation: false ,
+      animation: false,
       pointStyle: 'rectRot',
       pointRadius: 10,
       pointHoverRadius: 8,
@@ -238,7 +269,7 @@ export class ArmadilhasDetail implements AfterViewInit {
     return { datasets }
 
 
-    
+
 
   })
 
