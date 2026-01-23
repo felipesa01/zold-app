@@ -1,4 +1,4 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { CAPTURAS_MOCK } from '../captura.mock';
 import { Captura } from '../captura.model';
@@ -14,6 +14,10 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSortModule, Sort } from '@angular/material/sort';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { ProjectContextService } from '../../../../../../../../services/project-context.service';
+import { ApiConnectionService } from '../../../../../../../../services/api-connection-service';
+import { catchError, forkJoin, of } from 'rxjs';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-capturas-list',
@@ -21,7 +25,13 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
     MatTableModule,
     MatInputModule,
     MatButtonModule,
-    MatIconModule, MatChip, MatPaginatorModule, MatSelectModule, MatDatepickerModule, MatSortModule],
+    MatIconModule,
+    MatChip,
+    MatPaginatorModule,
+    MatSelectModule,
+    MatDatepickerModule,
+    MatSortModule,
+    MatProgressSpinnerModule],
   templateUrl: './capturas-list.html',
   styleUrl: './capturas-list.css',
 })
@@ -29,10 +39,42 @@ export class CapturasList {
 
   cols = ['armadilha', 'data', 'status', 'situacao', 'total', 'acoes'];
 
-  private capturas = signal<Captura[]>(CAPTURAS_MOCK);
-  armadilhas = signal<Armadilha[]>(ARMADILHAS_MOCK);
 
-  constructor(private router: Router) { }
+  private projectContext = inject(ProjectContextService);
+  selectedProject = this.projectContext.selected;
+  private api = inject(ApiConnectionService);
+
+  // private capturas = signal<Captura[]>(CAPTURAS_MOCK);
+  private capturas = signal<Captura[]>([]);
+
+  // armadilhas = signal<Armadilha[]>(ARMADILHAS_MOCK);
+  armadilhas = signal<Armadilha[]>([]);
+  loading = signal(false);
+
+  constructor(private router: Router) {
+    effect(() => {
+      const project = this.selectedProject();
+
+      if (!project) {
+        this.armadilhas.set([]);
+        return;
+      }
+
+      this.loading.set(true);
+      forkJoin({
+        armadilhas: this.api.listarArmadilhasByProjeto(project.id).pipe(
+          catchError(() => of([]))
+        ),
+        capturas: this.api.listarCapturasByProjeto(project.id).pipe(
+          catchError(() => of([]))
+        )
+      }).subscribe(({ armadilhas, capturas }) => {
+        this.armadilhas.set([...armadilhas]);
+        this.capturas.set([...capturas]);
+        this.loading.set(false);
+      });
+    });
+  }
 
 
   getArmadilha(id: string): Armadilha | undefined {

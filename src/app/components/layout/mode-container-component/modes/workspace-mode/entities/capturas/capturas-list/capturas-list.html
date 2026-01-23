@@ -5,6 +5,14 @@
     Workspace
   </button>
 
+  @if (loading()) {
+  <div class="workspace-loading">
+    <mat-spinner diameter="40"></mat-spinner>
+    <span>Carregando armadilhas...</span>
+  </div>
+  }
+  @else {
+
   <div class="page-header">
     <div class="header-left">
 
@@ -57,71 +65,82 @@
 
   </div>
 
+  @if (pagedData().length === 0) {
+  <div class="workspace-empty">
+    Nenhuma armadilha encontrada.
+  </div>
+  }
+    @else {
 
-  <table mat-table [dataSource]="pagedData()" matSort (matSortChange)="onSort($event)">
+    <table mat-table [dataSource]="pagedData()" matSort (matSortChange)="onSort($event)">
 
-    <!-- Armadilha -->
-    <ng-container matColumnDef="armadilha">
-      <th mat-header-cell *matHeaderCellDef>Armadilha</th>
-      <td mat-cell *matCellDef="let c">
-        {{ getArmadilha(c.armadilhaId)?.nome }}
-      </td>
-    </ng-container>
+      <!-- Armadilha -->
+      <ng-container matColumnDef="armadilha">
+        <th mat-header-cell *matHeaderCellDef>Armadilha</th>
+        <td mat-cell *matCellDef="let c">
+          {{ getArmadilha(c.armadilhaId)?.nome }}
+        </td>
+      </ng-container>
 
-    <!-- Data -->
-    <ng-container matColumnDef="data">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Data</th>
-      <td mat-cell *matCellDef="let c">
-        {{ c.data }}
-      </td>
-    </ng-container>
+      <!-- Data -->
+      <ng-container matColumnDef="data">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Data</th>
+        <td mat-cell *matCellDef="let c">
+          {{ c.data }}
+        </td>
+      </ng-container>
 
-    <!-- Status -->
-    <ng-container matColumnDef="status">
-      <th mat-header-cell *matHeaderCellDef>Status</th>
-      <td mat-cell *matCellDef="let c">
-        <mat-chip [color]="statusColor(c.status)" selected>
-          {{ c.status }}
-        </mat-chip>
-      </td>
-    </ng-container>
+      <!-- Status -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let c">
+          <mat-chip [color]="statusColor(c.status)" selected>
+            {{ c.status }}
+          </mat-chip>
+        </td>
+      </ng-container>
 
-    <!-- Situação -->
-    <ng-container matColumnDef="situacao">
-      <th mat-header-cell *matHeaderCellDef>Situação</th>
-      <td mat-cell *matCellDef="let c">
-        <mat-chip [color]="situacaoColor(c.situacaoFisica)" selected>
-          {{ c.situacaoFisica }}
-        </mat-chip>
-      </td>
-    </ng-container>
+      <!-- Situação -->
+      <ng-container matColumnDef="situacao">
+        <th mat-header-cell *matHeaderCellDef>Situação</th>
+        <td mat-cell *matCellDef="let c">
+          <mat-chip [color]="situacaoColor(c.situacaoFisica)" selected>
+            {{ c.situacaoFisica }}
+          </mat-chip>
+        </td>
+      </ng-container>
 
-    <!-- Total -->
-    <ng-container matColumnDef="total">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Total</th>
-      <td mat-cell *matCellDef="let c" class="center">
-        {{ c.numTotal }}
-      </td>
-    </ng-container>
+      <!-- Total -->
+      <ng-container matColumnDef="total">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Total</th>
+        <td mat-cell *matCellDef="let c" class="center">
+          {{ c.numTotal }}
+        </td>
+      </ng-container>
 
-    <!-- Ações -->
-    <ng-container matColumnDef="acoes">
-      <th mat-header-cell *matHeaderCellDef></th>
-      <td mat-cell *matCellDef="let c" class="actions-cell">
-        <button mat-icon-button (click)="open(c, $event)">
-          <mat-icon>open_in_new</mat-icon>
-        </button>
-      </td>
-    </ng-container>
+      <!-- Ações -->
+      <ng-container matColumnDef="acoes">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let c" class="actions-cell">
+          <button mat-icon-button (click)="open(c, $event)">
+            <mat-icon>open_in_new</mat-icon>
+          </button>
+        </td>
+      </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="cols"></tr>
-    <tr mat-row *matRowDef="let row; columns: cols" (click)="open(row)">
-    </tr>
+      <tr mat-header-row *matHeaderRowDef="cols"></tr>
+      <tr mat-row *matRowDef="let row; columns: cols" (click)="open(row)">
+      </tr>
 
-  </table>
+    </table>
 
-  <mat-paginator [length]="filtered().length" [pageSize]="pageSize()" [pageIndex]="pageIndex()"
-    [pageSizeOptions]="[10, 25, 50]" (page)="onPage($event)">
-  </mat-paginator>
+    <mat-paginator [length]="filtered().length" [pageSize]="pageSize()" [pageIndex]="pageIndex()"
+      [pageSizeOptions]="[10, 25, 50]" (page)="onPage($event)">
+    </mat-paginator>
+
+
+    }
+  }
+
 
 </div>

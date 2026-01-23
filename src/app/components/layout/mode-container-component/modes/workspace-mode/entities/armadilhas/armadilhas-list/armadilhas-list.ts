@@ -1,6 +1,5 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
-import { ARMADILHAS_MOCK } from '../armadilhas.mock';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -13,15 +12,21 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSelectModule } from '@angular/material/select';
 import { ProjectContextService } from '../../../../../../../../services/project-context.service';
 import { ApiConnectionService } from '../../../../../../../../services/api-connection-service';
-import { MatProgressSpinnerModule, MatSpinner } from '@angular/material/progress-spinner';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-armadilhas-list',
-  imports: [CommonModule,
+  imports: [
+    CommonModule,
     MatTableModule,
     MatInputModule,
     MatButtonModule,
-    MatIconModule, MatPaginatorModule, MatSelectModule, MatDatepickerModule, MatSortModule, MatProgressSpinnerModule, RouterOutlet],
+    MatIconModule,
+    MatPaginatorModule,
+    MatSelectModule,
+    MatDatepickerModule,
+    MatSortModule,
+    MatProgressSpinnerModule],
   templateUrl: './armadilhas-list.html',
   styleUrl: './armadilhas-list.css',
 })
@@ -113,15 +118,15 @@ export class ArmadilhasList {
       }
 
       this.loading.set(true);
-      this.api.listarArmadilhas(project.id).subscribe({
+      this.api.listarArmadilhasByProjeto(project.id).subscribe({
         next: data => {
           this.armadilhas.set([...data]);
           this.loading.set(false);
         },
-          error: () => {
-            this.armadilhas.set([]);
-            this.loading.set(false);
-          }
+        error: () => {
+          this.armadilhas.set([]);
+          this.loading.set(false);
+        }
       });
     });
   }

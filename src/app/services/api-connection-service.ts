@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { delay, map, Observable } from "rxjs";
 import { Armadilha } from "../components/layout/mode-container-component/modes/workspace-mode/entities/armadilhas/armadilha.model";
+import { Captura } from "../components/layout/mode-container-component/modes/workspace-mode/entities/capturas/captura.model";
 
 export interface Projeto {
     id: string
@@ -23,17 +24,22 @@ export class ApiConnectionService {
 
     apiURL = '/api';
 
-    constructor(private http: HttpClient) {}
+    constructor(private http: HttpClient) { }
 
     listarProjetos(): Observable<Projeto[]> {
 
         return this.http.get<Projeto[]>(`${this.apiURL}/projetos`)
     }
 
-    listarArmadilhas(projetoId: string): Observable<Armadilha[]> {
-        const params = new HttpParams().set('projeto', projetoId);
-        return this.http.get<Armadilha[]>(`${this.apiURL}/armadilhas`, { params }).pipe(
+    listarArmadilhasByProjeto(projetoId: string): Observable<Armadilha[]> {
+        return this.http.get<Armadilha[]>(`${this.apiURL}/projetos/${projetoId}/armadilhas`).pipe(
             // delay(20000)
+        )
+    }
+
+    listarCapturasByProjeto(projetoId: string): Observable<Captura[]> {
+        return this.http.get<Captura[]>(`${this.apiURL}/projetos/${projetoId}/capturas`).pipe(
+            delay(2000)
         )
     }
 

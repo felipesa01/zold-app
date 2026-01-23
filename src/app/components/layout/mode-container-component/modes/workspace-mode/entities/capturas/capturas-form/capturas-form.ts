@@ -1,12 +1,15 @@
-import { Component, OnInit, signal, computed, ViewChild } from '@angular/core';
+import { Component, OnInit, signal, computed, ViewChild, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbTypeahead, NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
-import { Observable, OperatorFunction, Subject, debounceTime, distinctUntilChanged, filter, map, merge } from 'rxjs';
+import { Observable, OperatorFunction, Subject, catchError, debounceTime, distinctUntilChanged, filter, finalize, map, merge, of, switchMap } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { Router } from '@angular/router';
+import { ApiConnectionService } from '../../../../../../../../services/api-connection-service';
+import { ProjectContextService } from '../../../../../../../../services/project-context.service';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 
 interface Armadilha {
   id: string;
@@ -17,7 +20,7 @@ interface Armadilha {
 @Component({
   selector: 'app-capturas-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, NgbTypeaheadModule,MatIconModule, MatButtonModule, MatInputModule],
+  imports: [CommonModule, ReactiveFormsModule, NgbTypeaheadModule, MatIconModule, MatButtonModule, MatInputModule],
   templateUrl: './capturas-form.html',
   styleUrls: ['./capturas-form.css']
 })
@@ -27,15 +30,38 @@ export class CapturasForm implements OnInit {
 
   @ViewChild('instance', { static: true }) instance!: NgbTypeahead;
 
-  armadilhas: Armadilha[] = [];
+  private projectContext = inject(ProjectContextService);
+  selectedProject = this.projectContext.selected;
+  private selectedProject$ = toObservable(this.selectedProject);
+
   form!: FormGroup;
 
   focus$ = new Subject<string>();
   click$ = new Subject<string>();
 
-  constructor(private fb: FormBuilder, private router: Router) { }
+  private api = inject(ApiConnectionService);
 
-    goBack() {
+  loading = signal(false);
+  private armadilhas$ = toSignal(
+    this.selectedProject$.pipe(
+      switchMap(project => {
+        if (!project) return of([] as Armadilha[]);
+
+        this.loading.set(true);
+
+        return this.api.listarArmadilhasByProjeto(project.id).pipe(
+          catchError(() => of([])),
+          finalize(() => this.loading.set(false))
+        );
+      })
+    ),
+    { initialValue: [] as Armadilha[] }
+  );
+  armadilhas = computed(() => this.armadilhas$());
+
+  constructor(private fb: FormBuilder, private router: Router) {  }
+
+  goBack() {
     this.router.navigate(['/workspace/entities/capturas']);
   }
 
@@ -57,7 +83,7 @@ export class CapturasForm implements OnInit {
       armadilhaId: ['', Validators.required]
     });
 
-    this.carregarArmadilhas();
+    // this.carregarArmadilhas();
     this.configurarRegras();
   }
 
@@ -74,16 +100,18 @@ export class CapturasForm implements OnInit {
 
     const inputFocus$ = this.focus$;
 
+
     return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$).pipe(
-      map(term =>
-        (term === ''
-          ? this.armadilhas
-          : this.armadilhas.filter(a =>
+      map(term => {
+        const lista = this.armadilhas();
+
+        return term === ''
+          ? lista.slice(0, 10)
+          : lista.filter(a =>
             a.nome.toLowerCase().includes(term.toLowerCase()) ||
             a.referencia.toLowerCase().includes(term.toLowerCase())
-          )
-        ).slice(0, 10)
-      )
+          ).slice(0, 10);
+      })
     );
   };
 
@@ -135,21 +163,25 @@ export class CapturasForm implements OnInit {
     });
   }
 
-  carregarArmadilhas() {
-    // mock temporário
-    this.armadilhas = [
-      { id: '1', nome: 'Armadilha Norte', referencia: 'Poste 12' },
-      { id: '2', nome: 'Armadilha Sul', referencia: 'Escola Municipal' },
-      { id: '1', nome: 'Armadilha Norte', referencia: 'Poste 12' },
-      { id: '2', nome: 'Armadilha Sul', referencia: 'Escola Municipal' },
-      { id: '1', nome: 'Armadilha Norte', referencia: 'Poste 12' },
-      { id: '2', nome: 'Armadilha Sul', referencia: 'Escola Municipal' },
-      { id: '1', nome: 'Armadilha Norte', referencia: 'Poste 12' },
-      { id: '2', nome: 'Armadilha Sul', referencia: 'Escola Municipal' },
-      { id: '1', nome: 'Armadilha Norte', referencia: 'Poste 12' },
-      { id: '2', nome: 'Armadilha Sul', referencia: 'Escola Municipal' },
-      { id: '1', nome: 'Armadilha Norte', referencia: 'Poste 12' },
-      { id: '2', nome: 'Armadilha Sul', referencia: 'Escola Municipal' },
-    ];
+  // carregarArmadilhas() {
+  //   // mock temporário
+  //   this.armadilhas = [
+  //     { id: '1', nome: 'Armadilha Norte', referencia: 'Poste 12' },
+  //     { id: '2', nome: 'Armadilha Sul', referencia: 'Escola Municipal' },
+  //     { id: '1', nome: 'Armadilha Norte', referencia: 'Poste 12' },
+  //     { id: '2', nome: 'Armadilha Sul', referencia: 'Escola Municipal' },
+  //     { id: '1', nome: 'Armadilha Norte', referencia: 'Poste 12' },
+  //     { id: '2', nome: 'Armadilha Sul', referencia: 'Escola Municipal' },
+  //     { id: '1', nome: 'Armadilha Norte', referencia: 'Poste 12' },
+  //     { id: '2', nome: 'Armadilha Sul', referencia: 'Escola Municipal' },
+  //     { id: '1', nome: 'Armadilha Norte', referencia: 'Poste 12' },
+  //     { id: '2', nome: 'Armadilha Sul', referencia: 'Escola Municipal' },
+  //     { id: '1', nome: 'Armadilha Norte', referencia: 'Poste 12' },
+  //     { id: '2', nome: 'Armadilha Sul', referencia: 'Escola Municipal' },
+  //   ];
+  // }
+
+  apply() {
+    console.log('Apply')
   }
 }

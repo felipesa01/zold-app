@@ -5,7 +5,7 @@
         Capturas
     </button>
 
-    <form [formGroup]="form" class="form-card">
+    <form [formGroup]="form" class="form-card" (submit)="apply()">
 
         <h2>Nova Captura</h2>
 
@@ -79,7 +79,7 @@
         </div>
 
         <div class="actions">
-            <button class="btn btn-primary" [disabled]="form.invalid">
+            <button class="btn btn-primary" type="submit" [disabled]="form.invalid">
                 Salvar Captura
             </button>
         </div>
