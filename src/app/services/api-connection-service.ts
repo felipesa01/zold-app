@@ -39,12 +39,16 @@ export class ApiConnectionService {
 
     listarCapturasByProjeto(projetoId: string): Observable<Captura[]> {
         return this.http.get<Captura[]>(`${this.apiURL}/projetos/${projetoId}/capturas`).pipe(
-            delay(2000)
+            // delay(2000)
         )
     }
 
     findArmadilha(id: string): Observable<Armadilha> {
         return this.http.get<Armadilha>(`${this.apiURL}/armadilhas/${id}`)
+    }
+
+    findCaptura(id: string): Observable<Captura> {
+        return this.http.get<Captura>(`${this.apiURL}/capturas/${id}`)
     }
 
 }

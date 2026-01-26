@@ -1,1 +1,59 @@
-<p>armadilhas-form works!</p>
+<div class="page">
+
+  <button mat-button class="back-btn" (click)="goBack()">
+    <mat-icon>arrow_back</mat-icon>
+    Armadilhas
+  </button>
+
+  <form [formGroup]="form" class="form-card" (submit)="apply()">
+
+    <h2>
+      @if (isEditMode()) {
+        Editar Armadilha
+      } @else {
+        Nova Armadilha
+      }
+    </h2>
+
+    <!-- Nome -->
+    <div class="field full">
+      <label>Nome</label>
+      <input type="text" class="form-control" formControlName="nome" />
+    </div>
+
+    <!-- Referência -->
+    <div class="field full">
+      <label>Referência</label>
+      <input type="text" class="form-control" formControlName="referencia" />
+    </div>
+
+    <!-- Região -->
+    <div class="field">
+      <label>Região</label>
+      <input type="text" class="form-control" formControlName="regiao" />
+    </div>
+
+    <!-- Latitude -->
+    <div class="field">
+      <label>Latitude</label>
+      <input type="number" step="any" class="form-control" formControlName="lat" />
+    </div>
+
+    <!-- Longitude -->
+    <div class="field">
+      <label>Longitude</label>
+      <input type="number" step="any" class="form-control" formControlName="lon" />
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-primary" type="submit" [disabled]="form.invalid || loading()">
+        @if (isEditMode()) {
+          Salvar Alterações
+        } @else {
+          Criar Armadilha
+        }
+      </button>
+    </div>
+
+  </form>
+</div>

@@ -24,6 +24,7 @@ import { Point } from 'ol/geom';
 import { XYZ } from 'ol/source';
 import { ptBR } from 'date-fns/locale';
 import { ApiConnectionService } from '../../../../../../../../services/api-connection-service';
+import { ProjectContextService } from '../../../../../../../../services/project-context.service';
 
 @Component({
   selector: 'app-armadilhas-detail',
@@ -40,12 +41,11 @@ export class ArmadilhasDetail implements AfterViewInit {
   showRefil = signal(true);
   showAtrativo = signal(true);
 
+  private projectContext = inject(ProjectContextService);
+  selectedProject = this.projectContext.selected;
+
   @ViewChild(BaseChartDirective)
   chart?: BaseChartDirective;
-
-  resetZoom() {
-    this.chart?.chart?.resetZoom();
-  }
 
   map: Map = new Map({
     moveTolerance: 3,
@@ -59,16 +59,33 @@ export class ArmadilhasDetail implements AfterViewInit {
     controls: defaultControls({ attribution: false, zoom: false, rotate: false }),
   })
 
+  armadilhaId = toSignal(
+    this.route.paramMap.pipe(
+      map(params => params.get('id'))
+    )
+  );
+
+  armadilha = signal<Armadilha | undefined>(undefined);
+  capturas = signal<Captura[]>([]);
+
+  // capturas = computed<Captura[]>(() =>
+  //   CAPTURAS_MOCK
+  //     .filter(c => c.armadilhaId === this.armadilhaId())
+  //     .sort((a, b) => a.data.localeCompare(b.data))
+  // );
+
   constructor(private api: ApiConnectionService) {
     effect((onCleanup) => {
-      const id = this.armadilhaId();
+      const armadilhaId = this.armadilhaId();
+      const projetoId = this.selectedProject()?.id;
 
-      if (!id) {
+      if (!armadilhaId || !projetoId) {
         this.armadilha.set(undefined);
+        this.capturas.set([]);
         return;
       }
 
-      const sub = this.api.findArmadilha(id).subscribe({
+      const subArmadilha = this.api.findArmadilha(armadilhaId).subscribe({
         next: armadilha => {
           this.armadilha.set(armadilha);
           this.createLayer(armadilha);
@@ -78,7 +95,19 @@ export class ArmadilhasDetail implements AfterViewInit {
         }
       });
 
-      onCleanup(() => sub.unsubscribe());
+      const subCapturas = this.api.listarCapturasByProjeto(projetoId).subscribe({
+        next: capturas => {
+          this.capturas.set(capturas);
+        },
+        error: () => {
+          this.capturas.set([]);
+        }
+      });
+
+      onCleanup(() => {
+        subArmadilha.unsubscribe();
+        subCapturas.unsubscribe();
+      });
     });
   }
 
@@ -86,30 +115,6 @@ export class ArmadilhasDetail implements AfterViewInit {
     this.defineMap()
   }
 
-
-  armadilhaId = toSignal(
-    this.route.paramMap.pipe(
-      map(params => params.get('id'))
-    )
-  );
-
-  armadilha = signal<Armadilha | undefined>(undefined);
-  // armadilha = computed(() => {
-  //   const id = this.armadilhaId();
-  //   if (!id) return undefined;
-
-  //   this.api.findArmadilha(id).subscribe(armadilha => {
-  //     next: () => {
-  //       this.createLayer(armadilha)
-  //       return armadilha
-  //     }
-  //     error: () => {
-  //       return undefined
-  //     }
-  //   }
-  //   )
-  // return ARMADILHAS_MOCK.find(a => a.id === id);
-  // });
 
   createLayer(armadilha?: Armadilha) {
     if (!armadilha) return
@@ -133,15 +138,13 @@ export class ArmadilhasDetail implements AfterViewInit {
     this.map.getView().fit(geom.getGeometry()!, { maxZoom: 18 })
   }
 
-  capturas = computed<Captura[]>(() =>
-    CAPTURAS_MOCK
-      .filter(c => c.armadilhaId === this.armadilhaId())
-      .sort((a, b) => a.data.localeCompare(b.data))
-  );
-
   defineMap() {
     this.map.updateSize()
     this.map.setTarget('map-armadilha-detail')
+  }
+
+  resetZoom() {
+    this.chart?.chart?.resetZoom();
   }
 
 

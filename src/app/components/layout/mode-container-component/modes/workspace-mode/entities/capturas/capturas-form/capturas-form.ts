@@ -6,16 +6,12 @@ import { Observable, OperatorFunction, Subject, catchError, debounceTime, distin
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ApiConnectionService } from '../../../../../../../../services/api-connection-service';
 import { ProjectContextService } from '../../../../../../../../services/project-context.service';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { Armadilha } from '../../armadilhas/armadilha.model';
 
-interface Armadilha {
-  id: string;
-  nome: string;
-  referencia: string;
-}
 
 @Component({
   selector: 'app-capturas-form',
@@ -30,9 +26,16 @@ export class CapturasForm implements OnInit {
 
   @ViewChild('instance', { static: true }) instance!: NgbTypeahead;
 
+
   private projectContext = inject(ProjectContextService);
   selectedProject = this.projectContext.selected;
   private selectedProject$ = toObservable(this.selectedProject);
+
+  isEditMode = signal(false);
+  capturaId: string | null = null;
+
+  private route = inject(ActivatedRoute);
+
 
   form!: FormGroup;
 
@@ -42,24 +45,59 @@ export class CapturasForm implements OnInit {
   private api = inject(ApiConnectionService);
 
   loading = signal(false);
-  private armadilhas$ = toSignal(
-    this.selectedProject$.pipe(
-      switchMap(project => {
-        if (!project) return of([] as Armadilha[]);
+  // private armadilhas$ = toSignal(
+  //   this.selectedProject$.pipe(
+  //     switchMap(project => {
+  //       if (!project) return of([] as Armadilha[]);
 
-        this.loading.set(true);
+  //       this.loading.set(true);
 
-        return this.api.listarArmadilhasByProjeto(project.id).pipe(
-          catchError(() => of([])),
-          finalize(() => this.loading.set(false))
-        );
-      })
-    ),
-    { initialValue: [] as Armadilha[] }
-  );
-  armadilhas = computed(() => this.armadilhas$());
+  //       return this.api.listarArmadilhasByProjeto(project.id).pipe(
+  //         catchError(() => of([])),
+  //         finalize(() => this.loading.set(false))
+  //       );
+  //     })
+  //   ),
+  //   { initialValue: [] as Armadilha[] }
+  // );
+  // armadilhas = computed(() => this.armadilhas$());
 
-  constructor(private fb: FormBuilder, private router: Router) {  }
+  private armadilhas = signal<Armadilha[]>([]);
+
+  constructor(private fb: FormBuilder, private router: Router) {
+    effect(() => {
+      if (!this.isEditMode()) return;
+
+      const armadilhaId = this.form.get('armadilhaId')?.value;
+
+      if (!armadilhaId) return;
+
+      this.preencherArmadilhaSelecionada(armadilhaId);
+    });
+
+    // Ajustar aqui. Primeiro pegar as armadilhas para depois chamar o preencherArmadilhaSelecionada
+    effect(() => {
+      const project = this.selectedProject();
+
+      if (!project) {
+        this.armadilhas.set([]);
+        return;
+      }
+
+      this.loading.set(true);
+      this.api.listarArmadilhasByProjeto(project.id).subscribe({
+        next: data => {
+          this.armadilhas.set([...data]);
+          this.loading.set(false);
+        },
+        error: () => {
+          this.armadilhas.set([]);
+          this.loading.set(false);
+        }
+      });
+    });
+
+  }
 
   goBack() {
     this.router.navigate(['/workspace/entities/capturas']);
@@ -80,11 +118,63 @@ export class CapturasForm implements OnInit {
       trocaAtrativo: [false],
 
       userId: [this.USER_ID_FIXO],
-      armadilhaId: ['', Validators.required]
+      armadilhaId: ['', Validators.required],
+      armadilhaDisplay: ['']
     });
 
     // this.carregarArmadilhas();
     this.configurarRegras();
+    this.checkEditMode();
+  }
+
+  checkEditMode() {
+    this.capturaId = this.route.snapshot.paramMap.get('id');
+
+    if (!this.capturaId) return;
+
+    this.isEditMode.set(true);
+    this.loadCaptura(this.capturaId);
+  }
+
+  loadCaptura(id: string) {
+    this.loading.set(true);
+
+    this.api.findCaptura(id).subscribe({
+      next: captura => {
+
+        const dataFormatada = captura.data
+          ? captura.data.split('T')[0]
+          : '';
+
+        console.log({
+          data: dataFormatada,
+          situacaoFisica: captura.situacaoFisica,
+          status: captura.status,
+          numAedes: captura.numAedes,
+          numCulex: captura.numCulex,
+          numOutras: captura.numOutras,
+          trocaRefil: captura.trocaRefil,
+          trocaAtrativo: captura.trocaAtrativo,
+          armadilhaId: captura.armadilhaId
+        })
+
+        this.form.patchValue({
+          data: dataFormatada,
+          situacaoFisica: captura.situacaoFisica,
+          status: captura.status,
+          numAedes: captura.numAedes,
+          numCulex: captura.numCulex,
+          numOutras: captura.numOutras,
+          trocaRefil: captura.trocaRefil,
+          trocaAtrativo: captura.trocaAtrativo,
+          armadilhaId: captura.armadilhaId
+        });
+
+        this.preencherArmadilhaSelecionada(captura.armadilhaId);
+      },
+      error: () => console.error('Erro ao carregar captura'),
+      complete: () => this.loading.set(false)
+    });
   }
 
   /** Função do Typeahead */
@@ -125,6 +215,22 @@ export class CapturasForm implements OnInit {
     this.form.get('armadilhaId')?.setValue(event.item.id);
   }
 
+  preencherArmadilhaSelecionada(id: string) {
+    console.log(this.armadilhas())
+    const arm = this.armadilhas().find(a => a.id === id);
+    // console.log(arm)
+    if (!arm) return;
+
+    const label = this.formatter(arm);
+
+    // acesso ao input host do ngbTypeahead
+    const inputEl = (this.instance as any)?._elementRef?.nativeElement;
+
+    if (inputEl) {
+      inputEl.value = label;
+    }
+  }
+
   configurarRegras() {
     merge(
       this.form.get('numAedes')!.valueChanges,
@@ -163,25 +269,15 @@ export class CapturasForm implements OnInit {
     });
   }
 
-  // carregarArmadilhas() {
-  //   // mock temporário
-  //   this.armadilhas = [
-  //     { id: '1', nome: 'Armadilha Norte', referencia: 'Poste 12' },
-  //     { id: '2', nome: 'Armadilha Sul', referencia: 'Escola Municipal' },
-  //     { id: '1', nome: 'Armadilha Norte', referencia: 'Poste 12' },
-  //     { id: '2', nome: 'Armadilha Sul', referencia: 'Escola Municipal' },
-  //     { id: '1', nome: 'Armadilha Norte', referencia: 'Poste 12' },
-  //     { id: '2', nome: 'Armadilha Sul', referencia: 'Escola Municipal' },
-  //     { id: '1', nome: 'Armadilha Norte', referencia: 'Poste 12' },
-  //     { id: '2', nome: 'Armadilha Sul', referencia: 'Escola Municipal' },
-  //     { id: '1', nome: 'Armadilha Norte', referencia: 'Poste 12' },
-  //     { id: '2', nome: 'Armadilha Sul', referencia: 'Escola Municipal' },
-  //     { id: '1', nome: 'Armadilha Norte', referencia: 'Poste 12' },
-  //     { id: '2', nome: 'Armadilha Sul', referencia: 'Escola Municipal' },
-  //   ];
-  // }
-
   apply() {
-    console.log('Apply')
+    if (this.form.invalid) return;
+
+    const payload = this.form.getRawValue();
+
+    if (this.isEditMode()) {
+      console.log('Editar')
+    } else {
+      console.log('Criar')
+    }
   }
 }

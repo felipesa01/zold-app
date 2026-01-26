@@ -15,6 +15,7 @@
             Armadilha <strong>{{ armadilha()?.nome }}</strong>
             — {{ captura()?.data }}
         </p>
+
     </div>
 
     <!-- Meta -->
@@ -23,6 +24,11 @@
         <div>
             <strong>Armadilha:</strong>
             {{ armadilha()?.nome }} – {{ armadilha()?.referencia }}
+        </div>
+
+        <div>
+            <strong>Data da captura:</strong>
+            {{ captura()?.data | date:'dd/MM/yyyy' }}
         </div>
 
         <div class="chips">
@@ -34,6 +40,11 @@
                 {{ captura()?.situacaoFisica }}
             </mat-chip>
         </div>
+
+        <button mat-flat-button color="primary" class="edit-btn" [routerLink]="['edit']">
+            <mat-icon>edit</mat-icon>
+            Editar
+        </button>
 
     </section>
 

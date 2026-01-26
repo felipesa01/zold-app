@@ -48,6 +48,12 @@ export const routes: Routes = [
                         .then(m => m.CapturasDetail)
             },
             {
+                path: 'entities/capturas/:id/edit',
+                loadComponent: () =>
+                    import('./components/layout/mode-container-component/modes/workspace-mode/entities/capturas/capturas-form/capturas-form')
+                        .then(m => m.CapturasForm)
+            },
+            {
                 path: 'entities/armadilhas',
                 loadComponent: () =>
                     import('./components/layout/mode-container-component/modes/workspace-mode/entities/armadilhas/armadilhas-list/armadilhas-list')
@@ -55,10 +61,22 @@ export const routes: Routes = [
                 data: { reuse: true }
             },
             {
+                path: 'entities/armadilhas/new',
+                loadComponent: () =>
+                    import('./components/layout/mode-container-component/modes/workspace-mode/entities/armadilhas/armadilhas-form/armadilhas-form')
+                        .then(m => m.ArmadilhasForm)
+            },
+            {
                 path: 'entities/armadilhas/:id',
                 loadComponent: () =>
                     import('./components/layout/mode-container-component/modes/workspace-mode/entities/armadilhas/armadilhas-detail/armadilhas-detail')
                         .then(m => m.ArmadilhasDetail)
+            },
+            {
+                path: 'entities/armadilhas/:id/edit',
+                loadComponent: () =>
+                    import('./components/layout/mode-container-component/modes/workspace-mode/entities/armadilhas/armadilhas-form/armadilhas-form')
+                        .then(m => m.ArmadilhasForm)
             },
             {
                 path: 'entities/armadilhas/new',

@@ -12,8 +12,8 @@
         <!-- ARMADILHA -->
         <div class="field full">
             <label>Armadilha</label>
-            <input type="text" class="form-control" [ngbTypeahead]="search" [inputFormatter]="formatter"
-                [resultFormatter]="formatter" (selectItem)="onSelect($event)"
+            <input type="text" class="form-control" formControlName="armadilhaId" [ngbTypeahead]="search"
+                [inputFormatter]="formatter" [resultFormatter]="formatter" (selectItem)="onSelect($event)"
                 (focus)="focus$.next($any($event.target).value)" (click)="click$.next($any($event.target).value)"
                 #instance="ngbTypeahead" placeholder="Buscar armadilha" />
         </div>
@@ -62,7 +62,7 @@
 
             <div class="field">
                 <label>Total</label>
-                <input type="number" class="form-control" formControlName="numTotal" [disabled]="true" />
+                <input type="number" class="form-control" formControlName="numTotal" />
             </div>
         </div>
 

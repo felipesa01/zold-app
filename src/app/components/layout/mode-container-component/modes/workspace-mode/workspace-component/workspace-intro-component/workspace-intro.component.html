@@ -1,0 +1,123 @@
+<div class="workspace-intro">
+
+  <!-- HEADER -->
+  <header class="intro-header">
+    <h1>Workspace</h1>
+    <p>
+      Área de gestão e análise dos dados de monitoramento.
+    </p>
+  </header>
+
+  <!-- SELETOR DE PROJETO -->
+  <!-- <div class="project-toolbar">
+    <label>Projeto</label>
+
+    <select [value]="selectedId() || ''" (change)="onProjectChange($event)">
+      <option value="">Selecione um projeto</option>
+
+      @for (p of projects(); track p) {
+        <option [value]="p.id" [selected]="p.id === selectedId()">
+          {{ p.nome }}
+        </option>
+      }
+    </select>
+  </div> -->
+
+  <!-- RESUMO DO PROJETO -->
+  @if (selectedProject()) {
+    <section class="project-summary">
+
+      <div class="summary-header">
+        <h4>{{ selectedProject()?.nome }}</h4>
+
+        <span class="status" 
+              [class.active]="selectedProject()?.status === 'ATIVO'">
+          {{ selectedProject()?.status }}
+        </span>
+      </div>
+
+      <div class="summary-grid">
+
+        <div class="summary-item">
+          <span class="label">Responsável</span>
+          <span class="value">
+            {{ selectedProject()?.responsavel || '-' }}
+          </span>
+        </div>
+
+        <div class="summary-item full">
+          <span class="label">Endereço</span>
+          <span class="value">
+            {{ selectedProject()?.logradouro }}, 
+            {{ selectedProject()?.numero }}
+
+            @if (selectedProject()?.complemento) {
+              - {{ selectedProject()?.complemento }}
+            }
+
+            <br />
+            {{ selectedProject()?.cidade }} - {{ selectedProject()?.uf }},
+            CEP {{ selectedProject()?.cep }}
+          </span>
+        </div>
+
+        <!-- <div class="summary-item">
+          <span class="label">Latitude</span>
+          <span class="value">
+            {{ selectedProject()?.lat }}
+          </span>
+        </div>
+
+        <div class="summary-item">
+          <span class="label">Longitude</span>
+          <span class="value">
+            {{ selectedProject()?.lon }}
+          </span>
+        </div> -->
+
+      </div>
+
+    </section>
+  }
+
+  <!-- CARDS -->
+  <section class="quick-access">
+
+    <div class="card" (click)="go('armadilhas')">
+      <mat-icon>place</mat-icon>
+      <div class="content">
+        <h3>Armadilhas</h3>
+        <p>
+          Cadastro e manutenção dos pontos de monitoramento.
+        </p>
+      </div>
+    </div>
+
+    <div class="card" (click)="go('capturas')">
+      <mat-icon>assignment</mat-icon>
+      <div class="content">
+        <h3>Capturas</h3>
+        <p>
+          Registros de vistorias e contagem de mosquitos.
+        </p>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- RESUMO ESTÁTICO (PODE VIRAR DINÂMICO DEPOIS) -->
+  <section class="summary">
+    <h2>Resumo</h2>
+
+    <ul>
+      <li><strong>Armadilhas cadastradas:</strong> 50</li>
+      <li><strong>Capturas registradas:</strong> 5.000</li>
+      <li><strong>Média de capturas por armadilha:</strong> 100</li>
+    </ul>
+
+    <p class="hint">
+      Utilize o menu lateral para navegar entre os módulos do workspace.
+    </p>
+  </section>
+
+</div>
