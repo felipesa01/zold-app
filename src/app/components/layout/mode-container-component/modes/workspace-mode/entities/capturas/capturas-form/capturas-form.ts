@@ -11,6 +11,7 @@ import { ApiConnectionService } from '../../../../../../../../services/api-conne
 import { ProjectContextService } from '../../../../../../../../services/project-context.service';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { Armadilha } from '../../armadilhas/armadilha.model';
+import { Captura, CreateCaptura } from '../captura.model';
 
 
 @Component({
@@ -26,77 +27,54 @@ export class CapturasForm implements OnInit {
 
   @ViewChild('instance', { static: true }) instance!: NgbTypeahead;
 
-
+  private route = inject(ActivatedRoute);
   private projectContext = inject(ProjectContextService);
   selectedProject = this.projectContext.selected;
   private selectedProject$ = toObservable(this.selectedProject);
 
+  private api = inject(ApiConnectionService);
+
   isEditMode = signal(false);
   capturaId: string | null = null;
-
-  private route = inject(ActivatedRoute);
-
 
   form!: FormGroup;
 
   focus$ = new Subject<string>();
   click$ = new Subject<string>();
 
-  private api = inject(ApiConnectionService);
-
   loading = signal(false);
-  // private armadilhas$ = toSignal(
-  //   this.selectedProject$.pipe(
-  //     switchMap(project => {
-  //       if (!project) return of([] as Armadilha[]);
+  private armadilhas$ = toSignal(
+    this.selectedProject$.pipe(
+      switchMap(project => {
+        if (!project) return of([] as Armadilha[]);
 
-  //       this.loading.set(true);
+        this.loading.set(true);
 
-  //       return this.api.listarArmadilhasByProjeto(project.id).pipe(
-  //         catchError(() => of([])),
-  //         finalize(() => this.loading.set(false))
-  //       );
-  //     })
-  //   ),
-  //   { initialValue: [] as Armadilha[] }
-  // );
-  // armadilhas = computed(() => this.armadilhas$());
+        return this.api.listarArmadilhasByProjeto(project.id).pipe(
+          catchError(() => of([])),
+          finalize(() => this.loading.set(false))
+        );
+      })
+    ),
+    { initialValue: [] as Armadilha[] }
+  );
+  armadilhas = computed(() => this.armadilhas$());
 
-  private armadilhas = signal<Armadilha[]>([]);
+  captura = signal<Captura | null>(null);
+
+  // private armadilhas = signal<Armadilha[]>([]);
 
   constructor(private fb: FormBuilder, private router: Router) {
     effect(() => {
       if (!this.isEditMode()) return;
 
       const armadilhaId = this.form.get('armadilhaId')?.value;
+      const lista = this.armadilhas();
 
-      if (!armadilhaId) return;
+      if (!armadilhaId || lista.length === 0) return;
 
       this.preencherArmadilhaSelecionada(armadilhaId);
     });
-
-    // Ajustar aqui. Primeiro pegar as armadilhas para depois chamar o preencherArmadilhaSelecionada
-    effect(() => {
-      const project = this.selectedProject();
-
-      if (!project) {
-        this.armadilhas.set([]);
-        return;
-      }
-
-      this.loading.set(true);
-      this.api.listarArmadilhasByProjeto(project.id).subscribe({
-        next: data => {
-          this.armadilhas.set([...data]);
-          this.loading.set(false);
-        },
-        error: () => {
-          this.armadilhas.set([]);
-          this.loading.set(false);
-        }
-      });
-    });
-
   }
 
   goBack() {
@@ -142,21 +120,11 @@ export class CapturasForm implements OnInit {
     this.api.findCaptura(id).subscribe({
       next: captura => {
 
+        this.captura.set(captura)
+
         const dataFormatada = captura.data
           ? captura.data.split('T')[0]
           : '';
-
-        console.log({
-          data: dataFormatada,
-          situacaoFisica: captura.situacaoFisica,
-          status: captura.status,
-          numAedes: captura.numAedes,
-          numCulex: captura.numCulex,
-          numOutras: captura.numOutras,
-          trocaRefil: captura.trocaRefil,
-          trocaAtrativo: captura.trocaAtrativo,
-          armadilhaId: captura.armadilhaId
-        })
 
         this.form.patchValue({
           data: dataFormatada,
@@ -169,8 +137,6 @@ export class CapturasForm implements OnInit {
           trocaAtrativo: captura.trocaAtrativo,
           armadilhaId: captura.armadilhaId
         });
-
-        this.preencherArmadilhaSelecionada(captura.armadilhaId);
       },
       error: () => console.error('Erro ao carregar captura'),
       complete: () => this.loading.set(false)
@@ -207,8 +173,18 @@ export class CapturasForm implements OnInit {
 
 
   /** Como o item aparece no input */
-  formatter = (a: Armadilha) =>
+  formatter = (a: Armadilha) => {
+    console.log('Armadilha no formmater')
+    return `${a.nome} — ${a.referencia}`
+  }
+
+  resultFormatter = (a: Armadilha) =>
     `${a.nome} — ${a.referencia}`;
+
+  inputFormatter = (a: Armadilha | string) => {
+    if (typeof a === 'string') return a;
+    return `${a.nome} — ${a.referencia}`;
+  };
 
   /** Ao selecionar */
   onSelect(event: any) {
@@ -216,19 +192,21 @@ export class CapturasForm implements OnInit {
   }
 
   preencherArmadilhaSelecionada(id: string) {
-    console.log(this.armadilhas())
-    const arm = this.armadilhas().find(a => a.id === id);
-    // console.log(arm)
-    if (!arm) return;
+    const lista = this.armadilhas();
 
-    const label = this.formatter(arm);
+    console.log('Lista armadilhas:', lista);
+    console.log('ID buscado:', id);
 
-    // acesso ao input host do ngbTypeahead
-    const inputEl = (this.instance as any)?._elementRef?.nativeElement;
+    const arm = lista.find(a => a.id === id);
 
-    if (inputEl) {
-      inputEl.value = label;
+    if (!arm) {
+      console.warn('Armadilha não encontrada ainda');
+      return;
     }
+
+    const label = this.resultFormatter(arm);
+
+    this.form.get('armadilhaDisplay')?.setValue(label);
   }
 
   configurarRegras() {
@@ -272,12 +250,35 @@ export class CapturasForm implements OnInit {
   apply() {
     if (this.form.invalid) return;
 
-    const payload = this.form.getRawValue();
+    const payload = this.form.getRawValue() as Captura;
+    payload.data = new Date(payload.data).toISOString();
+
+    console.log('payload', payload)
+
 
     if (this.isEditMode()) {
-      console.log('Editar')
+      this.api.updateCaptura(this.captura()?.id as string, payload as CreateCaptura).subscribe({
+        next: (result) => {
+          console.log('Feito!')
+          console.log(result)
+        },
+        error: (error) => {
+          console.log('Erro!')
+          console.log(error)
+        }
+      });
     } else {
-      console.log('Criar')
+      console.log('Criar', payload)
+      this.api.addCaptura(payload).subscribe({
+        next: (result) => {
+          console.log('Feito!')
+          console.log(result)
+        },
+        error: (error) => {
+          console.log('Erro!')
+          console.log(error)
+        }
+      });
     }
   }
 }

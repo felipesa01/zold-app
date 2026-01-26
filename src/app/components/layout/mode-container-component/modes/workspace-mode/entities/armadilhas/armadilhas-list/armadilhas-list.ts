@@ -31,15 +31,20 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   styleUrl: './armadilhas-list.css',
 })
 export class ArmadilhasList {
-  cols = ['nome', 'regiao', 'referencia', 'acoes'];
-
   private projectContext = inject(ProjectContextService);
   selectedProject = this.projectContext.selected;
-
   private api = inject(ApiConnectionService);
 
-  // private armadilhas = signal<Armadilha[]>(ARMADILHAS_MOCK);
   private armadilhas = signal<Armadilha[]>([]);
+
+
+
+  pageIndex = signal(0);
+  pageSize = signal(10);
+  loading = signal(false);
+
+  // regioes = ['Centro', 'Zona Norte', 'Zona Sul', 'Zona Leste'];
+  cols = ['nome', 'regiao', 'referencia', 'acoes'];
 
   filtered = computed(() => {
     return this.armadilhas().filter(a => {
@@ -61,18 +66,6 @@ export class ArmadilhasList {
       return true;
     });
   });
-
-  sort = signal<Sort>({ active: 'nome', direction: 'asc' });
-
-  pagedData = computed(() => {
-    const start = this.pageIndex() * this.pageSize();
-    return this.sorted().slice(start, start + this.pageSize());
-  });
-
-  search = signal('');
-  regiao = signal<string | null>(null);
-  dataInicio = signal<Date | null>(null);
-  dataFim = signal<Date | null>(null);
 
   sorted = computed(() => {
     const { active, direction } = this.sort();
@@ -101,12 +94,12 @@ export class ArmadilhasList {
     });
   });
 
-  pageIndex = signal(0);
-  pageSize = signal(10);
+  sort = signal<Sort>({ active: 'nome', direction: 'asc' });
 
-  loading = signal(false);
-
-  regioes = ['Centro', 'Zona Norte', 'Zona Sul', 'Zona Leste'];
+  pagedData = computed(() => {
+    const start = this.pageIndex() * this.pageSize();
+    return this.sorted().slice(start, start + this.pageSize());
+  });
 
   constructor(private router: Router) {
     effect(() => {
@@ -141,26 +134,62 @@ export class ArmadilhasList {
     this.router.navigate(['/workspace']);
   }
 
+
+  search = signal('');
+  regiao = signal<string | null>(null);
+  referencia = signal<string | null>(null);
+  dataInicio = signal<Date | null>(null);
+  dataFim = signal<Date | null>(null);
+
+  resetFilters() {
+    this.search.set('');
+    this.regiao.set(null);
+    this.referencia.set(null);
+    this.dataInicio.set(null);
+    this.dataFim.set(null);
+    this.pageIndex.set(0);
+  }
+
+  regiaoOptions = computed(() => {
+    const values = this.armadilhas().map(c => c.regiao);
+    return [...new Set(values)];
+  });
+
+  referenciaOptions = computed(() => {
+    const values = this.armadilhas().map(c => c.referencia);
+    return [...new Set(values)];
+  });
+
+  // TEXT SEARCH
+  // SELECTS (armadilha, status, situação, região)
   onSearch(e: Event) {
     this.search.set((e.target as HTMLInputElement).value.toLowerCase());
     this.pageIndex.set(0);
   }
 
-  onRegiao(r: string) {
-    this.regiao.set(r || null);
+  onRegiao(event: Event) {
+    const value = (event.target as HTMLSelectElement).value;
+    this.regiao.set(value || null);
     this.pageIndex.set(0);
   }
 
-  onInicio(d: Date | null) {
-    this.dataInicio.set(d);
+  onReferencia(event: Event) {
+    const value = (event.target as HTMLSelectElement).value;
+    this.referencia.set(value || null);
     this.pageIndex.set(0);
   }
 
-  onFim(d: Date | null) {
-    this.dataFim.set(d);
+  onInicio(event: Event) {
+    const date = (event.target as HTMLInputElement).valueAsDate;
+    this.dataInicio.set(date ?? null);
     this.pageIndex.set(0);
   }
 
+  onFim(event: Event) {
+    const date = (event.target as HTMLInputElement).valueAsDate;
+    this.dataFim.set(date ?? null);
+    this.pageIndex.set(0);
+  }
   onSort(s: Sort) {
     this.sort.set(s);
     this.pageIndex.set(0);

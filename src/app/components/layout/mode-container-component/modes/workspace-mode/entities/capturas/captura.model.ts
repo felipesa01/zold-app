@@ -19,3 +19,17 @@ export interface Captura {
   userId: string;
   armadilhaId: string;
 }
+
+export interface CreateCaptura {
+  data: string;
+  status: CapturaStatus;
+  numAedes: number;
+  numCulex: number;
+  numOutras: number;
+  numTotal: number;
+  trocaRefil: boolean;
+  trocaAtrativo: boolean;
+  situacaoFisica: SituacaoFisica;
+  userId: string;
+  armadilhaId: string;
+}

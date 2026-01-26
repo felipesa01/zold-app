@@ -6,6 +6,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ApiConnectionService } from '../../../../../../../../services/api-connection-service';
+import { Armadilha, CreateArmadilha } from '../armadilha.model';
+import { ProjectContextService } from '../../../../../../../../services/project-context.service';
 
 @Component({
   selector: 'app-armadilhas-form',
@@ -21,6 +23,9 @@ import { ApiConnectionService } from '../../../../../../../../services/api-conne
   styleUrls: ['./armadilhas-form.css']
 })
 export class ArmadilhasForm implements OnInit {
+
+  private projectContext = inject(ProjectContextService);
+  selectedProject = this.projectContext.selected;
 
   private fb = inject(FormBuilder);
   private api = inject(ApiConnectionService);
@@ -82,12 +87,32 @@ export class ArmadilhasForm implements OnInit {
   apply() {
     if (this.form.invalid) return;
 
-    const payload = this.form.getRawValue();
+    const payload = this.form.getRawValue() as Armadilha;
+    console.log('payload', payload)
 
     if (this.isEditMode()) {
-      console.log('editar')
+      this.api.updateArmadilha(this.armadilhaId ?? '', payload as CreateArmadilha).subscribe({
+        next: (result) => {
+          console.log('Feito!')
+          console.log(result)
+        },
+        error: (error) => {
+          console.log('Erro!')
+          console.log(error)
+        }
+      });
     } else {
-      console.log('criar')
+      console.log('Criar', payload)
+      this.api.addArmadilha({...payload, projetoId: this.selectedProject()?.id ?? ''}).subscribe({
+        next: (result) => {
+          console.log('Feito!')
+          console.log(result)
+        },
+        error: (error) => {
+          console.log('Erro!')
+          console.log(error)
+        }
+      });
     }
   }
 

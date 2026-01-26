@@ -47,17 +47,7 @@ export class ArmadilhasDetail implements AfterViewInit {
   @ViewChild(BaseChartDirective)
   chart?: BaseChartDirective;
 
-  map: Map = new Map({
-    moveTolerance: 3,
-    interactions: defaultInteractions(undefined),
-    layers: [new TileLayer({ source: new XYZ({ url: 'http://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}', attributions: '© Google' }) }),],
-    view: new View({
-      projection: 'EPSG:4326',
-      center: [-46.9212, -23.448],
-      zoom: 10,
-    }),
-    controls: defaultControls({ attribution: false, zoom: false, rotate: false }),
-  })
+  map!: Map;
 
   armadilhaId = toSignal(
     this.route.paramMap.pipe(
@@ -89,13 +79,14 @@ export class ArmadilhasDetail implements AfterViewInit {
         next: armadilha => {
           this.armadilha.set(armadilha);
           this.createLayer(armadilha);
+
         },
         error: () => {
           this.armadilha.set(undefined);
         }
       });
 
-      const subCapturas = this.api.listarCapturasByProjeto(projetoId).subscribe({
+      const subCapturas = this.api.listarCapturasByArmadilha(armadilhaId).subscribe({
         next: capturas => {
           this.capturas.set(capturas);
         },
@@ -112,11 +103,28 @@ export class ArmadilhasDetail implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.defineMap()
+    console.log('ngAfterViewInit')
+    this.map = new Map({
+      moveTolerance: 3,
+      interactions: defaultInteractions(undefined),
+      layers: [new TileLayer({ source: new XYZ({ url: 'http://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}', attributions: '© Google' }) }),],
+      view: new View({
+        projection: 'EPSG:4326',
+        center: [-46.9212, -23.448],
+        zoom: 10,
+      }),
+      controls: defaultControls({ attribution: false, zoom: false, rotate: false }),
+    })
+
+    this.map.setTarget('map-armadilha-detail')
+    this.map.updateSize()
+
+    console.log('Map initialized', {...this.map});
   }
 
 
   createLayer(armadilha?: Armadilha) {
+    console.log('createLayer -> armadilha', armadilha)
     if (!armadilha) return
 
     const geom = new Feature({ geometry: new Point([armadilha.lon, armadilha.lat]) })
@@ -138,10 +146,10 @@ export class ArmadilhasDetail implements AfterViewInit {
     this.map.getView().fit(geom.getGeometry()!, { maxZoom: 18 })
   }
 
-  defineMap() {
-    this.map.updateSize()
-    this.map.setTarget('map-armadilha-detail')
-  }
+  // defineMap() {
+  //   this.map.setTarget('map-armadilha-detail')
+  //   this.map.updateSize()
+  // }
 
   resetZoom() {
     this.chart?.chart?.resetZoom();
@@ -270,9 +278,6 @@ export class ArmadilhasDetail implements AfterViewInit {
     }
 
     return { datasets }
-
-
-
 
   })
 

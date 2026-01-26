@@ -49,6 +49,7 @@ export const ARMADILHAS_MOCK: Armadilha[] = Array.from({ length: 50 }).map((_, i
       : i % 4 === 2
       ? 'Zona Sul'
       : 'Zona Leste',
+    projetoId: '',
     createdAt: '2025-01-01T10:00:00.000Z',
     updatedAt: '2025-01-10T10:00:00.000Z'
   };

@@ -1,8 +1,8 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { delay, map, Observable } from "rxjs";
-import { Armadilha } from "../components/layout/mode-container-component/modes/workspace-mode/entities/armadilhas/armadilha.model";
-import { Captura } from "../components/layout/mode-container-component/modes/workspace-mode/entities/capturas/captura.model";
+import { Armadilha, CreateArmadilha } from "../components/layout/mode-container-component/modes/workspace-mode/entities/armadilhas/armadilha.model";
+import { Captura, CreateCaptura } from "../components/layout/mode-container-component/modes/workspace-mode/entities/capturas/captura.model";
 
 export interface Projeto {
     id: string
@@ -43,12 +43,35 @@ export class ApiConnectionService {
         )
     }
 
+    listarCapturasByArmadilha(armadilhaId: string): Observable<Captura[]> {
+        return this.http.get<Captura[]>(`${this.apiURL}/armadilhas/${armadilhaId}/capturas`).pipe(
+            // delay(2000)
+        )
+    }
+
     findArmadilha(id: string): Observable<Armadilha> {
         return this.http.get<Armadilha>(`${this.apiURL}/armadilhas/${id}`)
     }
 
     findCaptura(id: string): Observable<Captura> {
         return this.http.get<Captura>(`${this.apiURL}/capturas/${id}`)
+    }
+
+    addCaptura(payload: CreateCaptura): Observable<ArrayBuffer> {
+        return this.http.post<ArrayBuffer>(`${this.apiURL}/capturas`, payload)
+    }
+
+    updateCaptura(capturaId: string, payload: object): Observable<ArrayBuffer> {
+        return this.http.patch<ArrayBuffer>(`${this.apiURL}/capturas/${capturaId}`, payload)
+    }
+
+
+    addArmadilha(payload: CreateArmadilha): Observable<ArrayBuffer> {
+        return this.http.post<ArrayBuffer>(`${this.apiURL}/armadilhas`, payload)
+    }
+
+    updateArmadilha(aarmadilhaId: string, payload: object): Observable<ArrayBuffer> {
+        return this.http.patch<ArrayBuffer>(`${this.apiURL}/armadilhas/${aarmadilhaId}`, payload)
     }
 
 }

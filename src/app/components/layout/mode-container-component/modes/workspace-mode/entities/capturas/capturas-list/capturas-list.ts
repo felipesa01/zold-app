@@ -39,15 +39,12 @@ export class CapturasList {
 
   cols = ['armadilha', 'data', 'status', 'situacao', 'total', 'acoes'];
 
-
   private projectContext = inject(ProjectContextService);
   selectedProject = this.projectContext.selected;
   private api = inject(ApiConnectionService);
 
-  // private capturas = signal<Captura[]>(CAPTURAS_MOCK);
   private capturas = signal<Captura[]>([]);
 
-  // armadilhas = signal<Armadilha[]>(ARMADILHAS_MOCK);
   armadilhas = signal<Armadilha[]>([]);
   loading = signal(false);
 
@@ -110,6 +107,8 @@ export class CapturasList {
   armadilhaId = signal<string | null>(null);
   dataInicio = signal<Date | null>(null);
   dataFim = signal<Date | null>(null);
+  status = signal<string | null>(null);
+  situacao = signal<string | null>(null);
 
   // ordenação
   sort = signal<Sort>({ active: 'data', direction: 'desc' });
@@ -118,7 +117,19 @@ export class CapturasList {
   pageIndex = signal(0);
   pageSize = signal(10);
 
-  // 🔹 FILTROS
+
+  statusOptions = computed(() => {
+    const values = this.capturas().map(c => c.status);
+    return [...new Set(values)];
+  });
+
+  situacaoOptions = computed(() => {
+    const values = this.capturas().map(c => c.situacaoFisica);
+    return [...new Set(values)];
+  });
+
+
+  // FILTROS
   filtered = computed(() => {
     return this.capturas().filter(c => {
 
@@ -134,6 +145,16 @@ export class CapturasList {
         return false;
       }
 
+      // status
+      if (this.status() && c.status !== this.status()) {
+        return false;
+      }
+
+      // situação
+      if (this.situacao() && c.situacaoFisica !== this.situacao()) {
+        return false;
+      }
+
       // período
       const d = new Date(c.data + 'T00:00:00');
       if (this.dataInicio() && d < this.dataInicio()!) return false;
@@ -143,7 +164,17 @@ export class CapturasList {
     });
   });
 
-  // 🔹 ORDENAÇÃO
+  resetFilters() {
+    this.search.set('');
+    this.armadilhaId.set(null);
+    this.status.set(null);
+    this.situacao.set(null);
+    this.dataInicio.set(null);
+    this.dataFim.set(null);
+    this.pageIndex.set(0);
+  }
+
+  // ORDENAÇÃO
   sorted = computed(() => {
     const { active, direction } = this.sort();
     if (!direction) return this.filtered();
@@ -169,7 +200,7 @@ export class CapturasList {
     });
   });
 
-  // 🔹 PAGINAÇÃO
+  // PAGINAÇÃO
   pagedData = computed(() => {
     const start = this.pageIndex() * this.pageSize();
     return this.sorted().slice(start, start + this.pageSize());
@@ -181,18 +212,33 @@ export class CapturasList {
     this.pageIndex.set(0);
   }
 
-  onArmadilha(id: string) {
-    this.armadilhaId.set(id || null);
+  onArmadilha(event: Event) {
+    const value = (event.target as HTMLSelectElement).value;
+    this.armadilhaId.set(value || null);
     this.pageIndex.set(0);
   }
 
-  onInicio(d: Date | null) {
-    this.dataInicio.set(d);
+  onStatus(event: Event) {
+    const value = (event.target as HTMLSelectElement).value;
+    this.status.set(value || null);
     this.pageIndex.set(0);
   }
 
-  onFim(d: Date | null) {
-    this.dataFim.set(d);
+  onSituacao(event: Event) {
+    const value = (event.target as HTMLSelectElement).value;
+    this.situacao.set(value || null);
+    this.pageIndex.set(0);
+  }
+
+  onInicio(event: Event) {
+    const date = (event.target as HTMLInputElement).valueAsDate;
+    this.dataInicio.set(date ?? null);
+    this.pageIndex.set(0);
+  }
+
+  onFim(event: Event) {
+    const date = (event.target as HTMLInputElement).valueAsDate;
+    this.dataFim.set(date ?? null);
     this.pageIndex.set(0);
   }
 

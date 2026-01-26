@@ -25,84 +25,85 @@
     </button>
   </div>
 
-  <div class="filters">
-    <!-- Busca -->
-    <mat-form-field appearance="outline">
-      <mat-label>Buscar</mat-label>
-      <input matInput (input)="onSearch($event)" />
-    </mat-form-field>
-
-    <!-- Região -->
-    <mat-form-field appearance="outline">
-      <mat-label>Região</mat-label>
-      <mat-select (selectionChange)="onRegiao($event.value)">
-        <mat-option value="">Todas</mat-option>
-        <mat-option *ngFor="let r of regioes" [value]="r">
-          {{ r }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <!-- Data início -->
-    <mat-form-field appearance="outline">
-      <mat-label>Criada a partir de</mat-label>
-      <input matInput [matDatepicker]="ini" (dateChange)="onInicio($event.value)" />
-      <mat-datepicker-toggle matSuffix [for]="ini"></mat-datepicker-toggle>
-      <mat-datepicker #ini></mat-datepicker>
-    </mat-form-field>
-
-    <!-- Data fim -->
-    <mat-form-field appearance="outline">
-      <mat-label>Criada até</mat-label>
-      <input matInput [matDatepicker]="fim" (dateChange)="onFim($event.value)" />
-      <mat-datepicker-toggle matSuffix [for]="fim"></mat-datepicker-toggle>
-      <mat-datepicker #fim></mat-datepicker>
-    </mat-form-field>
+  <!-- BUSCA MODERNA -->
+  <div class="search-box">
+    <mat-icon>search</mat-icon>
+    <input placeholder="Buscar armadilhas..." (input)="onSearch($event)" />
   </div>
 
-    @if (pagedData().length === 0) {
-    <div class="workspace-empty">
-      Nenhuma armadilha encontrada.
-    </div>
-    }
-    @else {
-    <table mat-table [dataSource]="pagedData()" matSort (matSortChange)="onSort($event)">
+  <!-- FILTROS MODERNOS -->
+  <div class="filters-modern">
 
-      <ng-container matColumnDef="nome">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Nome</th>
-        <td mat-cell *matCellDef="let a">{{ a.nome }}</td>
-      </ng-container>
+    <!-- Região -->
+    <select class="filter-select" (change)="onRegiao($event)">
+      <option value="">Todas regiões</option>
+      <option *ngFor="let r of regiaoOptions()" [value]="r">
+        {{ r }}
+      </option>
+    </select>
 
-      <ng-container matColumnDef="regiao">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Região</th>
-        <td mat-cell *matCellDef="let a">{{ a.regiao }}</td>
-      </ng-container>
+    <!-- Referencia -->
+    <select class="filter-select" (change)="onReferencia($event)">
+      <option value="">Todas referências</option>
+      <option *ngFor="let r of referenciaOptions()" [value]="r">
+        {{ r }}
+      </option>
+    </select>
 
-      <ng-container matColumnDef="referencia">
-        <th mat-header-cell *matHeaderCellDef>Referência</th>
-        <td mat-cell *matCellDef="let a">{{ a.referencia }}</td>
-      </ng-container>
+    <!-- Data início -->
+    <!-- <input type="date" class="filter-date" (change)="onInicio($event)" /> -->
 
-      <ng-container matColumnDef="acoes">
-        <th mat-header-cell *matHeaderCellDef></th>
-        <td mat-cell *matCellDef="let a" class="actions-cell">
-          <button mat-icon-button (click)="open(a, $event)">
-            <mat-icon>open_in_new</mat-icon>
-          </button>
-        </td>
-      </ng-container>
+    <!-- Data fim -->
+    <!-- <input type="date" class="filter-date" (change)="onFim($event)" /> -->
 
-      <tr mat-header-row *matHeaderRowDef="cols"></tr>
-      <tr mat-row *matRowDef="let row; columns: cols" (click)="open(row)">
-      </tr>
+    <!-- Limpar -->
+    <button class="clear-btn" (click)="resetFilters()">Limpar</button>
 
-    </table>
+  </div>
 
-    <mat-paginator [length]="filtered().length" [pageSize]="pageSize()" [pageIndex]="pageIndex()"
-      [pageSizeOptions]="[10, 25, 50]" (page)="onPage($event)">
-    </mat-paginator>
+  @if (pagedData().length === 0) {
+  <div class="workspace-empty">
+    Nenhuma armadilha encontrada.
+  </div>
+  }
+  @else {
+  <table mat-table [dataSource]="pagedData()" matSort (matSortChange)="onSort($event)">
 
-    }
+    <ng-container matColumnDef="nome">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Nome</th>
+      <td mat-cell *matCellDef="let a">{{ a.nome }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="regiao">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Região</th>
+      <td mat-cell *matCellDef="let a">{{ a.regiao }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="referencia">
+      <th mat-header-cell *matHeaderCellDef>Referência</th>
+      <td mat-cell *matCellDef="let a">{{ a.referencia }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="acoes">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let a" class="actions-cell">
+        <button mat-icon-button (click)="open(a, $event)">
+          <mat-icon>open_in_new</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="cols"></tr>
+    <tr mat-row *matRowDef="let row; columns: cols" (click)="open(row)">
+    </tr>
+
+  </table>
+
+  <mat-paginator [length]="filtered().length" [pageSize]="pageSize()" [pageIndex]="pageIndex()"
+    [pageSizeOptions]="[10, 25, 50]" (page)="onPage($event)">
+  </mat-paginator>
+
+  }
   }
 
 
