@@ -1,5 +1,5 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, computed, effect, inject, model, signal } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
 import { CAPTURAS_MOCK } from '../captura.mock';
 import { Captura } from '../captura.model';
 import { Armadilha } from '../../armadilhas/armadilha.model';
@@ -16,8 +16,9 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { ProjectContextService } from '../../../../../../../../services/project-context.service';
 import { ApiConnectionService } from '../../../../../../../../services/api-connection-service';
-import { catchError, forkJoin, of } from 'rxjs';
+import { catchError, filter, forkJoin, of } from 'rxjs';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { compareDatesOnly, datePureToUTCDate, datePureToUTCString } from '../../../../../../../../utils/date-pure-to-UTC';
 
 @Component({
   selector: 'app-capturas-list',
@@ -50,27 +51,44 @@ export class CapturasList {
 
   constructor(private router: Router) {
     effect(() => {
-      const project = this.selectedProject();
+      this.selectedProject();
+      this.loadData()
+    })
 
-      if (!project) {
-        this.armadilhas.set([]);
-        return;
-      }
-
-      this.loading.set(true);
-      forkJoin({
-        armadilhas: this.api.listarArmadilhasByProjeto(project.id).pipe(
-          catchError(() => of([]))
-        ),
-        capturas: this.api.listarCapturasByProjeto(project.id).pipe(
-          catchError(() => of([]))
-        )
-      }).subscribe(({ armadilhas, capturas }) => {
-        this.armadilhas.set([...armadilhas]);
-        this.capturas.set([...capturas]);
-        this.loading.set(false);
+    this.router.events
+      .pipe(filter(e => e instanceof NavigationEnd))
+      .subscribe(() => {
+        if (this.router.url.includes('/workspace/entities/capturas')) {
+          this.loadData();
+        }
       });
+  }
+
+  loadData() {
+    const project = this.selectedProject();
+
+    if (!project) {
+      this.armadilhas.set([]);
+      return;
+    }
+
+    this.loading.set(true);
+    forkJoin({
+      armadilhas: this.api.listarArmadilhasByProjeto(project.id).pipe(
+        catchError(() => of([]))
+      ),
+      capturas: this.api.listarCapturasByProjeto(project.id).pipe(
+        catchError(() => of([]))
+      )
+    }).subscribe(({ armadilhas, capturas }) => {
+      this.armadilhas.set([...armadilhas]);
+      this.capturas.set([...capturas]);
+      this.loading.set(false);
     });
+  }
+
+  reload() {
+    this.loadData();
   }
 
 
@@ -104,7 +122,7 @@ export class CapturasList {
 
   // filtros
   search = signal('');
-  armadilhaId = signal<string | null>(null);
+  armadilhaId = model<string | null>(null);
   dataInicio = signal<Date | null>(null);
   dataFim = signal<Date | null>(null);
   status = signal<string | null>(null);
@@ -156,9 +174,12 @@ export class CapturasList {
       }
 
       // período
-      const d = new Date(c.data + 'T00:00:00');
-      if (this.dataInicio() && d < this.dataInicio()!) return false;
-      if (this.dataFim() && d > this.dataFim()!) return false;
+      const d = new Date(c.data);
+      // console.log('c.data', c.data)
+      // console.log('d', d)
+
+      if (this.dataInicio() && compareDatesOnly(d, this.dataInicio()!) < 0) return false;
+      if (this.dataFim() && compareDatesOnly(d, this.dataFim()!) > 0) return false;
 
       return true;
     });
@@ -231,14 +252,14 @@ export class CapturasList {
   }
 
   onInicio(event: Event) {
-    const date = (event.target as HTMLInputElement).valueAsDate;
-    this.dataInicio.set(date ?? null);
+    const date = (event.target as HTMLInputElement).value;
+    this.dataInicio.set(new Date(datePureToUTCString(date)) ?? null);
     this.pageIndex.set(0);
   }
 
   onFim(event: Event) {
-    const date = (event.target as HTMLInputElement).valueAsDate;
-    this.dataFim.set(date ?? null);
+    const date = (event.target as HTMLInputElement).value;
+    this.dataFim.set(new Date(datePureToUTCString(date)) ?? null);
     this.pageIndex.set(0);
   }
 

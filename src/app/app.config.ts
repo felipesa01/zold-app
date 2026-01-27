@@ -9,6 +9,8 @@ import { Overlay, OverlayContainer, OverlayModule } from '@angular/cdk/overlay';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { WorkspaceReuseStrategy } from './components/layout/mode-container-component/modes/workspace-mode/workspace-reuse.strategy';
+import { provideToastr } from 'ngx-toastr';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
 
 export const appConfig: ApplicationConfig = {
@@ -20,6 +22,8 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(),
     provideCharts(withDefaultRegisterables()),
     provideNativeDateAdapter(),
-    { provide: RouteReuseStrategy, useClass: WorkspaceReuseStrategy }
+    { provide: RouteReuseStrategy, useClass: WorkspaceReuseStrategy },
+    provideToastr(),
+    provideAnimations()
   ]
 };

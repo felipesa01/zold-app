@@ -1,5 +1,5 @@
 import { Component, OnInit, signal, computed, ViewChild, effect, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbTypeahead, NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { Observable, OperatorFunction, Subject, catchError, debounceTime, distinctUntilChanged, filter, finalize, map, merge, of, switchMap } from 'rxjs';
@@ -12,12 +12,14 @@ import { ProjectContextService } from '../../../../../../../../services/project-
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { Armadilha } from '../../armadilhas/armadilha.model';
 import { Captura, CreateCaptura } from '../captura.model';
+import { datePureToUTCString } from '../../../../../../../../utils/date-pure-to-UTC';
+import { ToastrService } from 'ngx-toastr';
 
 
 @Component({
   selector: 'app-capturas-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, NgbTypeaheadModule, MatIconModule, MatButtonModule, MatInputModule],
+  imports: [CommonModule, ReactiveFormsModule, NgbTypeaheadModule, MatIconModule, MatButtonModule, MatInputModule,],
   templateUrl: './capturas-form.html',
   styleUrls: ['./capturas-form.css']
 })
@@ -26,6 +28,8 @@ export class CapturasForm implements OnInit {
   readonly USER_ID_FIXO = '1d6429ae-130c-4500-b602-9b70bbad17c6';
 
   @ViewChild('instance', { static: true }) instance!: NgbTypeahead;
+
+  toastr = inject(ToastrService);
 
   private route = inject(ActivatedRoute);
   private projectContext = inject(ProjectContextService);
@@ -64,7 +68,7 @@ export class CapturasForm implements OnInit {
 
   // private armadilhas = signal<Armadilha[]>([]);
 
-  constructor(private fb: FormBuilder, private router: Router) {
+  constructor(private fb: FormBuilder, private router: Router, private location: Location) {
     effect(() => {
       if (!this.isEditMode()) return;
 
@@ -79,6 +83,10 @@ export class CapturasForm implements OnInit {
 
   goBack() {
     this.router.navigate(['/workspace/entities/capturas']);
+  }
+
+  voltar() {
+    this.location.back();
   }
 
   ngOnInit(): void {
@@ -247,11 +255,13 @@ export class CapturasForm implements OnInit {
     });
   }
 
+
+
   apply() {
     if (this.form.invalid) return;
 
     const payload = this.form.getRawValue() as Captura;
-    payload.data = new Date(payload.data).toISOString();
+    payload.data = datePureToUTCString(payload.data)
 
     console.log('payload', payload)
 
@@ -259,11 +269,11 @@ export class CapturasForm implements OnInit {
     if (this.isEditMode()) {
       this.api.updateCaptura(this.captura()?.id as string, payload as CreateCaptura).subscribe({
         next: (result) => {
-          console.log('Feito!')
+          this.showSuccess('As alterações foram salvas com sucesso!')
           console.log(result)
         },
         error: (error) => {
-          console.log('Erro!')
+          this.showError(`Mensagem: ${error.error.message}`)
           console.log(error)
         }
       });
@@ -271,14 +281,26 @@ export class CapturasForm implements OnInit {
       console.log('Criar', payload)
       this.api.addCaptura(payload).subscribe({
         next: (result) => {
-          console.log('Feito!')
+          this.showSuccess('A captura foi salva com sucesso!')
           console.log(result)
         },
         error: (error) => {
-          console.log('Erro!')
+          this.showError(`Mensagem: ${error.error.message}`)
           console.log(error)
         }
       });
     }
+  }
+
+  showSuccess(message: string) {
+    this.toastr.success(message, 'Sucesso!', { progressBar: true }).onHidden.subscribe(() => {
+      this.voltar()
+    });
+  }
+
+  showError(message: string) {
+    this.toastr.error(message, 'Algo deu errado!', { progressBar: true }).onHidden.subscribe(() => {
+      this.voltar()
+    });
   }
 }

@@ -1,6 +1,6 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { NavigationEnd, Router } from '@angular/router';
+import { CommonModule, Location } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -13,6 +13,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { ProjectContextService } from '../../../../../../../../services/project-context.service';
 import { ApiConnectionService } from '../../../../../../../../services/api-connection-service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-armadilhas-list',
@@ -101,27 +102,45 @@ export class ArmadilhasList {
     return this.sorted().slice(start, start + this.pageSize());
   });
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private location: Location) {
     effect(() => {
-      const project = this.selectedProject();
+      this.selectedProject();
+      this.loadData();
+    });
 
-      if (!project) {
-        this.armadilhas.set([]);
-        return;
-      }
-
-      this.loading.set(true);
-      this.api.listarArmadilhasByProjeto(project.id).subscribe({
-        next: data => {
-          this.armadilhas.set([...data]);
-          this.loading.set(false);
-        },
-        error: () => {
-          this.armadilhas.set([]);
-          this.loading.set(false);
+    this.router.events
+      .pipe(filter(e => e instanceof NavigationEnd))
+      .subscribe(() => {
+        if (this.router.url.includes('/workspace/entities/armadilhas')) {
+          this.loadData();
         }
       });
+  }
+
+  loadData() {
+    const project = this.selectedProject();
+
+    if (!project) {
+      this.armadilhas.set([]);
+      return;
+    }
+
+    this.loading.set(true);
+
+    this.api.listarArmadilhasByProjeto(project.id).subscribe({
+      next: data => {
+        this.armadilhas.set([...data]);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.armadilhas.set([]);
+        this.loading.set(false);
+      }
     });
+  }
+
+  reload() {
+    this.loadData();
   }
 
 
@@ -132,6 +151,10 @@ export class ArmadilhasList {
 
   goBack() {
     this.router.navigate(['/workspace']);
+  }
+
+  voltar() {
+    this.location.back();
   }
 
 

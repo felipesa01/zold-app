@@ -1,8 +1,8 @@
 <div class="page">
 
-    <button mat-button class="back-btn" (click)="goBack()">
+    <button mat-button class="back-btn" (click)="voltar()">
         <mat-icon>arrow_back</mat-icon>
-        Capturas
+        Voltar
     </button>
 
     <form [formGroup]="form" class="form-card" (submit)="apply()">
@@ -23,6 +23,7 @@
             <label>Data</label>
             <input type="date" class="form-control" formControlName="data" />
         </div>
+        
 
         <!-- Situação Física -->
         <div class="field">

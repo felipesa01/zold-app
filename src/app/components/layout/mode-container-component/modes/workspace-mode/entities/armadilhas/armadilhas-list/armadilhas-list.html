@@ -1,23 +1,17 @@
 <div class="page">
 
-  <button mat-button class="back-btn" (click)="goBack()">
+  <button mat-button class="back-btn" (click)="voltar()">
     <mat-icon>arrow_back</mat-icon>
-    Workspace
+    Voltar
   </button>
-
-  @if (loading()) {
-  <div class="workspace-loading">
-    <mat-spinner diameter="40"></mat-spinner>
-    <span>Carregando armadilhas...</span>
-  </div>
-  }
-  @else {
 
   <div class="page-header">
     <div class="header-left">
 
       <h1>Armadilhas</h1>
     </div>
+
+
 
     <button mat-flat-button color="primary" (click)="create()">
       <mat-icon>add</mat-icon>
@@ -35,20 +29,20 @@
   <div class="filters-modern">
 
     <!-- Região -->
-    <select class="filter-select" (change)="onRegiao($event)">
+    <!-- <select class="filter-select" (change)="onRegiao($event)">
       <option value="">Todas regiões</option>
       <option *ngFor="let r of regiaoOptions()" [value]="r">
         {{ r }}
       </option>
-    </select>
+    </select> -->
 
     <!-- Referencia -->
-    <select class="filter-select" (change)="onReferencia($event)">
+    <!-- <select class="filter-select" (change)="onReferencia($event)">
       <option value="">Todas referências</option>
       <option *ngFor="let r of referenciaOptions()" [value]="r">
         {{ r }}
       </option>
-    </select>
+    </select> -->
 
     <!-- Data início -->
     <!-- <input type="date" class="filter-date" (change)="onInicio($event)" /> -->
@@ -57,9 +51,24 @@
     <!-- <input type="date" class="filter-date" (change)="onFim($event)" /> -->
 
     <!-- Limpar -->
-    <button class="clear-btn" (click)="resetFilters()">Limpar</button>
+    <!-- <button class="clear-btn" (click)="resetFilters()">Limpar</button> -->
+
+    <button mat-stroked-button class="clear-btn ms-auto" (click)="reload()">
+      <mat-icon>refresh</mat-icon>
+      Atualizar
+    </button>
 
   </div>
+
+  @if (loading()) {
+  <div class="workspace-loading">
+    <mat-spinner diameter="40"></mat-spinner>
+    <span>Carregando armadilhas...</span>
+  </div>
+  }
+  @else {
+
+  
 
   @if (pagedData().length === 0) {
   <div class="workspace-empty">

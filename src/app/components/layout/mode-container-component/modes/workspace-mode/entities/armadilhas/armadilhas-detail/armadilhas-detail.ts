@@ -1,12 +1,10 @@
 import { AfterViewInit, Component, computed, effect, inject, signal, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { ChartType, ChartConfiguration, ChartDataset, ScatterDataPoint } from 'chart.js';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ChartConfiguration, ChartDataset, ScatterDataPoint } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
-import { CAPTURAS_MOCK } from '../../capturas/captura.mock';
 import { Captura } from '../../capturas/captura.model';
 import { Armadilha } from '../armadilha.model';
-import { ARMADILHAS_MOCK } from '../armadilhas.mock';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -28,7 +26,7 @@ import { ProjectContextService } from '../../../../../../../../services/project-
 
 @Component({
   selector: 'app-armadilhas-detail',
-  imports: [CommonModule, BaseChartDirective, MatButtonModule, MatIconModule, FormsModule, MatCheckboxModule],
+  imports: [CommonModule, BaseChartDirective, MatButtonModule, MatIconModule, FormsModule, MatCheckboxModule, RouterModule],
   templateUrl: './armadilhas-detail.html',
   styleUrl: './armadilhas-detail.css',
 })
@@ -64,7 +62,7 @@ export class ArmadilhasDetail implements AfterViewInit {
   //     .sort((a, b) => a.data.localeCompare(b.data))
   // );
 
-  constructor(private api: ApiConnectionService) {
+  constructor(private api: ApiConnectionService, private location: Location) {
     effect((onCleanup) => {
       const armadilhaId = this.armadilhaId();
       const projetoId = this.selectedProject()?.id;
@@ -119,7 +117,7 @@ export class ArmadilhasDetail implements AfterViewInit {
     this.map.setTarget('map-armadilha-detail')
     this.map.updateSize()
 
-    console.log('Map initialized', {...this.map});
+    console.log('Map initialized', { ...this.map });
   }
 
 
@@ -393,6 +391,10 @@ export class ArmadilhasDetail implements AfterViewInit {
 
   goBack() {
     this.router.navigate(['/workspace/entities/armadilhas']);
+  }
+
+  voltar() {
+    this.location.back();
   }
 
 

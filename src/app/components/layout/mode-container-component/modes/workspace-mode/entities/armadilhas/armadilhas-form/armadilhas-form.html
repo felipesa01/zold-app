@@ -1,8 +1,8 @@
 <div class="page">
 
-  <button mat-button class="back-btn" (click)="goBack()">
+  <button mat-button class="back-btn" (click)="voltar()">
     <mat-icon>arrow_back</mat-icon>
-    Armadilhas
+    Voltar
   </button>
 
   <form [formGroup]="form" class="form-card" (submit)="apply()">
@@ -36,13 +36,13 @@
     <!-- Latitude -->
     <div class="field">
       <label>Latitude</label>
-      <input type="number" step="any" class="form-control" formControlName="lat" />
+      <input type="number" inputmode="decimal" step="any" class="form-control" formControlName="lat" />
     </div>
 
     <!-- Longitude -->
     <div class="field">
       <label>Longitude</label>
-      <input type="number" step="any" class="form-control" formControlName="lon" />
+      <input type="number" inputmode="decimal" step="any" class="form-control" formControlName="lon" />
     </div>
 
     <div class="actions">

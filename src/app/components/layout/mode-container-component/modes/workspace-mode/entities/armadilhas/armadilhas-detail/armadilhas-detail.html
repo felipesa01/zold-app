@@ -2,9 +2,9 @@
 
   <!-- Header -->
   <div class="page-header">
-    <button mat-button class="back-btn" (click)="goBack()">
+    <button mat-button class="back-btn" (click)="voltar()">
       <mat-icon>arrow_back</mat-icon>
-      Armadilhas
+      Voltar
     </button>
 
     <div class="title">
@@ -26,13 +26,18 @@
     <div>
       <strong>Criada em:</strong> {{ armadilha()?.createdAt }}
     </div>
+
+    <button mat-flat-button color="primary" class="edit-btn" [routerLink]="['edit']">
+      <mat-icon>edit</mat-icon>
+      Editar
+    </button>
   </section>
 
   <!-- Visual section -->
   <section class="visual-grid">
 
     <!-- Mapa -->
-    <div id="map-armadilha-detail" class="map-container" ></div>
+    <div id="map-armadilha-detail" class="map-container"></div>
 
     <!-- Foto -->
     <div class="photo-container">

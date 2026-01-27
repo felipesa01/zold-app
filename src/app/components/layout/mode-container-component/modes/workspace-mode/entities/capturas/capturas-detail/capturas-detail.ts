@@ -1,15 +1,13 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Armadilha } from '../../armadilhas/armadilha.model';
-import { ARMADILHAS_MOCK } from '../../armadilhas/armadilhas.mock';
-import { CAPTURAS_MOCK } from '../captura.mock';
 import { Captura } from '../captura.model';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChip } from '@angular/material/chips';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { forkJoin, map, of, switchMap } from 'rxjs';
+import { map, of, switchMap } from 'rxjs';
 import { ApiConnectionService } from '../../../../../../../../services/api-connection-service';
 
 @Component({
@@ -33,7 +31,7 @@ export class CapturasDetail {
 
   captura = signal<Captura | undefined>(undefined);
 
-  constructor(private api: ApiConnectionService) {
+  constructor(private api: ApiConnectionService, private location: Location) {
     effect((onCleanup) => {
       const idCaptura = this.capturaId();
 
@@ -72,6 +70,10 @@ export class CapturasDetail {
 
   goBack() {
     this.router.navigate(['/workspace/entities/capturas']);
+  }
+
+  voltar() {
+    this.location.back();
   }
 
   statusColor(status: Captura['status']) {
