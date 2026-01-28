@@ -22,6 +22,30 @@
 .project-select select {
   height: 32px;
   padding: 0 8px;
+  max-width: 250px;
+  font-size: 15px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: white;
+  min-width: 150px;
+  cursor: pointer;
+}
+
+.project-select-empty select {
+  margin-left: 3px;
+  width: 175px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: rgba(255, 255, 255, 0);
+  cursor: pointer;
+  color: #777;
+}
+
+.project-select-empty select option {
+  font-size: 14px;
+  color: #777;
+  background-color: rgba(0, 0, 0, 0);
 }
 
 .workspace-empty {

@@ -9,9 +9,9 @@
 
     <h2>
       @if (isEditMode()) {
-        Editar Armadilha
+      Editar Armadilha
       } @else {
-        Nova Armadilha
+      Nova Armadilha
       }
     </h2>
 
@@ -46,12 +46,17 @@
     </div>
 
     <div class="actions">
-      <button class="btn btn-primary" type="submit" [disabled]="form.invalid || loading()">
-        @if (isEditMode()) {
-          Salvar Alterações
+      <button class="btn  btn-primary d-flex"  type="submit" [disabled]="form.invalid || loadingSave()">
+
+        @if (loadingSave()) {
+        <mat-spinner diameter="20" class="spinner-custom" style="width: 1.5em; height: 1.5em;" ></mat-spinner>
         } @else {
-          Criar Armadilha
-        }
+        @if (isEditMode()) {
+        Salvar Alterações
+        } @else {
+        Criar Armadilha
+        }}
+
       </button>
     </div>
 

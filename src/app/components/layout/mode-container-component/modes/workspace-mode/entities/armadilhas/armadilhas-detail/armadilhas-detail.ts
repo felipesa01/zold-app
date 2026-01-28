@@ -101,7 +101,6 @@ export class ArmadilhasDetail implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    console.log('ngAfterViewInit')
     this.map = new Map({
       moveTolerance: 3,
       interactions: defaultInteractions(undefined),
@@ -117,12 +116,10 @@ export class ArmadilhasDetail implements AfterViewInit {
     this.map.setTarget('map-armadilha-detail')
     this.map.updateSize()
 
-    console.log('Map initialized', { ...this.map });
   }
 
 
   createLayer(armadilha?: Armadilha) {
-    console.log('createLayer -> armadilha', armadilha)
     if (!armadilha) return
 
     const geom = new Feature({ geometry: new Point([armadilha.lon, armadilha.lat]) })

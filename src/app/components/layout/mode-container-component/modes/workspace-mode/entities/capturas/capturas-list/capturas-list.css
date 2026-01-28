@@ -158,3 +158,42 @@ td.mat-cell {
 .clear-btn:hover {
   background: #e5e7eb;
 }
+
+/* .date-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.calendar-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 6px;
+} */
+
+.date-input-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.filter-date2 {
+  width: 100%;
+  padding: 8px 36px 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+}
+
+.calendar-btn {
+  position: absolute;
+  display: flex;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  color: #444;
+}

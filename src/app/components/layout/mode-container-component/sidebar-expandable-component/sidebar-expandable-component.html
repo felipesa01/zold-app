@@ -10,44 +10,12 @@
 
 <div class="content">
 
-    @switch (activeFeature()) {
-
-    @case ('layers') {
-    <!-- <app-map-layers-panel /> -->
-    <p>app-map-layers-panel</p>
-    }
-
-    @case ('modules') {
-    <!-- <app-map-modules-panel /> -->
-    <p>app-map-modules-panel</p>
-    }
-
-    @case ('lists') {
-    <!-- <app-map-lists-panel /> -->
-    <p>app-map-lists-panel</p>
-    }
-
-    @case ('entities') {
-    <!-- <app-workspace-entities-panel /> -->
-    <p>app-workspace-entities-panel</p>
-    }
-
-    @case ('reports') {
-    <!-- <app-workspace-reports-panel /> -->
-    <p>app-workspace-reports-panel</p>
-    }
-
-    @case ('dashboard') {
-    <!-- <app-workspace-dashboards-panel /> -->
-    <p>app-workspace-dashboards-panel</p>
-    }
-
-    @default {
+  @if (activeMenuItem()?.component) {
+    <ng-container *ngComponentOutlet="activeMenuItem()?.component"></ng-container>
+  } @else {
     <div class="empty">
-        Selecione uma opção
+      Selecione uma opção
     </div>
-    }
-
-    }
+  }
 
 </div>

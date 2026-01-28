@@ -12,11 +12,11 @@
   </div>
 
   <nav>
-    <button *ngFor="let item of menuItems()" class="button" [class.mobile]="isMobile()" [class.computer]="!isMobile()" (click)="setActive(item.feature)"
-      [class.active]="item.feature === actived()" [matTooltip]="item.label" matTooltipPosition="after" [matTooltipDisabled]="isMobile()">
+    <button *ngFor="let item of menuItems()" class="button" [class.mobile]="isMobile()" [class.computer]="!isMobile()" (click)="setActive(item)"
+      [class.active]="item.id === actived()" [matTooltip]="item.nome" matTooltipPosition="after" [matTooltipDisabled]="isMobile()">
       <mat-icon>{{ item.icon }}</mat-icon>
       @if (fixedSidebarOpened() && isMobile()) {
-      <span class="span">{{item.label}}</span>
+      <span class="span">{{item.nome}}</span>
       }
 
     </button>

@@ -8,8 +8,8 @@ import { LayoutService } from '../../../../services/layout-service';
 import { ModeService } from '../../../../services/mode-service';
 import { MapService } from '../../../../services/map-service';
 import { Router } from '@angular/router';
-import { FixedFeature } from '../../../../types/layout.types';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { FixedFeature, MenuItemConfig } from '../../../../types/layout.types';
 
 @Component({
   selector: 'app-sidebar-fixed-component',
@@ -20,6 +20,10 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 export class SidebarFixedComponent {
   private responsive = inject(ResponsiveService);
   isMobile = computed(() => this.responsive.isSmallScreen());
+
+  private layoutService = inject(LayoutService);
+
+
 
   private sidebarControls = inject(LayoutService);
   fixedSidebarOpened = this.sidebarControls.fixedSidebarOpened;
@@ -40,22 +44,26 @@ export class SidebarFixedComponent {
   expanded = signal(true);
   actived = signal<FixedFeature | null>(null);
 
-  menuItems = computed<{
-    icon: string;
-    label: string;
-    feature: FixedFeature;
-  }[]>(() => {
-    return this.modeTurn() === 'map'
-      ? [
-        { icon: 'layers', label: 'Camadas', feature: 'layers' },
-        { icon: 'view_module', label: 'Módulos', feature: 'modules' },
-        { icon: 'list', label: 'Listas', feature: 'lists' },
-      ]
-      : [
-        { icon: 'ballot', label: 'Listas', feature: 'entities' },
-        { icon: 'assessment', label: 'Relatórios', feature: 'reports' },
-        { icon: 'space_dashboard', label: 'Dashboard', feature: 'dashboard' },
-      ];
+  // menuItems = computed<{
+  //   icon: string;
+  //   label: string;
+  //   feature: FixedFeature;
+  // }[]>(() => {
+  //   return this.modeTurn() === 'map'
+  //     ? [
+  //       { icon: 'layers', label: 'Camadas', feature: 'layers' },
+  //       { icon: 'view_module', label: 'Módulos', feature: 'modules' },
+  //       { icon: 'list', label: 'Listas', feature: 'lists' },
+  //     ]
+  //     : [
+  //       { icon: 'ballot', label: 'Listas', feature: 'entities' },
+  //       { icon: 'assessment', label: 'Relatórios', feature: 'reports' },
+  //       { icon: 'space_dashboard', label: 'Dashboard', feature: 'dashboard' },
+  //     ];
+  // });
+
+  menuItems = computed(() => {
+    return this.layoutService.getMenu(this.modeTurn(), undefined);
   });
 
   modeIcon: 'map' | 'space_dashboard' = this.modeTurn() === 'map' ? 'space_dashboard' : 'map';
@@ -98,20 +106,29 @@ export class SidebarFixedComponent {
 
   }
 
-  setActive(feature: FixedFeature) {
-    if (this.actived() === feature) {
+  setActive(feature: MenuItemConfig) {
+
+    // Caso NÃO seja expandível → executa ação e sai
+    if (!feature.expandible) {
+      this.router.navigate(feature?.route!)
+      this.actived.set(null);
+      this.sidebarControls.closeExpandable();
+
+      if (this.isMobile()) {
+        this.fixedSidebarOpened.set(false);
+      }
+      return;
+    }
+    // Caso SEJA expandível → controla sidebar
+    if (this.actived() === feature.id) {
       this.actived.set(null);
       this.sidebarControls.closeExpandable();
     } else {
-      this.actived.set(feature);
-      this.sidebarControls.openFeature(feature);
+      this.actived.set(feature.id);
+      this.sidebarControls.openFeature(feature.id);
     }
-
     if (this.isMobile()) {
       this.fixedSidebarOpened.set(false);
     }
   }
-
-
-
 }

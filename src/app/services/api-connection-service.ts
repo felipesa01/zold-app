@@ -62,7 +62,9 @@ export class ApiConnectionService {
     }
 
     updateCaptura(capturaId: string, payload: object): Observable<ArrayBuffer> {
-        return this.http.patch<ArrayBuffer>(`${this.apiURL}/capturas/${capturaId}`, payload)
+        return this.http.patch<ArrayBuffer>(`${this.apiURL}/capturas/${capturaId}`, payload).pipe(
+            delay(2000)
+        )
     }
 
 

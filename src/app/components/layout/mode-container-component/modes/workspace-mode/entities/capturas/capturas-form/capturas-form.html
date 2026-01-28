@@ -7,7 +7,12 @@
 
     <form [formGroup]="form" class="form-card" (submit)="apply()">
 
-        <h2>Nova Captura</h2>
+        <h2>@if (isEditMode()) {
+            Editar Captura
+            } @else {
+            Nova Captura
+            }
+        </h2>
 
         <!-- ARMADILHA -->
         <div class="field full">
@@ -23,7 +28,7 @@
             <label>Data</label>
             <input type="date" class="form-control" formControlName="data" />
         </div>
-        
+
 
         <!-- Situação Física -->
         <div class="field">
@@ -80,8 +85,16 @@
         </div>
 
         <div class="actions">
-            <button class="btn btn-primary" type="submit" [disabled]="form.invalid">
-                Salvar Captura
+            <button class="btn btn-primary d-flex"  type="submit" [disabled]="form.invalid || loadingSave()">
+                @if (loadingSave()) {
+                <div class="spinner-grow text-light" style="width: 1.5em; height: 1.5em;" role="status"></div>
+                } @else {
+                @if (isEditMode()) {
+                Salvar Alterações
+                } @else {
+                Criar Captura
+                }}
+
             </button>
         </div>
 

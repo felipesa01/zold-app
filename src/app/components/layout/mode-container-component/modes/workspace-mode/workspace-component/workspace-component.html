@@ -2,10 +2,11 @@
 
   <div class="workspace-toolbar">
     <!-- pode ser dinâmico depois -->
-    <span class="section-title">Gestão de Dados</span>
 
-    <div class="project-select">
-      <select  [value]="selectedId() || ''" (change)="onProjectChange($event)">
+    <!-- <span class="section-title">Gestão de Dados</span> -->
+
+    <div class="project-select ms-auto">
+      <select [value]="selectedId() || ''" (change)="onProjectChange($event)">
         <option value="">Selecione um projeto</option>
         @for (p of projects(); track p) {
         <option [value]="p.id" [selected]="p.id === selectedId()">
@@ -20,7 +21,18 @@
   <div class="workspace-content">
     @if (!selectedProject()) {
     <div class="workspace-empty">
-      Para visualizar os elementos do workspace, selecione um projeto.
+      <span>Para visualizar os elementos do workspace,</span>
+      <div class="project-select-empty">
+        <select [value]="selectedId() || ''" (change)="onProjectChange($event)">
+          <option value="">Selecione um projeto</option>
+          @for (p of projects(); track p) {
+          <option [value]="p.id" [selected]="p.id === selectedId()">
+            {{ p.nome }}
+          </option>
+          }
+
+        </select>
+      </div>
     </div>
     } @else {
     <router-outlet />

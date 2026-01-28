@@ -1,3 +1,4 @@
+
 export type AppMode = 'map' | 'workspace';
 
 export type FixedFeature =
@@ -10,3 +11,15 @@ export type FixedFeature =
   | 'entities'
   | 'reports'
   | 'dashboard';
+
+
+export interface MenuItemConfig {
+  id: FixedFeature;
+  nome: string;
+  icon: string;
+  expandible: boolean;
+  route?: string[];
+  component?: any;
+  permission?: string;
+  planRequired?: string[];
+}

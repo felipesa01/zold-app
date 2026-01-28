@@ -9,6 +9,10 @@ import { ApiConnectionService } from '../../../../../../../../services/api-conne
 import { Armadilha, CreateArmadilha } from '../armadilha.model';
 import { ProjectContextService } from '../../../../../../../../services/project-context.service';
 import { ToastrService } from 'ngx-toastr';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../../../../../../../shared/confirm-dialog-component/confirm-dialog-component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-armadilhas-form',
@@ -18,7 +22,8 @@ import { ToastrService } from 'ngx-toastr';
     ReactiveFormsModule,
     MatButtonModule,
     MatIconModule,
-    MatInputModule
+    MatInputModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './armadilhas-form.html',
   styleUrls: ['./armadilhas-form.css']
@@ -37,10 +42,11 @@ export class ArmadilhasForm implements OnInit {
   form!: FormGroup;
 
   loading = signal(false);
+  loadingSave = signal(false);
   isEditMode = signal(false);
   armadilhaId: string | null = null;
 
-  constructor(private location: Location) { }
+  constructor(private location: Location, private dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.buildForm();
@@ -96,42 +102,53 @@ export class ArmadilhasForm implements OnInit {
     if (this.form.invalid) return;
 
     const payload = this.form.getRawValue() as Armadilha;
-    console.log('payload', payload)
 
-    if (this.isEditMode()) {
-      this.api.updateArmadilha(this.armadilhaId ?? '', payload as CreateArmadilha).subscribe({
-        next: (result) => {
-          this.showSuccess('As alterações foram salvas com sucesso!')
-          console.log(result)
-        },
-        error: (error) => {
-          this.showError(`Mensagem: ${error.error.message}`)
-          console.log(error)
-        }
-      });
-    } else {
-      console.log('Criar', payload)
-      this.api.addArmadilha({ ...payload, projetoId: this.selectedProject()?.id ?? '' }).subscribe({
-        next: (result) => {
-          this.showSuccess('A armadilha foi salva com sucesso!')
-          console.log(result)
-        },
-        error: (error) => {
-          this.showError(`Mensagem: ${error.error.message}`)
-          console.log(error)
-        }
-      });
-    }
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '360px',
+      data: {
+        title: this.isEditMode() ? 'Editar armadilha' : 'Inserir armadilha',
+        message: 'Tem certeza que deseja continuar?',
+        confirmText: 'Sim',
+        cancelText: 'Cancelar'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(confirmado => {
+      if (!confirmado) return
+      this.loadingSave.set(true)
+      if (this.isEditMode()) {
+        this.api.updateArmadilha(this.armadilhaId ?? '', payload as CreateArmadilha).pipe(
+          finalize(() => this.loadingSave.set(false))).subscribe({
+            next: (result) => {
+              this.showSuccess('As alterações foram salvas com sucesso!')
+            },
+            error: (error) => {
+              this.showError(`Mensagem: ${error.error.message}`)
+            }
+          });
+      } else {
+        this.api.addArmadilha({ ...payload, projetoId: this.selectedProject()?.id ?? '' }).pipe(
+          finalize(() => this.loadingSave.set(false))).subscribe({
+            next: (result) => {
+              this.showSuccess('A armadilha foi salva com sucesso!')
+            },
+            error: (error) => {
+              this.showError(`Mensagem: ${error.error.message}`)
+            }
+          });
+      }
+    })
+
   }
 
   showSuccess(message: string) {
-    this.toastr.success(message, 'Sucesso!', {progressBar: true}).onHidden.subscribe(() => {
+    this.toastr.success(message, 'Sucesso!', { progressBar: true }).onHidden.subscribe(() => {
       this.voltar()
     });
   }
 
   showError(message: string) {
-    this.toastr.error(message, 'Algo deu errado!', {progressBar: true}).onHidden.subscribe(() => {
+    this.toastr.error(message, 'Algo deu errado!', { progressBar: true }).onHidden.subscribe(() => {
       this.voltar()
     });
   }

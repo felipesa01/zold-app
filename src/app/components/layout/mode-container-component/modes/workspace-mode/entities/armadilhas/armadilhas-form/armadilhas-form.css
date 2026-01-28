@@ -81,10 +81,6 @@ input, select {
   justify-content: flex-end;
 }
 
-button {
-  padding: 10px 20px;
-  font-weight: 600;
-}
 
 /* AUTOCOMPLETE */
 .autocomplete {
@@ -128,3 +124,8 @@ button {
     grid-template-columns: 1fr 1fr;
   }
 }
+
+
+  .spinner-custom circle {
+    stroke: #ffffff;
+  }

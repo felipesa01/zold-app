@@ -13,12 +13,13 @@ import { MatChip } from '@angular/material/chips';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSortModule, Sort } from '@angular/material/sort';
 import { MatSelectModule } from '@angular/material/select';
-import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDatepickerInputEvent, MatDatepickerModule } from '@angular/material/datepicker';
 import { ProjectContextService } from '../../../../../../../../services/project-context.service';
 import { ApiConnectionService } from '../../../../../../../../services/api-connection-service';
 import { catchError, filter, forkJoin, of } from 'rxjs';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { compareDatesOnly, datePureToUTCDate, datePureToUTCString } from '../../../../../../../../utils/date-pure-to-UTC';
+import { MatNativeDateModule } from '@angular/material/core';
 
 @Component({
   selector: 'app-capturas-list',
@@ -32,7 +33,10 @@ import { compareDatesOnly, datePureToUTCDate, datePureToUTCString } from '../../
     MatSelectModule,
     MatDatepickerModule,
     MatSortModule,
-    MatProgressSpinnerModule],
+    MatProgressSpinnerModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatInputModule],
   templateUrl: './capturas-list.html',
   styleUrl: './capturas-list.css',
 })
@@ -256,6 +260,87 @@ export class CapturasList {
     this.dataInicio.set(new Date(datePureToUTCString(date)) ?? null);
     this.pageIndex.set(0);
   }
+
+  onInicioPicker(event: any, input: HTMLInputElement) {
+    const date = event.value as Date | null;
+
+    if (!date) {
+      this.dataInicio.set(null);
+      input.value = '';
+      return;
+    }
+
+    // Formata com zero à esquerda
+    input.value = this.formatarData(date);
+
+    // Mantém sua lógica UTC
+    // const utcDate = new Date(datePureToUTCString(date));
+    const utcDate = date
+
+    this.dataInicio.set(utcDate);
+    this.pageIndex.set(0);
+  }
+
+
+  onInicioDigitado(event: Event) {
+    let valor = (event.target as HTMLInputElement).value;
+
+    // Remove tudo que não é número
+    valor = valor.replace(/\D/g, '');
+
+    // Aplica máscara dd/MM/yyyy
+    if (valor.length > 2) valor = valor.replace(/^(\d{2})(\d)/, '$1/$2');
+    if (valor.length > 5) valor = valor.replace(/^(\d{2})\/(\d{2})(\d)/, '$1/$2/$3');
+
+    (event.target as HTMLInputElement).value = valor;
+  }
+
+  validarInicio(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const valor = input.value;
+
+    if (!valor || valor.length !== 10) {
+      this.dataInicio.set(null);
+      return;
+    }
+
+    const [diaStr, mesStr, anoStr] = valor.split('/');
+
+    const dia = Number(diaStr);
+    const mes = Number(mesStr) - 1;
+    const ano = Number(anoStr);
+
+    const date = new Date(ano, mes, dia);
+
+    // Bloqueia datas impossíveis
+    const invalida =
+      isNaN(date.getTime()) ||
+      date.getDate() !== dia ||
+      date.getMonth() !== mes ||
+      date.getFullYear() !== ano;
+
+    if (invalida) {
+      input.value = '';
+      this.dataInicio.set(null);
+      return;
+    }
+
+    // Mantém sua lógica UTC
+    // const utcDate = new Date(datePureToUTCString(date));
+    const utcDate = date
+
+    this.dataInicio.set(utcDate);
+    this.pageIndex.set(0);
+  }
+
+  formatarData(date: Date): string {
+    const dia = String(date.getDate()).padStart(2, '0');
+    const mes = String(date.getMonth() + 1).padStart(2, '0');
+    const ano = date.getFullYear();
+
+    return `${dia}/${mes}/${ano}`;
+  }
+
 
   onFim(event: Event) {
     const date = (event.target as HTMLInputElement).value;

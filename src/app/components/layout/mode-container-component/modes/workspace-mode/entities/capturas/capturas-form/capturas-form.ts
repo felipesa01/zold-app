@@ -14,12 +14,15 @@ import { Armadilha } from '../../armadilhas/armadilha.model';
 import { Captura, CreateCaptura } from '../captura.model';
 import { datePureToUTCString } from '../../../../../../../../utils/date-pure-to-UTC';
 import { ToastrService } from 'ngx-toastr';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../../../../../../../shared/confirm-dialog-component/confirm-dialog-component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 
 @Component({
   selector: 'app-capturas-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, NgbTypeaheadModule, MatIconModule, MatButtonModule, MatInputModule,],
+  imports: [CommonModule, ReactiveFormsModule, NgbTypeaheadModule, MatIconModule, MatButtonModule, MatInputModule, MatProgressSpinnerModule],
   templateUrl: './capturas-form.html',
   styleUrls: ['./capturas-form.css']
 })
@@ -46,6 +49,7 @@ export class CapturasForm implements OnInit {
   focus$ = new Subject<string>();
   click$ = new Subject<string>();
 
+  loadingSave = signal(false);
   loading = signal(false);
   private armadilhas$ = toSignal(
     this.selectedProject$.pipe(
@@ -68,7 +72,7 @@ export class CapturasForm implements OnInit {
 
   // private armadilhas = signal<Armadilha[]>([]);
 
-  constructor(private fb: FormBuilder, private router: Router, private location: Location) {
+  constructor(private fb: FormBuilder, private router: Router, private location: Location, private dialog: MatDialog) {
     effect(() => {
       if (!this.isEditMode()) return;
 
@@ -201,10 +205,6 @@ export class CapturasForm implements OnInit {
 
   preencherArmadilhaSelecionada(id: string) {
     const lista = this.armadilhas();
-
-    console.log('Lista armadilhas:', lista);
-    console.log('ID buscado:', id);
-
     const arm = lista.find(a => a.id === id);
 
     if (!arm) {
@@ -263,33 +263,46 @@ export class CapturasForm implements OnInit {
     const payload = this.form.getRawValue() as Captura;
     payload.data = datePureToUTCString(payload.data)
 
-    console.log('payload', payload)
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '360px',
+      data: {
+        title: this.isEditMode() ? 'Editar captura' : 'Inserir captura',
+        message: 'Tem certeza que deseja continuar?',
+        confirmText: 'Sim',
+        cancelText: 'Cancelar'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(confirmado => {
+      if (!confirmado) return
+      this.loadingSave.set(true)
+      if (this.isEditMode()) {
+        this.api.updateCaptura(this.captura()?.id as string, payload as CreateCaptura).pipe(
+          finalize(() => this.loadingSave.set(false))).subscribe({
+            next: (result) => {
+              this.showSuccess('As alterações foram salvas com sucesso!')
+            },
+            error: (error) => {
+              const msg = error?.error?.message || 'Erro inesperado ao salvar.';
+              this.showError(`Mensagem: ${msg}`)
+            }
+          });
+      } else {
+        this.api.addCaptura(payload).pipe(
+          finalize(() => this.loadingSave.set(false))).subscribe({
+            next: (result) => {
+              this.showSuccess('A captura foi salva com sucesso!')
+            },
+            error: (error) => {
+              const msg = error?.error?.message || 'Erro inesperado ao salvar.';
+              this.showError(`Mensagem: ${msg}`)
+            }
+          });
+      }
+
+    });
 
 
-    if (this.isEditMode()) {
-      this.api.updateCaptura(this.captura()?.id as string, payload as CreateCaptura).subscribe({
-        next: (result) => {
-          this.showSuccess('As alterações foram salvas com sucesso!')
-          console.log(result)
-        },
-        error: (error) => {
-          this.showError(`Mensagem: ${error.error.message}`)
-          console.log(error)
-        }
-      });
-    } else {
-      console.log('Criar', payload)
-      this.api.addCaptura(payload).subscribe({
-        next: (result) => {
-          this.showSuccess('A captura foi salva com sucesso!')
-          console.log(result)
-        },
-        error: (error) => {
-          this.showError(`Mensagem: ${error.error.message}`)
-          console.log(error)
-        }
-      });
-    }
   }
 
   showSuccess(message: string) {

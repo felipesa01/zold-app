@@ -6,7 +6,6 @@ import { App } from './app/app';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import zoomPlugin from 'chartjs-plugin-zoom';
 import 'chartjs-adapter-date-fns';
-
 import {
   Chart,
   LineController,
@@ -18,6 +17,10 @@ import {
   Legend
 } from 'chart.js';
 
+import { registerLocaleData } from '@angular/common';
+import localePt from '@angular/common/locales/pt';
+
+registerLocaleData(localePt);
 
 Chart.register(
   LineController,
