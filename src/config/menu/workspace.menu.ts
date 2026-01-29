@@ -4,9 +4,9 @@ import { SideMenuItemConfig } from "../../app/types/layout.types";
 
 export const WORKSPACE_MENU: SideMenuItemConfig[] = [
   {
-    id: 'entities',
-    nome: 'Entidades',
-    icon: 'ballot',
+    id: 'lists',
+    nome: 'Listas',
+    icon: 'lists',
     expandible: true,
     component: ListasMenuComponent
   },

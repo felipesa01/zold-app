@@ -1,0 +1,60 @@
+<div class="page" *ngIf="projeto()">
+
+  <div class="page-header">
+    <button mat-button class="back-btn" (click)="voltar()">
+      <mat-icon>arrow_back</mat-icon>
+      Voltar
+    </button>
+
+    <h1>Projeto</h1>
+
+    <p class="subtitle">
+      {{ projeto()?.nome }} — {{ projeto()?.cidade }}/{{ projeto()?.uf }}
+    </p>
+  </div>
+
+  <section class="meta">
+
+    <div>
+      <strong>Responsável:</strong>
+      {{ projeto()?.responsavel }}
+    </div>
+
+    <div class="chips">
+      <mat-chip [color]="statusColor(projeto()!.status)" selected>
+        {{ projeto()?.status }}
+      </mat-chip>
+    </div>
+
+    <button mat-flat-button color="primary" [routerLink]="['edit']">
+      <mat-icon>edit</mat-icon>
+      Editar
+    </button>
+
+  </section>
+
+  <section class="counts">
+    <div class="count">
+      <span class="label">Latitude</span>
+      <span class="value">{{ projeto()?.lat }}</span>
+    </div>
+
+    <div class="count">
+      <span class="label">Longitude</span>
+      <span class="value">{{ projeto()?.lon }}</span>
+    </div>
+  </section>
+
+  <section class="operacional">
+    <h2>Endereço</h2>
+
+    <ul>
+      <li><strong>Logradouro:</strong> {{ projeto()?.logradouro }}, {{ projeto()?.numero }}</li>
+      <li><strong>Complemento:</strong> {{ projeto()?.complemento }}</li>
+      <li><strong>CEP:</strong> {{ projeto()?.cep }}</li>
+      <li><strong>Cidade:</strong> {{ projeto()?.cidade }}/{{ projeto()?.uf }}</li>
+    </ul>
+
+  </section>
+
+</div>

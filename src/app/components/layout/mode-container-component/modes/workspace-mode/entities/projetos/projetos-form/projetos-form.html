@@ -1,0 +1,83 @@
+<div class="page">
+
+  <button mat-button class="back-btn" (click)="voltar()">
+    <mat-icon>arrow_back</mat-icon>
+    Voltar
+  </button>
+
+  <form [formGroup]="form" class="form-card" (submit)="apply()">
+
+    <h2>
+      @if (isEditMode()) { Editar Projeto } @else { Novo Projeto }
+    </h2>
+
+    <div class="field full">
+      <label>Nome do Projeto</label>
+      <input class="form-control" formControlName="nome" />
+    </div>
+
+    <div class="field">
+      <label>Status</label>
+      <select class="form-control" formControlName="status">
+        <option value="ATIVO">ATIVO</option>
+        <option value="ENCERRADO">ENCERRADO</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Responsável</label>
+      <input class="form-control" formControlName="responsavel" />
+    </div>
+
+    <div class="field">
+      <label>Latitude</label>
+      <input type="number" class="form-control" formControlName="lat" />
+    </div>
+
+    <div class="field">
+      <label>Longitude</label>
+      <input type="number" class="form-control" formControlName="lon" />
+    </div>
+
+    <div class="field">
+      <label>CEP</label>
+      <input class="form-control" formControlName="cep" />
+    </div>
+
+    <div class="field">
+      <label>Logradouro</label>
+      <input class="form-control" formControlName="logradouro" />
+    </div>
+
+    <div class="field">
+      <label>Número</label>
+      <input class="form-control" formControlName="numero" />
+    </div>
+
+    <div class="field">
+      <label>Complemento</label>
+      <input class="form-control" formControlName="complemento" />
+    </div>
+
+    <div class="field">
+      <label>Cidade</label>
+      <input class="form-control" formControlName="cidade" />
+    </div>
+
+    <div class="field">
+      <label>UF</label>
+      <input class="form-control" formControlName="uf" maxlength="2" />
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-primary d-flex" type="submit" [disabled]="form.invalid || loadingSave()">
+        @if (loadingSave()) {
+          <div class="spinner-grow text-light" style="width: 1.5em; height: 1.5em;"></div>
+        } @else {
+          @if (isEditMode()) { Salvar Alterações } @else { Criar Projeto }
+        }
+      </button>
+    </div>
+
+  </form>
+</div>

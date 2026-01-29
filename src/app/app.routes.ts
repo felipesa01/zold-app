@@ -85,6 +85,37 @@ export const routes: Routes = [
                         .then(m => m.ArmadilhasForm)
             },
             {
+                path: 'entities/projetos',
+                loadComponent: () =>
+                    import('./components/layout/mode-container-component/modes/workspace-mode/entities/projetos/projetos-list/projetos-list')
+                        .then(m => m.ProjetosList),
+                data: { reuse: true }
+            },
+            {
+                path: 'entities/projetos/new',
+                loadComponent: () =>
+                    import('./components/layout/mode-container-component/modes/workspace-mode/entities/projetos/projetos-form/projetos-form')
+                        .then(m => m.ProjetosForm)
+            },
+            {
+                path: 'entities/projetos/:id',
+                loadComponent: () =>
+                    import('./components/layout/mode-container-component/modes/workspace-mode/entities/projetos/projetos-detail/projetos-detail')
+                        .then(m => m.ProjetosDetail)
+            },
+            {
+                path: 'entities/projetos/:id/edit',
+                loadComponent: () =>
+                    import('./components/layout/mode-container-component/modes/workspace-mode/entities/projetos/projetos-form/projetos-form')
+                        .then(m => m.ProjetosForm)
+            },
+            {
+                path: 'entities/projetos/new',
+                loadComponent: () =>
+                    import('./components/layout/mode-container-component/modes/workspace-mode/entities/projetos/projetos-form/projetos-form')
+                        .then(m => m.ProjetosForm)
+            },
+            {
                 path: 'dashboard',
                 loadComponent: () =>
                     import('./components/layout/mode-container-component/modes/workspace-mode/dashboard/dashboard-component')

@@ -57,8 +57,20 @@ export class ApiConnectionService {
         return this.http.get<Captura>(`${this.apiURL}/capturas/${id}`)
     }
 
+    findProjeto(id: string): Observable<Projeto> {
+        return this.http.get<Projeto>(`${this.apiURL}/projetos/${id}`)
+    }
+
     addCaptura(payload: CreateCaptura): Observable<ArrayBuffer> {
         return this.http.post<ArrayBuffer>(`${this.apiURL}/capturas`, payload)
+    }
+
+    addProjeto(payload: CreateCaptura): Observable<ArrayBuffer> {
+        return this.http.post<ArrayBuffer>(`${this.apiURL}/projetos`, payload)
+    }
+
+    addArmadilha(payload: CreateArmadilha): Observable<ArrayBuffer> {
+        return this.http.post<ArrayBuffer>(`${this.apiURL}/armadilhas`, payload)
     }
 
     updateCaptura(capturaId: string, payload: object): Observable<ArrayBuffer> {
@@ -67,13 +79,16 @@ export class ApiConnectionService {
         )
     }
 
-
-    addArmadilha(payload: CreateArmadilha): Observable<ArrayBuffer> {
-        return this.http.post<ArrayBuffer>(`${this.apiURL}/armadilhas`, payload)
-    }
-
     updateArmadilha(aarmadilhaId: string, payload: object): Observable<ArrayBuffer> {
         return this.http.patch<ArrayBuffer>(`${this.apiURL}/armadilhas/${aarmadilhaId}`, payload)
     }
+
+    updateProjeto(projetoId: string, payload: object): Observable<ArrayBuffer> {
+        return this.http.patch<ArrayBuffer>(`${this.apiURL}/projetos/${projetoId}`, payload)
+    }
+
+
+
+
 
 }
