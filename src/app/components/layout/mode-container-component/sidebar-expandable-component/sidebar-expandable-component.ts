@@ -23,7 +23,6 @@ export class SidebarExpandableComponent {
   private modeControl = inject(ModeService);
   modeTurn = this.modeControl.mode;
 
-  mode = computed(() => 'workspace'); // ajuste conforme seu app
   activeMenuItem = computed(() =>
     this.layout.getMenu(this.modeTurn()).find(
       item => item.id === this.activeFeature()

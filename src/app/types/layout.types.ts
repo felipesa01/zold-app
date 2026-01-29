@@ -1,7 +1,7 @@
 
 export type AppMode = 'map' | 'workspace';
 
-export type FixedFeature =
+export type SideMenuItemId =
   // mapa
   | 'layers'
   | 'modules'
@@ -13,8 +13,8 @@ export type FixedFeature =
   | 'dashboard';
 
 
-export interface MenuItemConfig {
-  id: FixedFeature;
+export interface SideMenuItemConfig {
+  id: SideMenuItemId;
   nome: string;
   icon: string;
   expandible: boolean;

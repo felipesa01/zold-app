@@ -1,8 +1,8 @@
 import { ListasMenuComponent } from "../../app/components/layout/mode-container-component/sidebar-expandable-component/listas-menu-component/listas-menu-component";
-import { MenuItemConfig } from "../../app/types/layout.types";
+import { SideMenuItemConfig } from "../../app/types/layout.types";
 
 
-export const WORKSPACE_MENU: MenuItemConfig[] = [
+export const WORKSPACE_MENU: SideMenuItemConfig[] = [
   {
     id: 'entities',
     nome: 'Entidades',

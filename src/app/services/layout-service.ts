@@ -1,19 +1,27 @@
-import { Injectable, signal } from '@angular/core';
-import { FixedFeature, MenuItemConfig } from '../types/layout.types';
+import { computed, inject, Injectable, signal } from '@angular/core';
+import { SideMenuItemId, SideMenuItemConfig } from '../types/layout.types';
 import { MENU_CONFIG } from '../../config/menu';
+import { ResponsiveService } from './responsive-service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LayoutService {
 
+  private responsive = inject(ResponsiveService);
+  isMobile = computed(() => this.responsive.isSmallScreen());
+
   fixedSidebarOpened = signal(false);
-
   expandableSidebarOpened = signal(false);
+  activeFeature = signal<SideMenuItemId | null>(null);
 
-  activeFeature = signal<FixedFeature | null>(null);
+  openFeature(feature: SideMenuItemId) {
+    if (this.isMobile()) {
+      this.activeFeature.set(feature);
+      this.expandableSidebarOpened.set(true);
+      return
+    }
 
-  openFeature(feature: FixedFeature) {
     if (this.activeFeature() === feature) {
       this.activeFeature.set(null);
       this.expandableSidebarOpened.set(false);
@@ -24,8 +32,11 @@ export class LayoutService {
   }
 
   closeExpandable() {
-    this.activeFeature.set(null);
     this.expandableSidebarOpened.set(false);
+    if (!this.isMobile()) {
+      this.activeFeature.set(null);
+
+    }
   }
 
   getActiveMenuItem(mode: 'map' | 'workspace', user?: any) {
@@ -34,7 +45,7 @@ export class LayoutService {
   }
 
 
-  getMenu(mode: 'map' | 'workspace', user?: any): MenuItemConfig[] {
+  getMenu(mode: 'map' | 'workspace', user?: any): SideMenuItemConfig[] {
     return MENU_CONFIG[mode].filter(item => {
       // Se não existe user, ignora regras de permissão/plano
       if (!user) return true;

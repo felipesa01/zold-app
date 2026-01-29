@@ -9,7 +9,7 @@ import { ModeService } from '../../../../services/mode-service';
 import { MapService } from '../../../../services/map-service';
 import { Router } from '@angular/router';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { FixedFeature, MenuItemConfig } from '../../../../types/layout.types';
+import { SideMenuItemId, SideMenuItemConfig } from '../../../../types/layout.types';
 
 @Component({
   selector: 'app-sidebar-fixed-component',
@@ -42,7 +42,8 @@ export class SidebarFixedComponent {
 
 
   expanded = signal(true);
-  actived = signal<FixedFeature | null>(null);
+  actived = signal<SideMenuItemId | null>(null);
+
 
   // menuItems = computed<{
   //   icon: string;
@@ -97,7 +98,6 @@ export class SidebarFixedComponent {
     if (this.modeTurn() == 'map') {
       this.modeIcon = 'map'
       this.router.navigate(['/workspace']);
-
     }
     else {
       this.modeIcon = 'space_dashboard'
@@ -106,28 +106,29 @@ export class SidebarFixedComponent {
 
   }
 
-  setActive(feature: MenuItemConfig) {
-
+  setActive(feature: SideMenuItemConfig) {
     // Caso NÃO seja expandível → executa ação e sai
     if (!feature.expandible) {
       this.router.navigate(feature?.route!)
       this.actived.set(null);
       this.sidebarControls.closeExpandable();
-
       if (this.isMobile()) {
         this.fixedSidebarOpened.set(false);
       }
       return;
     }
     // Caso SEJA expandível → controla sidebar
-    if (this.actived() === feature.id) {
-      this.actived.set(null);
-      this.sidebarControls.closeExpandable();
+    if (!this.isMobile()) {
+      if (this.actived() === feature.id) {
+        this.actived.set(null);
+        this.sidebarControls.closeExpandable();
+      } else {
+        this.actived.set(feature.id);
+        this.sidebarControls.openFeature(feature.id);
+      }
     } else {
       this.actived.set(feature.id);
       this.sidebarControls.openFeature(feature.id);
-    }
-    if (this.isMobile()) {
       this.fixedSidebarOpened.set(false);
     }
   }

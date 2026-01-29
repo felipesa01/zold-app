@@ -1,1 +1,13 @@
-<p>listas-menu-component works!</p>
+<div class="entities-list">
+
+  <button 
+    class="entity-item"
+    *ngFor="let entity of entities"
+    (click)="goTo(entity.route)"
+  >
+    <mat-icon class="icon">{{ entity.icon }}</mat-icon>
+    <span class="label">{{ entity.label }}</span>
+    <mat-icon class="arrow">chevron_right</mat-icon>
+  </button>
+
+</div>

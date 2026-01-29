@@ -1,8 +1,8 @@
-import { MenuItemConfig } from "../../app/types/layout.types";
+import { SideMenuItemConfig } from "../../app/types/layout.types";
 
 
 
-export const MAP_MENU: MenuItemConfig[] = [
+export const MAP_MENU: SideMenuItemConfig[] = [
   {
     id: 'layers',
     nome: 'Camadas',
