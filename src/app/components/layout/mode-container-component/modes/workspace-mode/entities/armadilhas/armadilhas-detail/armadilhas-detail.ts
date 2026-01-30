@@ -8,7 +8,7 @@ import { CommonModule, Location } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { map } from 'rxjs';
+import { finalize, map } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { Feature, Map, View } from 'ol';
@@ -23,6 +23,9 @@ import { XYZ } from 'ol/source';
 import { ptBR } from 'date-fns/locale';
 import { ApiConnectionService } from '../../../../../../../../services/api-connection-service';
 import { ProjectContextService } from '../../../../../../../../services/project-context.service';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../../../../../../../shared/confirm-dialog-component/confirm-dialog-component';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-armadilhas-detail',
@@ -35,9 +38,11 @@ import { ProjectContextService } from '../../../../../../../../services/project-
 export class ArmadilhasDetail implements AfterViewInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  toastr = inject(ToastrService);
 
   showRefil = signal(true);
   showAtrativo = signal(true);
+  loadingRemove = signal(false);
 
   private projectContext = inject(ProjectContextService);
   selectedProject = this.projectContext.selected;
@@ -62,7 +67,7 @@ export class ArmadilhasDetail implements AfterViewInit {
   //     .sort((a, b) => a.data.localeCompare(b.data))
   // );
 
-  constructor(private api: ApiConnectionService, private location: Location) {
+  constructor(private api: ApiConnectionService, private location: Location, private dialog: MatDialog) {
     effect((onCleanup) => {
       const armadilhaId = this.armadilhaId();
       const projetoId = this.selectedProject()?.id;
@@ -148,6 +153,47 @@ export class ArmadilhasDetail implements AfterViewInit {
 
   resetZoom() {
     this.chart?.chart?.resetZoom();
+  }
+
+
+  delete() {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '360px',
+      data: {
+        title: 'Excluir armadilha',
+        message: 'Tem certeza que deseja continuar?',
+        confirmText: 'Sim',
+        cancelText: 'Cancelar'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(confirmado => {
+      if (!confirmado) return
+      this.loadingRemove.set(true)
+
+      this.api.removeArmadilha(this.armadilhaId() ?? '').pipe(
+        finalize(() => this.loadingRemove.set(false))).subscribe({
+          next: (result) => {
+            this.showSuccess('Armadilha apagada!')
+          },
+          error: (error) => {
+            this.showError(`Mensagem: ${error.error.message}`)
+          }
+        });
+
+    })
+  }
+
+  showSuccess(message: string) {
+    this.toastr.success(message, 'Sucesso!', { progressBar: true }).onHidden.subscribe(() => {
+      this.voltar()
+    });
+  }
+
+  showError(message: string) {
+    this.toastr.error(message, 'Algo deu errado!', { progressBar: true }).onHidden.subscribe(() => {
+      this.voltar()
+    });
   }
 
 

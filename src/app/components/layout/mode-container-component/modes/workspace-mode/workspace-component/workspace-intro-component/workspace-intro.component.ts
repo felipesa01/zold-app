@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink, RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { ApiConnectionService } from '../../../../../../../services/api-connection-service';
 import { ProjectContextService } from '../../../../../../../services/project-context.service';
@@ -9,7 +9,7 @@ import { ProjectContextService } from '../../../../../../../services/project-con
 @Component({
   standalone: true,
   selector: 'app-workspace-intro',
-  imports: [CommonModule, MatIconModule],
+  imports: [CommonModule, MatIconModule, RouterModule],
   templateUrl: './workspace-intro.component.html',
   styleUrls: ['./workspace-intro.component.css']
 })

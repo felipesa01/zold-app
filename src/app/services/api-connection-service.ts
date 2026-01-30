@@ -79,12 +79,25 @@ export class ApiConnectionService {
         )
     }
 
-    updateArmadilha(aarmadilhaId: string, payload: object): Observable<ArrayBuffer> {
-        return this.http.patch<ArrayBuffer>(`${this.apiURL}/armadilhas/${aarmadilhaId}`, payload)
+    updateArmadilha(armadilhaId: string, payload: object): Observable<ArrayBuffer> {
+        return this.http.patch<ArrayBuffer>(`${this.apiURL}/armadilhas/${armadilhaId}`, payload)
     }
 
     updateProjeto(projetoId: string, payload: object): Observable<ArrayBuffer> {
         return this.http.patch<ArrayBuffer>(`${this.apiURL}/projetos/${projetoId}`, payload)
+    }
+
+    removeArmadilha(armadilhaId: string): Observable<ArrayBuffer> {
+        return this.http.delete<ArrayBuffer>(`${this.apiURL}/armadilhas/${armadilhaId}`)
+    }
+
+
+    removeCaptura(capturaId: string): Observable<ArrayBuffer> {
+        return this.http.delete<ArrayBuffer>(`${this.apiURL}/capturas/${capturaId}`)
+    }
+
+    removeProjeto(projetoId: string): Observable<ArrayBuffer> {
+        return this.http.delete<ArrayBuffer>(`${this.apiURL}/projetos/${projetoId}`)
     }
 
 

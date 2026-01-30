@@ -20,29 +20,34 @@
       {{ projeto()?.responsavel }}
     </div>
 
+    <div>
+      <strong>Latitude:</strong>
+      {{ projeto()?.lat }}
+    </div>
+
+    <div>
+      <strong>Longitude:</strong>
+      {{ projeto()?.lon }}
+    </div>
+
     <div class="chips">
       <mat-chip [color]="statusColor(projeto()!.status)" selected>
         {{ projeto()?.status }}
       </mat-chip>
     </div>
 
-    <button mat-flat-button color="primary" [routerLink]="['edit']">
-      <mat-icon>edit</mat-icon>
-      Editar
-    </button>
+    <div class="d-flex align-content-center">
+      <button mat-flat-button color="primary" class="edit-btn" [routerLink]="['edit']">
+        <mat-icon>edit</mat-icon>
+        Editar
+      </button>
 
-  </section>
-
-  <section class="counts">
-    <div class="count">
-      <span class="label">Latitude</span>
-      <span class="value">{{ projeto()?.lat }}</span>
+      <button class="btn btn-outline-danger d-flex" style="border-radius: 2em;" (click)="delete()">
+        <mat-icon>delete</mat-icon>
+        Excluir
+      </button>
     </div>
 
-    <div class="count">
-      <span class="label">Longitude</span>
-      <span class="value">{{ projeto()?.lon }}</span>
-    </div>
   </section>
 
   <section class="operacional">

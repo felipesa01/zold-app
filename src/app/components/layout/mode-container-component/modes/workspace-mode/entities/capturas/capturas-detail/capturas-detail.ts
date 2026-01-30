@@ -7,8 +7,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChip } from '@angular/material/chips';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { map, of, switchMap } from 'rxjs';
+import { finalize, map, of, switchMap } from 'rxjs';
 import { ApiConnectionService } from '../../../../../../../../services/api-connection-service';
+import { ConfirmDialogComponent } from '../../../../../../../shared/confirm-dialog-component/confirm-dialog-component';
+import { MatDialog } from '@angular/material/dialog';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-capturas-detail',
@@ -20,7 +23,8 @@ export class CapturasDetail {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
-
+  toastr = inject(ToastrService);
+  loadingRemove = signal(false);
   armadilha = signal<Armadilha | undefined>(undefined);
 
   capturaId = toSignal(
@@ -31,7 +35,7 @@ export class CapturasDetail {
 
   captura = signal<Captura | undefined>(undefined);
 
-  constructor(private api: ApiConnectionService, private location: Location) {
+  constructor(private api: ApiConnectionService, private location: Location, private dialog: MatDialog) {
     effect((onCleanup) => {
       const idCaptura = this.capturaId();
 
@@ -74,6 +78,45 @@ export class CapturasDetail {
 
   voltar() {
     this.location.back();
+  }
+
+  delete() {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '360px',
+      data: {
+        title: 'Excluir captura',
+        message: 'Tem certeza que deseja continuar?',
+        confirmText: 'Sim',
+        cancelText: 'Cancelar'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(confirmado => {
+      if (!confirmado) return
+      this.loadingRemove.set(true)
+
+      this.api.removeCaptura(this.captura()?.id ?? '').pipe(
+        finalize(() => this.loadingRemove.set(false))).subscribe({
+          next: (result) => {
+            this.showSuccess('Captura apagada!')
+          },
+          error: (error) => {
+            this.showError(`Mensagem: ${error.error.message}`)
+          }
+        });
+    })
+  }
+
+  showSuccess(message: string) {
+    this.toastr.success(message, 'Sucesso!', { progressBar: true }).onHidden.subscribe(() => {
+      this.voltar()
+    });
+  }
+
+  showError(message: string) {
+    this.toastr.error(message, 'Algo deu errado!', { progressBar: true }).onHidden.subscribe(() => {
+      this.voltar()
+    });
   }
 
   statusColor(status: Captura['status']) {

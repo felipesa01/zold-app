@@ -1,7 +1,7 @@
 <mat-drawer-container [hasBackdrop]="false" class="content">
 
     <mat-drawer #drawer [mode]="isMobile() ? 'over' : 'side'" [opened]="expandableSidebarOpened()"
-        (openedChange)="expandableSidebarOpened.set($event)">
+        (openedChange)="expandableSidebarOpened.set($event)" style="box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06); background-color: white;">
         <app-sidebar-expandable-component></app-sidebar-expandable-component>
     </mat-drawer>
 

@@ -40,12 +40,12 @@ export class ProjetosForm implements OnInit {
       responsavel: ['', Validators.required],
       lat: [null],
       lon: [null],
-      logradouro: [''],
-      numero: [''],
+      logradouro: ['', Validators.required],
+      numero: ['', Validators.required],
       complemento: [''],
-      cep: [''],
-      cidade: [''],
-      uf: ['']
+      cep: ['', Validators.required],
+      cidade: ['', Validators.required],
+      uf: ['', Validators.required, Validators.maxLength(2), Validators.minLength(2)]
     });
 
     this.checkEditMode();

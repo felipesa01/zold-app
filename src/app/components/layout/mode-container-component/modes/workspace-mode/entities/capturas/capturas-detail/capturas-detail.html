@@ -41,10 +41,17 @@
             </mat-chip>
         </div>
 
-        <button mat-flat-button color="primary" class="edit-btn" [routerLink]="['edit']">
-            <mat-icon>edit</mat-icon>
-            Editar
-        </button>
+        <div class="d-flex align-content-center">
+            <button mat-flat-button color="primary" class="edit-btn" [routerLink]="['edit']">
+                <mat-icon>edit</mat-icon>
+                Editar
+            </button>
+
+            <button class="btn btn-outline-danger d-flex" style="border-radius: 2em;" (click)="delete()">
+                <mat-icon>delete</mat-icon>
+                Excluir
+            </button>
+        </div>
 
     </section>
 
