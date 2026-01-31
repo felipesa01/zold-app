@@ -58,8 +58,8 @@ export class ArmadilhasForm implements OnInit {
       nome: ['', Validators.required],
       referencia: ['', Validators.required],
       regiao: ['', Validators.required],
-      lat: [null, Validators.required],
-      lon: [null, Validators.required]
+      lat: [null, [Validators.required, Validators.min(-90), Validators.max(90)]],
+      lon: [null, [Validators.required, Validators.min(-180), Validators.max(180)]],
     });
   }
 
@@ -98,10 +98,31 @@ export class ArmadilhasForm implements OnInit {
     this.location.back();
   }
 
+  onCoordinateInput(control: 'lat' | 'lon', event: Event) {
+    const input = event.target as HTMLInputElement;
+
+    // só troca vírgula por ponto e remove lixo
+    let value = input.value
+      .replace(',', '.')
+      .replace(/[^0-9.-]/g, '');
+
+    this.form.get(control)?.setValue(value, { emitEvent: false });
+  }
+
+  hasError(control: string, error: string) {
+    const c = this.form.get(control);
+    return !!(c && c.touched && c.hasError(error));
+  }
+
   apply() {
-    if (this.form.invalid) return;
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
 
     const payload = this.form.getRawValue() as Armadilha;
+    payload.lat = Number(payload.lat)
+    payload.lon = Number(payload.lon)
 
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '360px',

@@ -12,46 +12,92 @@
     </h2>
 
     <div class="field full">
-      <label>Nome do Projeto</label>
+      <label>Nome do Projeto *</label>
       <input class="form-control" formControlName="nome" />
+
+      @if (hasError('nome', 'required')) {
+      <small class="text-danger">Nome é obrigatório</small>
+      }
+      @if (hasError('nome', 'minlength')) {
+      <small class="text-danger">Mínimo de 3 caracteres</small>
+      }
+    </div>
+
+    <div class="field full">
+      <label>Responsável *</label>
+      <input class="form-control" formControlName="responsavel" />
+
+      @if (hasError('responsavel', 'required')) {
+      <small class="text-danger">Responsável é obrigatório</small>
+      }
     </div>
 
     <div class="field">
-      <label>Status</label>
+      <label>Status *</label>
       <select class="form-control" formControlName="status">
         <option value="ATIVO">ATIVO</option>
         <option value="ENCERRADO">ENCERRADO</option>
       </select>
     </div>
 
+
+
     <div class="field">
-      <label>Responsável</label>
-      <input class="form-control" formControlName="responsavel" />
+      <label>Latitude *</label>
+      <input class="form-control" formControlName="lat" (input)="onCoordinateInput('lat', $event)"/>
+
+      @if (hasError('lat', 'required')) {
+      <small class="text-danger">Latitude é obrigatório</small>
+      }
+
+      @if (hasError('lat', 'min') || hasError('lat', 'max')) {
+      <small class="text-danger">Latitude deve estar entre -90 e 90</small>
+      }
     </div>
 
     <div class="field">
-      <label>Latitude</label>
-      <input type="number" class="form-control" formControlName="lat" />
+      <label>Longitude *</label>
+      <input class="form-control" formControlName="lon" (input)="onCoordinateInput('lon', $event)" />
+
+      @if (hasError('lon', 'required')) {
+      <small class="text-danger">Longitude é obrigatório</small>
+      }
+
+      @if (hasError('lon', 'min') || hasError('lon', 'max')) {
+      <small class="text-danger">Longitude deve estar entre -180 e 180</small>
+      }
+
     </div>
 
     <div class="field">
-      <label>Longitude</label>
-      <input type="number" class="form-control" formControlName="lon" />
+      <label>CEP *</label>
+      <input class="form-control" formControlName="cep" maxlength="9" (input)="onCepInput($event)" />
+
+      @if (hasError('cep', 'required')) {
+      <small class="text-danger">CEP é obrigatório</small>
+      }
+      @if (hasError('cep', 'pattern')) {
+      <small class="text-danger">CEP inválido</small>
+      }
     </div>
 
     <div class="field">
-      <label>CEP</label>
-      <input class="form-control" formControlName="cep" />
-    </div>
-
-    <div class="field">
-      <label>Logradouro</label>
+      <label>Logradouro *</label>
       <input class="form-control" formControlName="logradouro" />
+
+
+      @if (hasError('logradouro', 'required')) {
+      <small class="text-danger">Logradouro obrigatório</small>
+      }
     </div>
 
     <div class="field">
-      <label>Número</label>
+      <label>Número *</label>
       <input class="form-control" formControlName="numero" />
+
+      @if (hasError('numero', 'required')) {
+      <small class="text-danger">Número é obrigatório</small>
+      }
     </div>
 
     <div class="field">
@@ -60,21 +106,36 @@
     </div>
 
     <div class="field">
-      <label>Cidade</label>
+      <label>Cidade *</label>
       <input class="form-control" formControlName="cidade" />
+
+      @if (hasError('cidade', 'required')) {
+      <small class="text-danger">Cidade é obrigatório</small>
+      }
     </div>
 
     <div class="field">
-      <label>UF</label>
+      <label>UF (sigla) *</label>
       <input class="form-control" formControlName="uf" maxlength="2" />
+
+      @if (hasError('uf', 'required')) {
+      <small class="text-danger">UF é obrigatório</small>
+      }
+      @if (hasError('uf', 'minlength') || hasError('uf', 'maxlength')) {
+      <small class="text-danger">UF deve ter 2 letras</small>
+      }
+    </div>
+
+    <div>
+      <span style="font-size: 0.8em">* campos obrigatórios</span>
     </div>
 
     <div class="actions">
       <button class="btn btn-primary d-flex" type="submit" [disabled]="form.invalid || loadingSave()">
         @if (loadingSave()) {
-          <div class="spinner-grow text-light" style="width: 1.5em; height: 1.5em;"></div>
+        <div class="spinner-grow text-light" style="width: 1.5em; height: 1.5em;"></div>
         } @else {
-          @if (isEditMode()) { Salvar Alterações } @else { Criar Projeto }
+        @if (isEditMode()) { Salvar Alterações } @else { Criar Projeto }
         }
       </button>
     </div>

@@ -16,6 +16,8 @@ export class TopbarComponent {
   fixedSidebarOpened = this.sidebarControls.fixedSidebarOpened;
   expandableSidebarOpened = this.sidebarControls.expandableSidebarOpened;
 
+  activeFeature = this.sidebarControls.activeFeature;
+
   openFixedSidebar() {
     this.expandableSidebarOpened.set(false)
     this.fixedSidebarOpened.set(true)

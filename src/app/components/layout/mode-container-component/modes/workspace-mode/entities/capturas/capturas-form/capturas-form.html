@@ -16,23 +16,32 @@
 
         <!-- ARMADILHA -->
         <div class="field full">
-            <label>Armadilha</label>
+            <label>Armadilha *</label>
             <input type="text" class="form-control" formControlName="armadilhaDisplay" [ngbTypeahead]="search"
                 [inputFormatter]="inputFormatter" [resultFormatter]="resultFormatter" (selectItem)="onSelect($event)"
                 (focus)="focus$.next($any($event.target).value)" (click)="click$.next($any($event.target).value)"
                 #instance="ngbTypeahead" placeholder="Buscar armadilha" />
+
+
+            @if (hasError('armadilhaDisplay', 'required')) {
+            <small class="text-danger">Você deve selecionar uma armadilha</small>
+            }
         </div>
 
         <!-- Data -->
         <div class="field">
-            <label>Data</label>
+            <label>Data *</label>
             <input type="date" class="form-control" formControlName="data" />
+
+            @if (hasError('data', 'required')) {
+            <small class="text-danger">Data é obrigatório</small>
+            }
         </div>
 
 
         <!-- Situação Física -->
         <div class="field">
-            <label>Situação Física</label>
+            <label>Situação Física *</label>
             <select class="form-control" formControlName="situacaoFisica">
                 <option value="REGULAR">REGULAR</option>
                 <option value="DERRUBADA">DERRUBADA</option>
@@ -42,7 +51,7 @@
 
         <!-- Status -->
         <div class="field">
-            <label>Status</label>
+            <label>Status *</label>
             <select class="form-control" formControlName="status">
                 <option value="ATIVA">ATIVA</option>
                 <option value="INATIVA">INATIVA</option>
@@ -54,16 +63,28 @@
             <div class="field">
                 <label>Aedes</label>
                 <input type="number" class="form-control" formControlName="numAedes" />
+
+                @if (hasError('numAedes', 'required')) {
+                <small class="text-danger">Voce deve informar o número de mosquitos, use 0 (zero) em caso de ausência</small>
+                }
             </div>
 
             <div class="field">
                 <label>Culex</label>
                 <input type="number" class="form-control" formControlName="numCulex" />
+
+                @if (hasError('numCulex', 'required')) {
+                <small class="text-danger">Voce deve informar o número de mosquitos, use 0 (zero) em caso de ausência</small>
+                }
             </div>
 
             <div class="field">
                 <label>Outras</label>
                 <input type="number" class="form-control" formControlName="numOutras" />
+
+                @if (hasError('numOutras', 'required')) {
+                <small class="text-danger">Voce deve informar o número de mosquitos, use 0 (zero) em caso de ausência</small>
+                }
             </div>
 
             <div class="field">
@@ -85,7 +106,7 @@
         </div>
 
         <div class="actions">
-            <button class="btn btn-primary d-flex"  type="submit" [disabled]="form.invalid || loadingSave()">
+            <button class="btn btn-primary d-flex" type="submit" [disabled]="form.invalid || loadingSave()">
                 @if (loadingSave()) {
                 <div class="spinner-grow text-light" style="width: 1.5em; height: 1.5em;" role="status"></div>
                 } @else {

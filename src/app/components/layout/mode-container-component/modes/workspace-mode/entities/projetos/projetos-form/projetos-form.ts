@@ -9,6 +9,7 @@ import { ToastrService } from "ngx-toastr";
 import { ApiConnectionService } from "../../../../../../../../services/api-connection-service";
 import { ConfirmDialogComponent } from "../../../../../../../shared/confirm-dialog-component/confirm-dialog-component";
 import { Projeto } from "../projetos.model";
+import { ProjectContextService } from "../../../../../../../../services/project-context.service";
 
 @Component({
   selector: 'app-projetos-form',
@@ -21,6 +22,7 @@ export class ProjetosForm implements OnInit {
 
   private api = inject(ApiConnectionService);
   private route = inject(ActivatedRoute);
+  private projectContext = inject(ProjectContextService);
   private router = inject(Router);
   private dialog = inject(MatDialog);
   toastr = inject(ToastrService);
@@ -35,20 +37,65 @@ export class ProjetosForm implements OnInit {
 
   ngOnInit() {
     this.form = this.fb.group({
-      nome: ['', Validators.required],
+      nome: ['', [Validators.required, Validators.minLength(3)]],
       status: ['ATIVO', Validators.required],
-      responsavel: ['', Validators.required],
-      lat: [null],
-      lon: [null],
+      responsavel: ['', [Validators.required, Validators.minLength(3)]],
+
+      lat: [null, [Validators.required, Validators.min(-90), Validators.max(90)]],
+      lon: [null, [Validators.required, Validators.min(-180), Validators.max(180)]],
+
+      cep: ['', [
+        Validators.required,
+        Validators.pattern(/^\d{5}-?\d{3}$/)
+      ]],
+
       logradouro: ['', Validators.required],
       numero: ['', Validators.required],
       complemento: [''],
-      cep: ['', Validators.required],
       cidade: ['', Validators.required],
-      uf: ['', Validators.required, Validators.maxLength(2), Validators.minLength(2)]
+
+      uf: ['', [
+        Validators.required,
+        Validators.minLength(2),
+        Validators.maxLength(2)
+      ]]
     });
 
     this.checkEditMode();
+  }
+
+  onCoordinateInput(control: 'lat' | 'lon', event: Event) {
+    const input = event.target as HTMLInputElement;
+
+    // só troca vírgula por ponto e remove lixo
+    let value = input.value
+      .replace(',', '.')
+      .replace(/[^0-9.-]/g, '');
+
+    this.form.get(control)?.setValue(value, { emitEvent: false });
+  }
+
+  onCepInput(event: Event) {
+    const input = event.target as HTMLInputElement;
+
+    // remove tudo que não for número
+    let value = input.value.replace(/\D/g, '');
+
+    // limita a 8 dígitos
+    value = value.substring(0, 8);
+
+    // aplica máscara 12345-678
+    if (value.length > 5) {
+      value = value.replace(/^(\d{5})(\d{0,3})/, '$1-$2');
+    }
+
+    // atualiza o form sem disparar loop
+    this.form.get('cep')?.setValue(value, { emitEvent: false });
+  }
+
+  hasError(control: string, error: string) {
+    const c = this.form.get(control);
+    return !!(c && c.touched && c.hasError(error));
   }
 
   voltar() {
@@ -80,9 +127,16 @@ export class ProjetosForm implements OnInit {
   }
 
   apply() {
-    if (this.form.invalid) return;
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
 
     const payload = this.form.getRawValue();
+    payload.cep = (payload.cep as string).replace("-", "")
+    payload.lat = Number(payload.lat)
+    payload.lon = Number(payload.lon)
+
 
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '360px',
@@ -104,20 +158,31 @@ export class ProjetosForm implements OnInit {
         : this.api.addProjeto(payload);
 
       req.subscribe({
-        next: () => this.showSuccess(),
-        error: () => this.showError(),
+        next: () => {
+          this.reloadProjetos()
+          this.showSuccess('Projeto salvo com sucesso!')},
+        error: () => this.showError('Algo deu errado!'),
         complete: () => this.loadingSave.set(false)
       });
     });
   }
 
-  showSuccess() {
-    this.toastr.success('Projeto salvo com sucesso!', 'Sucesso!')
-      .onHidden.subscribe(() => this.voltar());
+  showSuccess(message: string) {
+    this.toastr.success(message, 'Sucesso!', { progressBar: true }).onHidden.subscribe(() => {
+      this.voltar()
+    });
   }
 
-  showError() {
-    this.toastr.error('Erro ao salvar projeto', 'Erro!')
-      .onHidden.subscribe(() => this.voltar());
+  showError(message: string) {
+    this.toastr.error(message, 'Algo deu errado!', { progressBar: true }).onHidden.subscribe(() => {
+      this.voltar()
+    });
   }
+
+  reloadProjetos() {
+    this.api.listarProjetos().subscribe(projects => {
+      this.projectContext.setProjects(projects);
+    });
+  }
+
 }

@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, computed, effect, inject, signal, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { ChartConfiguration, ChartDataset, ScatterDataPoint } from 'chart.js';
+import { ActiveElement, ChartConfiguration, ChartDataset, ChartEvent, ScatterDataPoint } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { Captura } from '../../capturas/captura.model';
 import { Armadilha } from '../armadilha.model';
@@ -60,6 +60,12 @@ export class ArmadilhasDetail implements AfterViewInit {
 
   armadilha = signal<Armadilha | undefined>(undefined);
   capturas = signal<Captura[]>([]);
+
+  capturasOrdenadas = computed<Captura[]>(() =>
+    [...this.capturas()].sort(
+      (a, b) => new Date(a.data).getTime() - new Date(b.data).getTime()
+    )
+  );
 
   // capturas = computed<Captura[]>(() =>
   //   CAPTURAS_MOCK
@@ -196,12 +202,45 @@ export class ArmadilhasDetail implements AfterViewInit {
     });
   }
 
+  onChartClick(event: {
+    event?: ChartEvent;
+    active?: object[];
+  }) {
+    if (!event.active || event.active.length === 0) return;
+
+    const activePoint = (event.active[0] as ActiveElement);
+    if (!activePoint) return;
+
+    const { datasetIndex, index } = activePoint;
+
+    const dataset = this.chartData().datasets[datasetIndex];
+    if (!dataset) return;
+
+    if (
+      dataset.label === 'Troca de refil' ||
+      dataset.label === 'Troca de atrativo'
+    ) return;
+
+    const point = dataset.data[index] as { x: number; y: number };
+
+    const captura = this.capturasOrdenadas().find(
+      c => new Date(c.data).getTime() === point.x
+    );
+
+    if (!captura) return;
+
+    this.router.navigate(
+      ['/workspace/entities/capturas', captura.id],
+      { replaceUrl: false }
+    );
+  }
+
 
   refilDataset = computed<ChartDataset<'line', { x: number; y: number }[]>>(() => {
 
     return {
       label: 'Troca de refil',
-      data: this.capturas()
+      data: this.capturasOrdenadas()
         .filter(c => c.trocaRefil)
         .map(c => ({
           x: new Date(c.data).getTime(),
@@ -223,7 +262,7 @@ export class ArmadilhasDetail implements AfterViewInit {
 
     return {
       label: 'Troca de atrativo',
-      data: this.capturas()
+      data: this.capturasOrdenadas()
         .filter(c => c.trocaAtrativo)
         .map(c => ({
           x: new Date(c.data).getTime(),
@@ -244,7 +283,7 @@ export class ArmadilhasDetail implements AfterViewInit {
   baseDataset = computed<ChartDataset<'line', { x: number; y: number }[]>[]>(() => [
     {
       label: 'Aedes',
-      data: this.capturas().map(c => ({
+      data: this.capturasOrdenadas().map(c => ({
         x: new Date(c.data).getTime(),
         y: c.numAedes
       })),
@@ -260,7 +299,7 @@ export class ArmadilhasDetail implements AfterViewInit {
     },
     {
       label: 'Culex',
-      data: this.capturas().map(c => ({
+      data: this.capturasOrdenadas().map(c => ({
         x: new Date(c.data).getTime(),
         y: c.numCulex
       })),
@@ -275,7 +314,7 @@ export class ArmadilhasDetail implements AfterViewInit {
     },
     {
       label: 'Outras',
-      data: this.capturas().map(c => ({
+      data: this.capturasOrdenadas().map(c => ({
         x: new Date(c.data).getTime(),
         y: c.numOutras
       })),
@@ -290,7 +329,7 @@ export class ArmadilhasDetail implements AfterViewInit {
     },
     {
       label: 'Total',
-      data: this.capturas().map(c => ({
+      data: this.capturasOrdenadas().map(c => ({
         x: new Date(c.data).getTime(),
         y: c.numTotal
       })),

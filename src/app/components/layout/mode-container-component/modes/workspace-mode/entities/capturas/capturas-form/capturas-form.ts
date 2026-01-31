@@ -99,9 +99,9 @@ export class CapturasForm implements OnInit {
       situacaoFisica: ['REGULAR', Validators.required],
       status: ['ATIVA', Validators.required],
 
-      numAedes: [0],
-      numCulex: [0],
-      numOutras: [0],
+      numAedes: [0, Validators.required],
+      numCulex: [0, Validators.required],
+      numOutras: [0, Validators.required],
       numTotal: [{ value: 0, disabled: true }],
 
       trocaRefil: [false],
@@ -109,12 +109,20 @@ export class CapturasForm implements OnInit {
 
       userId: [this.USER_ID_FIXO],
       armadilhaId: ['', Validators.required],
-      armadilhaDisplay: ['']
+      armadilhaDisplay: ['', Validators.required
+
+
+      ]
     });
 
     // this.carregarArmadilhas();
     this.configurarRegras();
     this.checkEditMode();
+  }
+
+  hasError(control: string, error: string) {
+    const c = this.form.get(control);
+    return !!(c && c.touched && c.hasError(error));
   }
 
   checkEditMode() {
@@ -258,7 +266,10 @@ export class CapturasForm implements OnInit {
 
 
   apply() {
-    if (this.form.invalid) return;
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
 
     const payload = this.form.getRawValue() as Captura;
     payload.data = datePureToUTCString(payload.data)

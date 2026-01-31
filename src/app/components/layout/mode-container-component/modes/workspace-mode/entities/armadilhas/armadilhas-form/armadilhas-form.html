@@ -17,39 +17,70 @@
 
     <!-- Nome -->
     <div class="field full">
-      <label>Nome</label>
+      <label>Nome *</label>
       <input type="text" class="form-control" formControlName="nome" />
+
+      @if (hasError('nome', 'required')) {
+      <small class="text-danger">Nome é obrigatório</small>
+      }
     </div>
 
     <!-- Referência -->
     <div class="field full">
-      <label>Referência</label>
+      <label>Referência *</label>
       <input type="text" class="form-control" formControlName="referencia" />
+
+      @if (hasError('referencia', 'required')) {
+      <small class="text-danger">Referência é obrigatório</small>
+      }
     </div>
 
     <!-- Região -->
     <div class="field">
-      <label>Região</label>
+      <label>Região *</label>
       <input type="text" class="form-control" formControlName="regiao" />
+
+      @if (hasError('regiao', 'required')) {
+      <small class="text-danger">Região é obrigatório</small>
+      }
     </div>
 
-    <!-- Latitude -->
     <div class="field">
-      <label>Latitude</label>
-      <input type="number" inputmode="decimal" step="any" class="form-control" formControlName="lat" />
+      <label>Latitude *</label>
+      <input class="form-control" formControlName="lat" (input)="onCoordinateInput('lat', $event)" />
+
+      @if (hasError('lat', 'required')) {
+      <small class="text-danger">Latitude é obrigatório</small>
+      }
+
+      @if (hasError('lat', 'min') || hasError('lat', 'max')) {
+      <small class="text-danger">Latitude deve estar entre -90 e 90</small>
+      }
     </div>
 
-    <!-- Longitude -->
     <div class="field">
-      <label>Longitude</label>
-      <input type="number" inputmode="decimal" step="any" class="form-control" formControlName="lon" />
+      <label>Longitude *</label>
+      <input class="form-control" formControlName="lon" (input)="onCoordinateInput('lon', $event)" />
+
+      @if (hasError('lon', 'required')) {
+      <small class="text-danger">Longitude é obrigatório</small>
+      }
+
+      @if (hasError('lon', 'min') || hasError('lon', 'max')) {
+      <small class="text-danger">Longitude deve estar entre -180 e 180</small>
+      }
+
+    </div>
+
+    <div>
+      <span style="font-size: 0.8em">* campos obrigatórios</span>
     </div>
 
     <div class="actions">
-      <button class="btn  btn-primary d-flex"  type="submit" [disabled]="form.invalid || loadingSave()">
+      <button class="btn  btn-primary d-flex" type="submit" [disabled]="form.invalid || loadingSave()">
 
         @if (loadingSave()) {
-        <mat-spinner diameter="20" class="spinner-custom" style="width: 1.5em; height: 1.5em;" ></mat-spinner>
+        <mat-spinner diameter="20" class="spinner-custom" style="width: 1.5em; height: 1.5em;"></mat-spinner>
         } @else {
         @if (isEditMode()) {
         Salvar Alterações

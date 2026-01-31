@@ -3,7 +3,7 @@
         <mat-icon>menu</mat-icon>
     </button>
 
-    <button class="button" (click)="openExpandableSidebar()">
+    <button class="button" (click)="openExpandableSidebar()" [disabled]="!activeFeature()">
         <mat-icon>vertical_split</mat-icon>
     </button>
 
