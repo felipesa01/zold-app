@@ -2,11 +2,13 @@
 
   <!-- KPIs -->
   <header class="dashboard-section kpis">
+    <h4>Dados gerais</h4>
     <app-kpi-cards />
   </header>
 
   <!-- Série temporal principal -->
   <section class="dashboard-section timeseries">
+    <h4>Somatório das capturas</h4>
     <div class="chart-container">
       <app-time-series-chart />
     </div>
@@ -16,7 +18,7 @@
   <section class="dashboard-section analytics">
 
     <!-- Intervalos -->
-    <div class="analytics-block">
+    <!-- <div class="analytics-block">
       <div class="section-header">
         <h3>Intervalos de troca</h3>
         <span class="section-subtitle">
@@ -25,10 +27,10 @@
       </div>
 
       <app-interval-stats />
-    </div>
+    </div> -->
 
     <!-- Ranking -->
-    <div class="analytics-block">
+    <!-- <div class="analytics-block">
       <div class="section-header">
         <h3>Armadilhas críticas</h3>
         <span class="section-subtitle">
@@ -37,7 +39,7 @@
       </div>
 
       <app-ranking-table />
-    </div>
+    </div> -->
 
   </section>
 

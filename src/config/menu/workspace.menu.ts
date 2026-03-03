@@ -15,12 +15,14 @@ export const WORKSPACE_MENU: SideMenuItemConfig[] = [
     nome: 'Relatórios',
     icon: 'assessment',
     expandible: false,
+    disabled: true
   },
   {
     id: 'dashboard',
     nome: 'Dashboard',
     icon: 'space_dashboard',
     expandible: false,
-    route: ['/workspace/dashboard']
+    route: ['/workspace/dashboard'],
+    disabled: false
   }
 ];

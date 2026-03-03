@@ -22,4 +22,5 @@ export interface SideMenuItemConfig {
   component?: any;
   permission?: string;
   planRequired?: string[];
+  disabled?: boolean 
 }

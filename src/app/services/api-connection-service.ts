@@ -3,6 +3,10 @@ import { Injectable } from "@angular/core";
 import { delay, map, Observable } from "rxjs";
 import { Armadilha, CreateArmadilha } from "../components/layout/mode-container-component/modes/workspace-mode/entities/armadilhas/armadilha.model";
 import { Captura, CreateCaptura } from "../components/layout/mode-container-component/modes/workspace-mode/entities/capturas/captura.model";
+import { environment } from "../../environments/environment";
+import { DashboardTimePoint, DashboardTrocaStats } from "../components/layout/mode-container-component/modes/workspace-mode/dashboard/models/KPI-model";
+import { DashboardTrocaInterval } from "../components/layout/mode-container-component/modes/workspace-mode/dashboard/models/interval-stats-model";
+
 
 export interface Projeto {
     id: string
@@ -22,7 +26,7 @@ export interface Projeto {
 @Injectable({ providedIn: 'root' })
 export class ApiConnectionService {
 
-    apiURL = '/api';
+    apiURL = `${environment.apiUrl}`
 
     constructor(private http: HttpClient) { }
 
@@ -75,7 +79,7 @@ export class ApiConnectionService {
 
     updateCaptura(capturaId: string, payload: object): Observable<ArrayBuffer> {
         return this.http.patch<ArrayBuffer>(`${this.apiURL}/capturas/${capturaId}`, payload).pipe(
-            delay(2000)
+            // delay(2000)
         )
     }
 
@@ -100,8 +104,37 @@ export class ApiConnectionService {
         return this.http.delete<ArrayBuffer>(`${this.apiURL}/projetos/${projetoId}`)
     }
 
+    countArmCapMosq(projetoId: string): Observable<{
+        armadilhas: number,
+        capturas: number,
+        mosquitos: {
+            aedes: number,
+            culex: number,
+            outros: number,
+            total: number
+        }
+    }> {
+        return this.http.get<{
+            armadilhas: number,
+            capturas: number,
+            mosquitos: {
+                aedes: number,
+                culex: number,
+                outros: number,
+                total: number
+            }
+        }>(`${this.apiURL}/projetos/${projetoId}/count`)
+    }
 
 
+    getTimeSeries(projetoId: string): Observable<DashboardTimePoint[]> {
+        return this.http.get<DashboardTimePoint[]>(`${this.apiURL}/projetos/${projetoId}/dashboard/time-series`);
+    }
 
+    getIntervalosTroca(projetoId: string): Observable<DashboardTrocaInterval[]> {
+        return this.http.get<DashboardTrocaInterval[]>(
+            `${this.apiURL}/projetos/${projetoId}/dashboard/intervalos-troca`
+        );
+    }
 
 }

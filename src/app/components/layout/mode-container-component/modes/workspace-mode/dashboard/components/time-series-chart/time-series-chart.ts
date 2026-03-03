@@ -1,10 +1,12 @@
-import { AfterViewInit, Component, computed, HostListener, inject, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, computed, effect, HostListener, inject, signal, ViewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ChartConfiguration } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { DashboardDataService } from '../../services/dashboard-data.service';
 import { ptBR } from 'date-fns/locale';
 import { APLICACOES_MOCK } from '../../../entities/aplicacoes/aplicacoes.mock';
+import { ProjectContextService } from '../../../../../../../../services/project-context.service';
+import { DashboardTimePoint } from '../../models/KPI-model';
 
 @Component({
   selector: 'app-time-series-chart',
@@ -22,6 +24,9 @@ export class TimeSeriesChartComponent implements AfterViewInit {
     this.chart?.chart?.resize();
   }
 
+  private projectContext = inject(ProjectContextService);
+  selectedProject = this.projectContext.selected;
+
   ngAfterViewInit() {
     // Aguarda o layout estabilizar
     setTimeout(() => {
@@ -29,14 +34,27 @@ export class TimeSeriesChartComponent implements AfterViewInit {
     }, 0);
   }
 
+  constructor() {
+    effect(() => {
+      this.selectedProject();
+      this.loadData()
+    })
+  }
+
+  data = signal<DashboardTimePoint[]>([])
+
   private dataService = inject(DashboardDataService);
 
-  data = toSignal(this.dataService.getTimeSeries(), { initialValue: [] });
+  loadData() {
+    this.dataService.getTimeSeries(this.selectedProject()?.id!).subscribe(result => {
+      this.data.set(result)
+    })
+  }
+
 
   chartData = computed<ChartConfiguration<'line', { x: number; y: number }[]>['data']>(() => {
 
     const series = this.data(); // DashboardTimePoint[]
-
     return {
       datasets: [
 
@@ -133,37 +151,37 @@ export class TimeSeriesChartComponent implements AfterViewInit {
           font: { size: 12 }
         }
       },
-      annotation: {
-        annotations: Object.fromEntries(
-          APLICACOES_MOCK.map(a => [
-            a.id,
-            {
-              type: 'line',
-              xMin: new Date(a.data).getTime(),
-              xMax: new Date(a.data).getTime(),
-              borderColor: '#2e7d32',
-              borderWidth: 2,
-              borderDash: [4, 4],
+      // annotation: {
+      //   annotations: Object.fromEntries(
+      //     APLICACOES_MOCK.map(a => [
+      //       a.id,
+      //       {
+      //         type: 'line',
+      //         xMin: new Date(a.data).getTime(),
+      //         xMax: new Date(a.data).getTime(),
+      //         borderColor: '#2e7d32',
+      //         borderWidth: 2,
+      //         borderDash: [4, 4],
 
-              label: {
-                display: true,
-                content: `Aplicação`,
-                position: 'end',
-                rotation: 270,
-                backgroundColor: 'rgba(255, 255, 255, 1)',
-                color: '#2e7d32',
-                borderWidth: 0.5,
-                borderColor: '#2e7d32',
-                borderRadius: 6,
-                font: {
-                  size: 12
-                },
-                padding: 5
-              }
-            }
-          ])
-        )
-      }
+      //         label: {
+      //           display: true,
+      //           content: `Aplicação`,
+      //           position: 'end',
+      //           rotation: 270,
+      //           backgroundColor: 'rgba(255, 255, 255, 1)',
+      //           color: '#2e7d32',
+      //           borderWidth: 0.5,
+      //           borderColor: '#2e7d32',
+      //           borderRadius: 6,
+      //           font: {
+      //             size: 12
+      //           },
+      //           padding: 5
+      //         }
+      //       }
+      //     ])
+      //   )
+      // }
     },
 
     scales: {

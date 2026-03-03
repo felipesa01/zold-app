@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, computed, ViewChild, effect, inject } from '@angular/core';
+import { Component, OnInit, signal, computed, ViewChild, effect, inject, isDevMode } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbTypeahead, NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
@@ -28,7 +28,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 })
 export class CapturasForm implements OnInit {
 
-  readonly USER_ID_FIXO = '1d6429ae-130c-4500-b602-9b70bbad17c6';
+  readonly USER_ID_FIXO = isDevMode() ? '9cd1e56a-7357-4cf3-8eec-08265e231d6d' : '1d6429ae-130c-4500-b602-9b70bbad17c6';
 
   @ViewChild('instance', { static: true }) instance!: NgbTypeahead;
 

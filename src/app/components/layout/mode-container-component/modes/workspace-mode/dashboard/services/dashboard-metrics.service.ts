@@ -8,6 +8,8 @@ import { DashboardTrocaInterval } from "../models/interval-stats-model";
 @Injectable({ providedIn: 'root' })
 export class DashboardMetricsService {
 
+
+
   private ONE_DAY = 1000 * 60 * 60 * 24;
 
   diasEntre(a: number, b: number): number {
@@ -148,82 +150,84 @@ export class DashboardMetricsService {
   }
 
 
-  calcularIntervalosTroca(
-    capturas: Captura[],
-    tipo: 'REFIL' | 'ATRATIVO'
-  ): DashboardTrocaInterval {
+  // calcularIntervalosTroca(
+  //   capturas: Captura[],
+  //   tipo: 'REFIL' | 'ATRATIVO'
+  // ): DashboardTrocaInterval {
 
-    const flag = tipo === 'REFIL' ? 'trocaRefil' : 'trocaAtrativo';
+  //   const flag = tipo === 'REFIL' ? 'trocaRefil' : 'trocaAtrativo';
 
-    const datas = capturas
-      .filter(c => c[flag])
-      .map(c => new Date(c.data).getTime())
-      .sort((a, b) => a - b);
+  //   const datas = capturas
+  //     .filter(c => c[flag])
+  //     .map(c => new Date(c.data).getTime())
+  //     .sort((a, b) => a - b);
 
-    if (datas.length < 2) {
-      return {
-        tipo,
-        intervalos: [],
-        media: 0,
-        min: 0,
-        max: 0
-      };
-    }
+  //   if (datas.length < 2) {
+  //     return {
+  //       tipo,
+  //       intervalos: [],
+  //       media: 0,
+  //       min: 0,
+  //       max: 0
+  //     };
+  //   }
 
-    const ONE_DAY = 1000 * 60 * 60 * 24;
+  //   const ONE_DAY = 1000 * 60 * 60 * 24;
 
-    const intervalos = datas.slice(1).map((d, i) =>
-      Math.round((d - datas[i]) / ONE_DAY)
-    );
+  //   const intervalos = datas.slice(1).map((d, i) =>
+  //     Math.round((d - datas[i]) / ONE_DAY)
+  //   );
 
-    return {
-      tipo,
-      intervalos,
-      media: Math.round(intervalos.reduce((a, b) => a + b, 0) / intervalos.length),
-      min: Math.min(...intervalos),
-      max: Math.max(...intervalos)
-    };
-  }
+  //   return {
+  //     tipo,
+  //     intervalos,
+  //     media: Math.round(intervalos.reduce((a, b) => a + b, 0) / intervalos.length),
+  //     min: Math.min(...intervalos),
+  //     max: Math.max(...intervalos)
+  //   };
+  // }
 
-  buildTimeSeries(capturas: Captura[]): DashboardTimePoint[] {
 
-    const aggregated = new Map<number, DashboardTimePoint>();
 
-    capturas.forEach(c => {
+  // buildTimeSeries(capturas: Captura[]): DashboardTimePoint[] {
 
-      const ts = new Date(c.data).getTime();
+  //   const aggregated = new Map<number, DashboardTimePoint>();
 
-      const hasEvento = c.trocaRefil || c.trocaAtrativo;
-      const hasMedicao = c.situacaoFisica === 'REGULAR';
+  //   capturas.forEach(c => {
 
-      // ❗ só ignora se não há NADA relevante
-      if (!hasMedicao && !hasEvento) {
-        return;
-      }
+  //     const ts = new Date(c.data).getTime();
 
-      if (!aggregated.has(ts)) {
-        aggregated.set(ts, {
-          timestamp: ts,
-          numAedes: 0,
-          numCulex: 0,
-          numOutras: 0,
-          numTotal: 0,
-        });
-      }
+  //     const hasEvento = c.trocaRefil || c.trocaAtrativo;
+  //     const hasMedicao = c.situacaoFisica === 'REGULAR';
 
-      const acc = aggregated.get(ts)!;
+  //     // ❗ só ignora se não há NADA relevante
+  //     if (!hasMedicao && !hasEvento) {
+  //       return;
+  //     }
 
-      // soma só se houve medição válida
-      if (hasMedicao) {
-        acc.numAedes += c.numAedes;
-        acc.numCulex += c.numCulex;
-        acc.numOutras += c.numOutras;
-        acc.numTotal += c.numTotal;
-      }
-    });
+  //     if (!aggregated.has(ts)) {
+  //       aggregated.set(ts, {
+  //         timestamp: ts,
+  //         numAedes: 0,
+  //         numCulex: 0,
+  //         numOutras: 0,
+  //         numTotal: 0,
+  //       });
+  //     }
 
-    return Array.from(aggregated.values())
-      .sort((a, b) => a.timestamp - b.timestamp);
-  }
+  //     const acc = aggregated.get(ts)!;
+
+  //     // soma só se houve medição válida
+  //     if (hasMedicao) {
+  //       acc.numAedes += c.numAedes;
+  //       acc.numCulex += c.numCulex;
+  //       acc.numOutras += c.numOutras;
+  //       acc.numTotal += c.numTotal;
+  //     }
+  //   });
+
+  //   return Array.from(aggregated.values())
+  //     .sort((a, b) => a.timestamp - b.timestamp);
+  // }
 
 }

@@ -1,6 +1,11 @@
 <div class="kpi-grid">
   <div class="kpi-card" *ngFor="let kpi of kpis()">
     <div class="kpi-label">{{ kpi.label }}</div>
+    @if (loading()) {
+    <mat-spinner diameter="30"></mat-spinner>
+    }
+    @else {
     <div class="kpi-value">{{ kpi.value }} {{ kpi.unit }}</div>
+    }
   </div>
 </div>

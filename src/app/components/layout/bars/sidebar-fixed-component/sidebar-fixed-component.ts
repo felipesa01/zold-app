@@ -70,8 +70,8 @@ export class SidebarFixedComponent {
   modeIcon: 'map' | 'space_dashboard' = this.modeTurn() === 'map' ? 'space_dashboard' : 'map';
 
   configItems = [
-    { icon: undefined, label: 'Alternar modo', onClick: () => this.changeMode() },
-    { icon: 'account_circle', label: 'Conta' }
+    { icon: undefined, label: 'Alternar modo', onClick: () => this.changeMode(), disabled: false },
+    { icon: 'account_circle', label: 'Conta', disabled: true  }
   ];
 
   toggle() {

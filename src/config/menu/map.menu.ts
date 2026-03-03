@@ -7,18 +7,21 @@ export const MAP_MENU: SideMenuItemConfig[] = [
     id: 'layers',
     nome: 'Camadas',
     icon: 'layers',
-    expandible: true
+    expandible: true,
+    disabled: true
   },
   {
     id: 'modules',
     nome: 'Módulos',
     icon: 'view_module',
-    expandible: true
+    expandible: true,
+    disabled: true
   },
   {
     id: 'lists',
     nome: 'Listas',
     icon: 'list',
-    expandible: true
+    expandible: true,
+    disabled: true
   }
 ];

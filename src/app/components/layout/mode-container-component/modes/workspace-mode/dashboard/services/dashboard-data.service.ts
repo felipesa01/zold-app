@@ -6,66 +6,56 @@ import { DashboardKpi, DashboardOperationalKpi, DashboardTimePoint, DashboardTro
 import { DashboardMetricsService } from "./dashboard-metrics.service";
 import { DashboardCriticalTrap } from "../models/ranking-model";
 import { DashboardTrocaInterval } from "../models/interval-stats-model";
+import { ApiConnectionService } from "../../../../../../../services/api-connection-service";
 
 @Injectable({ providedIn: 'root' })
 export class DashboardDataService {
 
     private metrics = inject(DashboardMetricsService);
 
+    constructor(private apiConnection: ApiConnectionService) { }
 
-    getTimeSeries(): Observable<DashboardTimePoint[]> {
-        return of(
-            this.metrics.buildTimeSeries(CAPTURAS_MOCK)
-        );
+    getTimeSeries(projetoId: string): Observable<DashboardTimePoint[]> {
+        return this.apiConnection.getTimeSeries(projetoId)
     }
 
-    getKpis(): Observable<DashboardKpi[]> {
-        const totalArmadilhas = ARMADILHAS_MOCK.length;
-        const totalCapturas = CAPTURAS_MOCK.length;
-        const totalMosquitos = CAPTURAS_MOCK.reduce((s, c) => s + c.numTotal, 0);
+    getKpis(projetoId: string): Observable<DashboardKpi[]> {
+        return this.apiConnection.countArmCapMosq(projetoId).pipe(
+            map(result => {
+                return [
+                    { id: 'armadilhas', label: 'Armadilhas', value: result.armadilhas },
+                    { id: 'capturas', label: 'Capturas', value: result.capturas },
+                    { id: 'mosquitos', label: 'Mosquitos', value: result.mosquitos.total }
+                ]
+            })
+        )
 
-        return of([
-            { id: 'armadilhas', label: 'Armadilhas', value: totalArmadilhas },
-            { id: 'capturas', label: 'Capturas', value: totalCapturas },
-            { id: 'mosquitos', label: 'Mosquitos', value: totalMosquitos }
-        ]);
     }
 
-    getTrocaStats(): Observable<DashboardTrocaStats[]> {
-        return of([
-            this.metrics.calcularTrocaStats(
-                CAPTURAS_MOCK,
-                ARMADILHAS_MOCK,
-                'REFIL'
-            ),
-            this.metrics.calcularTrocaStats(
-                CAPTURAS_MOCK,
-                ARMADILHAS_MOCK,
-                'ATRATIVO'
-            )
-        ]);
-    }
+    // getTrocaStats(projetoId: string): Observable<DashboardTrocaStats[]> {
+    //    return this.apiConnection.getTrocaStats(projetoId)
+    // }
 
-    getOperationalKpis(): Observable<DashboardOperationalKpi[]> {
-        return this.getTrocaStats().pipe(
-            map(stats =>
-                stats.flatMap(s => ([
-                    {
-                        id: `media-${s.tipo}`,
-                        label: `Média entre trocas (${s.tipo.toLowerCase()})`,
-                        value: s.mediaDias,
-                        unit: 'dias'
-                    },
-                    {
-                        id: `maior-${s.tipo}`,
-                        label: `Maior período sem troca (${s.tipo.toLowerCase()})`,
-                        value: s.maiorPeriodoAtual,
-                        unit: 'dias'
-                    }
-                ]))
-            )
-        );
-    }
+    // getOperationalKpis(projetoId: string): Observable<DashboardOperationalKpi[]> {
+    //     return this.apiConnection.getTrocaStats(projetoId).pipe(
+    //         map(stats =>
+    //             stats.flatMap(s => ([
+    //                 {
+    //                     id: `media-${s.tipo}`,
+    //                     label: `Média entre trocas (${s.tipo.toLowerCase()})`,
+    //                     value: s.mediaDias,
+    //                     unit: 'dias'
+    //                 },
+    //                 {
+    //                     id: `maior-${s.tipo}`,
+    //                     label: `Maior período sem troca (${s.tipo.toLowerCase()})`,
+    //                     value: s.maiorPeriodoAtual,
+    //                     unit: 'dias'
+    //                 }
+    //             ]))
+    //         )
+    //     );
+    // }
 
     getRankingCritico(): Observable<DashboardCriticalTrap[]> {
         return of(
@@ -76,18 +66,18 @@ export class DashboardDataService {
         );
     }
 
-    getIntervalosTroca(): Observable<DashboardTrocaInterval[]> {
+    // getIntervalosTroca(): Observable<DashboardTrocaInterval[]> {
 
-        const refil = this.metrics.calcularIntervalosTroca(
-            CAPTURAS_MOCK,
-            'REFIL'
-        );
+    //     const refil = this.metrics.calcularIntervalosTroca(
+    //         CAPTURAS_MOCK,
+    //         'REFIL'
+    //     );
 
-        const atrativo = this.metrics.calcularIntervalosTroca(
-            CAPTURAS_MOCK,
-            'ATRATIVO'
-        );
+    //     const atrativo = this.metrics.calcularIntervalosTroca(
+    //         CAPTURAS_MOCK,
+    //         'ATRATIVO'
+    //     );
 
-        return of([refil, atrativo]);
-    }
+    //     return of([refil, atrativo]);
+    // }
 }

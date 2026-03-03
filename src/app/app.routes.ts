@@ -125,5 +125,5 @@ export const routes: Routes = [
     },
 
 
-    { path: '**', redirectTo: '/map' }
+    { path: '**', redirectTo: '/workspace' }
 ];
