@@ -28,12 +28,16 @@ import { Fill, Stroke } from 'ol/style';
 import VectorSource from 'ol/source/Vector';
 import VectorLayer from 'ol/layer/Vector';
 import Text from 'ol/style/Text';
+import { defaults as defaultControls } from 'ol/control';
+import { defaults as defaultInteractions } from 'ol/interaction';
+import { XYZ } from 'ol/source';
+import { CommonModule } from '@angular/common';
 
 
 @Component({
     selector: 'app-total-armadilha-barra-mapa',
     standalone: true,
-    imports: [BaseChartDirective, PeriodControlComponent],
+    imports: [CommonModule, BaseChartDirective, PeriodControlComponent],
     templateUrl: './total-armadilha-barra-mapa.component.html',
     styleUrl: './total-armadilha-barra-mapa.component.css'
 })
@@ -41,6 +45,7 @@ export class TotalArmadilhaBarraMapaComponent implements AfterViewInit {
 
     @ViewChild(BaseChartDirective)
     chart?: BaseChartDirective;
+
     @ViewChild('mapElement') mapElement!: ElementRef<HTMLDivElement>;
 
 
@@ -52,28 +57,48 @@ export class TotalArmadilhaBarraMapaComponent implements AfterViewInit {
     periodo = signal<PeriodInterval>({})
     periodoLabel = signal<string>('')
     data = signal<MosquitosArmadilha[]>([]);
-    private armadilhas = signal<Armadilha[]>([]);
+    // private armadilhas = signal<Armadilha[]>([]);
 
     pageSize = 10
 
     pagina = signal(0)
 
-    totalPaginas = computed(() =>
-        Math.ceil(this.armadilhas().length / this.pageSize)
-    )
+    totalPaginas = computed(() => {
+        var data;
+        if (this.regiao()) {data = this.data().filter(e => e.a_regiao == this.regiao())}
+        else {data = this.data()}
+
+        return Math.ceil(data.length / this.pageSize)
+    })
 
     armadilhasPagina = computed(() => {
+        var data;
+        if (this.regiao()) {data = this.data().filter(e => e.a_regiao == this.regiao())}
+        else {data = this.data()}
 
         const start = this.pagina() * this.pageSize
         const end = start + this.pageSize
 
-        return this.data().slice(start, end)
+        return data.slice(start, end)
 
     })
 
+    regiaoOptions = computed(() => {
+        const data = this.data();
+        const values = data.map(c => c.a_regiao);
+        return [...new Set(values)];
+    });
+    regiao = signal<string | null>(null);
+
+    onRegiao(event: Event) {
+        this.pagina.set(0)
+        const value = (event.target as HTMLSelectElement).value;
+        this.regiao.set(value || null);
+    }
+
     private zone = inject(NgZone)
     map = signal<Map | null>(null);
-    
+
 
     datasetVisibility = signal<Record<string, boolean>>({})
 
@@ -84,24 +109,17 @@ export class TotalArmadilhaBarraMapaComponent implements AfterViewInit {
 
     filtered = computed(() => {
         const armadilhasPagina = this.armadilhasPagina()
-        const data = this.data()
         const nomesPagina = new Set(armadilhasPagina.map(a => a.armadilha))
+        const data = this.data()
         return data.filter(d => nomesPagina.has(d.armadilha))
     })
 
     titulo = computed(() => {
 
         const visibilidade = this.datasetVisibility()
-        console.log(visibilidade)
         const visiveis = Object.keys(visibilidade).sort().filter(d => visibilidade[d] !== false)
-        console.log(visiveis)
-
 
         const periodo = this.periodo()
-
-        const inicio = periodo?.inicio
-        const fim = periodo?.fim
-
 
         if (visiveis.length === 0)
             return `Sem dados`
@@ -129,17 +147,44 @@ export class TotalArmadilhaBarraMapaComponent implements AfterViewInit {
             datasetVisibleInit[d.label!] = this.chart!.chart!.isDatasetVisible(i)
         })
         this.datasetVisibility.set(datasetVisibleInit);
+
+
+
+        const mapInstance = new Map({
+            moveTolerance: 3,
+            interactions: defaultInteractions(undefined),
+            layers: [
+                new TileLayer({
+                    source: new XYZ({
+                        url: 'https://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}',
+                        attributions: '© Google'
+                    })
+                }),
+                this.armadilhaLayer
+            ],
+            view: new View({
+                projection: 'EPSG:4326',
+                center: [-46.9212, -23.448],
+                zoom: 10,
+            }),
+            controls: defaultControls({ attribution: false, zoom: false, rotate: false }),
+        });
+        mapInstance.setTarget(this.mapElement.nativeElement);
+        this.map.set(mapInstance);
+        setTimeout(() => mapInstance.updateSize());
     }
 
     constructor() {
+
+        effect(() => {
+            this.selectedProject();
+            this.pagina.set(0);
+            this.regiao.set(null)
+        })
+
         effect(() => {
 
-            const project = this.selectedProject();
-            const p = this.periodo()
-            if (project) {
-                this.loadData();
-            }
-
+            this.selectedProject();
             const map = this.map();
             const armadilhas = this.armadilhasPagina();
 
@@ -149,28 +194,36 @@ export class TotalArmadilhaBarraMapaComponent implements AfterViewInit {
             if (!armadilhas.length) return;
             const features = armadilhas.map(a => {
                 const feature = new Feature({
-                    geometry: new Point([a.lon, a.lat])
+                    geometry: new Point([a.a_lon, a.a_lat])
                 });
-                feature.set('armadilhaId', a.id);
+                feature.set('armadilhaId', a.a_id);
                 feature.set('nome', a.armadilha);
                 return feature;
             });
-
             this.armadilhaSource.addFeatures(features);
 
+            map.getView().fit(
+                this.armadilhaSource.getExtent(),
+                { padding: [100, 100, 100, 100], maxZoom: 18 }
+            );
 
+        })
+        effect(() => {
 
+            const project = this.selectedProject();
+            const p = this.periodo()
+            if (project) {
+                this.loadData();
+            }
 
+            const map = this.map();
+            if (!map) return;
             this.zone.onStable.subscribe(() => {
                 if (!this.mapElement) return;
                 map.setTarget(this.mapElement.nativeElement);
                 map.updateSize();
             });
 
-            map.getView().fit(
-                this.armadilhaSource.getExtent(),
-                { padding: [100, 100, 100, 100], maxZoom: 18 }
-            );
         });
 
 
@@ -218,10 +271,8 @@ export class TotalArmadilhaBarraMapaComponent implements AfterViewInit {
             .getMosquitosPorArmadilhas(this.selectedProject()?.id!, this.periodo().inicio, this.periodo().fim)
             .subscribe(result => {
                 this.data.set(result);
-
             });
 
-        const project = this.selectedProject();
     }
 
 
@@ -258,8 +309,6 @@ export class TotalArmadilhaBarraMapaComponent implements AfterViewInit {
 
         const data = this.filtered();
         const visibilidade = this.datasetVisibility()
-
-
         const armadilhas = this.armadilhasPagina()
 
         function soma(tipo: 'aedes' | 'culex' | 'outras', armadilhaNome: string) {
@@ -320,7 +369,7 @@ export class TotalArmadilhaBarraMapaComponent implements AfterViewInit {
                 color: '#444',
                 font: {
                     weight: 'bold',
-                    size: 12
+                    size: 11
                 },
 
                 formatter: (value: number) => {

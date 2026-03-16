@@ -55,9 +55,9 @@ export class EvolucaoMesLinhaComponent implements AfterViewInit {
     titulo = computed(() => {
 
         const visibilidade = this.datasetVisibility()
-        console.log(visibilidade)
+        // console.log(visibilidade)
         const visiveis = Object.keys(visibilidade).sort().filter(d => visibilidade[d] !== false)
-        console.log(visiveis)
+        // console.log(visiveis)
 
 
         const periodo = this.periodo()

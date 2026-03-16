@@ -1,24 +1,36 @@
 <div class="h-100">
-
     <div class="chart-layout h-100">
         <div class="d-flex">
             <app-period-control (periodoChange)="onPeriodoChange($event)"></app-period-control>
         </div>
-        <!-- <app-period-control (periodoChange)="onPeriodoChange($event)"></app-period-control> -->
-        <div class="title-container">
-            <h5>
-                Totais por Mês: {{titulo()}}
-            </h5>
 
-            <p>{{periodoLabel()}}</p>
+        <div>
+            <select class="regiao-select" (change)="onRegiao($event)">
+                <option value="">Todas as regiões</option>
+                @for (s of regiaoOptions(); track s) {
+                <option [value]="s" [selected]="regiao() === s">
+                    {{ s }}
+                </option>
+                }
+            </select>
+        </div>
+        <!-- <app-period-control (periodoChange)="onPeriodoChange($event)"></app-period-control> -->
+        <div class="title-container mb-3">
+            <h5>
+                Totais por armadilhas: {{titulo()}}
+            </h5>
+            @if (regiao()) {
+            <p class="mb-0">Região: {{regiao()}}</p>
+
+            }
+            <p class="mb-0">{{periodoLabel()}}</p>
         </div>
 
         <div class="charts">
+
             <div class="bar">
                 <canvas baseChart class="chart-md" [data]="chartData()" [options]="chartOptions" [type]="'bar'">
                 </canvas>
-
-
             </div>
 
             <div class="map-container">

@@ -7,7 +7,7 @@ import { IntervalStatsComponent } from "./components/interval-stats/interval-sta
 import { TotalMesBarraComponent } from "./components/total-mes-barra/total-mes-barra.component";
 import { TotalMonitoramentoBarraComponent } from "./components/total-monitoramento-barra/total-monitoramento-barra.component";
 import { EvolucaoMesLinhaComponent } from "./components/evolucao-mes-linha/evolucao-mes-linha.component";
-import { EvolucaoMonitoramentoLinhaComponent } from "./components/evolucao-monitoramento-linha.component/evolucao-monitoramento-linha.component";
+import { EvolucaoMonitoramentoLinhaComponent } from "./components/evolucao-monitoramento-linha/evolucao-monitoramento-linha.component";
 import { TotalRegiaoBarraComponent } from "./components/total-regiao-barra.component/total-regiao-barra.component";
 import { TotalArmadilhaBarraMapaComponent } from "./components/total-armadilha-barra-mapa/total-armadilha-barra-mapa.component";
 

@@ -76,10 +76,11 @@ export interface MosquitosRegiao {
 }
 
 export interface MosquitosArmadilha {
-  id: string,
+  a_id: string,
   armadilha: string;
-  lat: number;
-  lon: number;
+  a_regiao: string,
+  a_lat: number;
+  a_lon: number;
   aedes: number;
   culex: number;
   outras: number;
