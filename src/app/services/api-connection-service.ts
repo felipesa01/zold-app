@@ -4,7 +4,7 @@ import { delay, map, Observable } from "rxjs";
 import { Armadilha, CreateArmadilha } from "../components/layout/mode-container-component/modes/workspace-mode/entities/armadilhas/armadilha.model";
 import { Captura, CreateCaptura } from "../components/layout/mode-container-component/modes/workspace-mode/entities/capturas/captura.model";
 import { environment } from "../../environments/environment";
-import { DashboardTimePoint, DashboardTrocaStats } from "../components/layout/mode-container-component/modes/workspace-mode/dashboard/models/KPI-model";
+import { DashboardTimePoint, DashboardTrocaStats, EvoluçãoAgrupado, MosquitosAgrupados, MosquitosArmadilha, MosquitosRegiao } from "../components/layout/mode-container-component/modes/workspace-mode/dashboard/models/KPI-model";
 import { DashboardTrocaInterval } from "../components/layout/mode-container-component/modes/workspace-mode/dashboard/models/interval-stats-model";
 
 
@@ -134,6 +134,88 @@ export class ApiConnectionService {
     getIntervalosTroca(projetoId: string): Observable<DashboardTrocaInterval[]> {
         return this.http.get<DashboardTrocaInterval[]>(
             `${this.apiURL}/projetos/${projetoId}/dashboard/intervalos-troca`
+        );
+    }
+
+
+
+    getMosquitosPorMes(projetoId: string, inicio?: Date | undefined, fim?: Date | undefined): Observable<MosquitosAgrupados[]> {
+        var periodo = ''
+        if (inicio) {
+            periodo += `&dataInicio=${inicio.toISOString().slice(0, 10)}`
+        }
+        if (fim) {
+            periodo += `&dataFim=${fim.toISOString().slice(0, 10)}`
+        }
+        return this.http.get<MosquitosAgrupados[]>(
+            `${this.apiURL}/dashboard/mosquitos-mes?projetoId=${projetoId}${periodo}`
+        );
+    }
+
+    getMosquitosPorMonitoramento(projetoId: string, inicio?: Date | undefined, fim?: Date | undefined): Observable<MosquitosAgrupados[]> {
+
+        var periodo = ''
+        if (inicio) {
+            periodo += `&dataInicio=${inicio.toISOString().slice(0, 10)}`
+        }
+        if (fim) {
+            periodo += `&dataFim=${fim.toISOString().slice(0, 10)}`
+        }
+
+        return this.http.get<MosquitosAgrupados[]>(
+            `${this.apiURL}/dashboard/mosquitos-monitoramento?projetoId=${projetoId}${periodo}`
+        );
+    }
+
+    // getEvolucaoPorMes(projetoId: string, inicio?: Date | undefined, fim?: Date | undefined): Observable<EvoluçãoAgrupado[]> {
+    //     var periodo = ''
+    //     if (inicio) {
+    //         periodo += `&dataInicio=${inicio.toISOString().slice(0, 10)}`
+    //     }
+    //     if (fim) {
+    //         periodo += `&dataFim=${fim.toISOString().slice(0, 10)}`
+    //     }
+    //     return this.http.get<EvoluçãoAgrupado[]>(
+    //         `${this.apiURL}/dashboard/evolucao-mes?projetoId=${projetoId}${periodo}`
+    //     );
+    // }
+
+    // getEvolucaoPorMonitoramento(projetoId: string, inicio?: Date | undefined, fim?: Date | undefined): Observable<EvoluçãoAgrupado[]> {
+    //     var periodo = ''
+    //     if (inicio) {
+    //         periodo += `&dataInicio=${inicio.toISOString().slice(0, 10)}`
+    //     }
+    //     if (fim) {
+    //         periodo += `&dataFim=${fim.toISOString().slice(0, 10)}`
+    //     }
+    //     return this.http.get<EvoluçãoAgrupado[]>(
+    //         `${this.apiURL}/dashboard/evolucao-monitoramento?projetoId=${projetoId}${periodo}`
+    //     );
+    // }
+
+    getMosquitosPorRegiao(projetoId: string, inicio?: Date | undefined, fim?: Date | undefined): Observable<MosquitosRegiao[]> {
+        var periodo = ''
+        if (inicio) {
+            periodo += `&dataInicio=${inicio.toISOString().slice(0, 10)}`
+        }
+        if (fim) {
+            periodo += `&dataFim=${fim.toISOString().slice(0, 10)}`
+        }
+        return this.http.get<MosquitosRegiao[]>(
+            `${this.apiURL}/dashboard/regioes?projetoId=${projetoId}${periodo}`
+        );
+    }
+
+    getMosquitosPorArmadilhas(projetoId: string, inicio?: Date | undefined, fim?: Date | undefined): Observable<MosquitosArmadilha[]> {
+        var periodo = ''
+        if (inicio) {
+            periodo += `&dataInicio=${inicio.toISOString().slice(0, 10)}`
+        }
+        if (fim) {
+            periodo += `&dataFim=${fim.toISOString().slice(0, 10)}`
+        }
+        return this.http.get<MosquitosArmadilha[]>(
+            `${this.apiURL}/dashboard/armadilhas?projetoId=${projetoId}${periodo}`
         );
     }
 

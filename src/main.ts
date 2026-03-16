@@ -6,19 +6,10 @@ import { App } from './app/app';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import zoomPlugin from 'chartjs-plugin-zoom';
 import 'chartjs-adapter-date-fns';
-import {
-  Chart,
-  LineController,
-  LineElement,
-  PointElement,
-  LinearScale,
-  TimeScale,
-  Tooltip,
-  Legend
-} from 'chart.js';
-
+import {  Chart,  LineController,LineElement,PointElement,LinearScale,TimeScale,Tooltip,  Legend} from 'chart.js';
 import { registerLocaleData } from '@angular/common';
 import localePt from '@angular/common/locales/pt';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 registerLocaleData(localePt);
 
@@ -30,10 +21,12 @@ Chart.register(
   TimeScale,
   Tooltip,
   Legend,
-  zoomPlugin
+  zoomPlugin,
+  annotationPlugin,
+  ChartDataLabels
 );
 
-Chart.register(annotationPlugin);
+
 
 bootstrapApplication(App, appConfig)
   .catch((err) => console.error(err));

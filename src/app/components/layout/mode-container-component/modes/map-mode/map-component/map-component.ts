@@ -57,7 +57,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   fitTrees() {
     const extent = this.layerService.arvoresLayer.getSource()?.getExtent()
     const padding = this.isMobile() ? [10, 50, 10, 50] : [200, 200, 200, 200]
-    if (extent) this.mapService.map.getView().fit(extent, { padding: padding, duration: 1200 })
+    if (extent) this.mapService.map.getView().fit(extent, { padding: padding, duration: 1200, maxZoom: 19 })
   }
 
   modoMapa: 'satelite' | 'mapa' = 'satelite';

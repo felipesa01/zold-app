@@ -1,0 +1,109 @@
+.dashboard-card {
+  /* height: 450px; */
+  padding: 16px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.periodo {
+  width: 260px;
+}
+
+.title-container {
+  text-align: center;
+  margin: 0px;
+}
+
+.title-container p {
+  font-size: 0.9em;
+}
+
+
+.chart-layout {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* container dos gráficos */
+.charts {
+  flex: 1;
+  display: flex;
+  gap: 20px;
+  min-height: 0;
+}
+
+/* gráfico de barras */
+.bar {
+  flex: 3;
+  position: relative;
+  max-height: 350px;
+}
+
+/* donut */
+.doughnut {
+  flex: 1;
+  position:relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-height: 250px;
+/* 
+  position: absolute;
+  top: 0.4em;
+  right: 0em; */
+  max-width: 220px;
+}
+
+.doughnut.deactived{
+ display: none;
+}
+
+/* canvas ocupar todo espaço */
+.bar canvas,
+.doughnut canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+
+.chart-mode-btn{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width:30px;
+  height:30px;
+  border-radius:8px;
+  border:none;
+  background:#f3f3f3;
+  cursor:pointer;
+
+}
+
+.chart-mode-btn.active{
+  background:#ff6b3d;
+  color:white;
+}
+
+@media (max-width: 1250px) {
+
+  .charts {
+    flex-direction: column;
+  }
+
+  .bar {
+    height: 300px;
+  }
+
+  .doughnut {
+    height: 220px;
+    max-width: 100%;
+  }
+
+}

@@ -1,0 +1,49 @@
+<div class="h-100">
+
+    <div class="chart-layout h-100">
+        <div class="d-flex">
+            <app-period-control (periodoChange)="onPeriodoChange($event)"></app-period-control>
+        </div>
+        <!-- <app-period-control (periodoChange)="onPeriodoChange($event)"></app-period-control> -->
+        <div class="title-container">
+            <h5>
+                Totais por Mês: {{titulo()}}
+            </h5>
+
+            <p>{{periodoLabel()}}</p>
+        </div>
+
+        <div class="charts">
+            <div class="bar">
+                <canvas baseChart class="chart-md" [data]="chartData()" [options]="chartOptions" [type]="'bar'">
+                </canvas>
+
+
+            </div>
+
+            <div class="map-container">
+                <div #mapElement class="map"></div>
+            </div>
+
+
+        </div>
+        <div class="paginacao">
+            <button class="btn-nav" (click)="paginaAnterior()" [disabled]="pagina() === 0">
+                ◀
+            </button>
+            <span>Página {{ pagina() + 1 }} de
+                {{ totalPaginas() }}
+            </span>
+            <button class="btn-nav" (click)="proximaPagina()" [disabled]="pagina() === totalPaginas() - 1">
+                ▶
+            </button>
+        </div>
+
+    </div>
+
+
+
+
+
+
+</div>

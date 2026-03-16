@@ -13,6 +13,8 @@ import TileLayer from "ol/layer/Tile";
 import OsmSource from 'ol/source/OSM';
 import { XYZ } from "ol/source";
 import CircleStyle from "ol/style/Circle";
+import { exemplaresMock } from "../components/shared/exemplar-info-component/data-mock";
+import Point from "ol/geom/Point";
 
 
 export interface mappingResultObject {
@@ -55,19 +57,45 @@ export class LayersService {
             this.fasesLayer.setStyle(this.styleFases)
         });
 
-        this.http.get('assets/vetores/arvores.json').pipe(take(1)).subscribe(e => {
-            let features: Feature[] = new GeoJSON({ dataProjection: "EPSG:4326", featureProjection: 'EPSG:4326', }).readFeatures(e);
-            this.arvoresLayer.setSource(new VectorSource({
-                features: features,
-            }));
-            const properties_ = {
-                'name': 'Árvores',
-                'id': 2,
-            }
-            this.arvoresLayer.setProperties(properties_);
-            this.arvoresLayer.setStyle(this.styleArvores)
+        // this.http.get('assets/vetores/arvores.json').pipe(take(1)).subscribe(e => {
+        //     let features: Feature[] = new GeoJSON({ dataProjection: "EPSG:4326", featureProjection: 'EPSG:4326', }).readFeatures(e);
+        //     this.arvoresLayer.setSource(new VectorSource({
+        //         features: features,
+        //     }));
+        //     const properties_ = {
+        //         'name': 'Árvores',
+        //         'id': 2,
+        //     }
+        //     this.arvoresLayer.setProperties(properties_);
+        //     this.arvoresLayer.setStyle(this.styleArvores)
+
+        // });
+
+        const features: Feature[] = exemplaresMock.map(ex => {
+            const feature = new Feature({
+                geometry: new Point([
+                    ex.exemplar.longitude,
+                    ex.exemplar.latitude
+                ]),
+                ...ex.exemplar
+            });
+            // dados completos da árvore
+            // feature.set('data', ex);
+            return feature;
 
         });
+
+        this.arvoresLayer.setSource(new VectorSource({
+            features: features
+        }));
+
+        this.arvoresLayer.setProperties({
+            name: 'Árvores',
+            id: 2,
+            pk_name: 'identificacao'
+        });
+
+        this.arvoresLayer.setStyle(this.styleArvores);
     }
 
     zoomToResolution4326(zoom: number): number {

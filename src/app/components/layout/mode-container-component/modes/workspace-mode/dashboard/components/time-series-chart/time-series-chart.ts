@@ -7,10 +7,11 @@ import { ptBR } from 'date-fns/locale';
 import { APLICACOES_MOCK } from '../../../entities/aplicacoes/aplicacoes.mock';
 import { ProjectContextService } from '../../../../../../../../services/project-context.service';
 import { DashboardTimePoint } from '../../models/KPI-model';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-time-series-chart',
-  imports: [BaseChartDirective],
+  imports: [BaseChartDirective, MatButtonModule],
   templateUrl: './time-series-chart.html',
   styleUrl: './time-series-chart.css',
 })
@@ -50,6 +51,11 @@ export class TimeSeriesChartComponent implements AfterViewInit {
       this.data.set(result)
     })
   }
+
+  resetZoom() {
+    this.chart?.chart?.resetZoom();
+  }
+
 
 
   chartData = computed<ChartConfiguration<'line', { x: number; y: number }[]>['data']>(() => {
@@ -151,6 +157,23 @@ export class TimeSeriesChartComponent implements AfterViewInit {
           font: { size: 12 }
         }
       },
+      zoom: {
+        zoom: {
+          wheel: {
+            enabled: true   // zoom com scroll do mouse
+          },
+          pinch: {
+            enabled: true   // zoom com dois dedos (touch)
+          },
+          mode: 'x'         // zoom apenas no eixo X (tempo)
+        },
+        pan: {
+          enabled: true,
+          mode: 'x',        // arrastar horizontal
+          modifierKey: 'ctrl' // evita pan acidental
+        }
+      },
+      datalabels: {display: false}
       // annotation: {
       //   annotations: Object.fromEntries(
       //     APLICACOES_MOCK.map(a => [

@@ -2,7 +2,7 @@ import { inject, Injectable } from "@angular/core";
 import { Observable, of, map } from "rxjs";
 import { ARMADILHAS_MOCK } from "../../entities/armadilhas/armadilhas.mock";
 import { CAPTURAS_MOCK } from "../../entities/capturas/captura.mock";
-import { DashboardKpi, DashboardOperationalKpi, DashboardTimePoint, DashboardTrocaStats } from "../models/KPI-model";
+import { DashboardKpi, DashboardOperationalKpi, DashboardTimePoint, DashboardTrocaStats, MosquitosAgrupados } from "../models/KPI-model";
 import { DashboardMetricsService } from "./dashboard-metrics.service";
 import { DashboardCriticalTrap } from "../models/ranking-model";
 import { DashboardTrocaInterval } from "../models/interval-stats-model";
@@ -56,6 +56,10 @@ export class DashboardDataService {
     //         )
     //     );
     // }
+
+    getMosquitosPorMes(projetoId: string, inicio?: Date, fim?: Date): Observable<MosquitosAgrupados[]> {
+        return this.apiConnection.getMosquitosPorMes(projetoId, inicio, fim)
+    }
 
     getRankingCritico(): Observable<DashboardCriticalTrap[]> {
         return of(

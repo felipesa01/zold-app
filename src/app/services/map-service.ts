@@ -21,7 +21,7 @@ import { FormGroup } from '@angular/forms';
 import { BottomSheetService } from './bottom-sheet-service';
 import { ResponsiveService } from './responsive-service';
 import { ExemplarInfoComponent } from '../components/shared/exemplar-info-component/exemplar-info-component';
-import { exemplarMock } from '../components/shared/exemplar-info-component/data-mock';
+import { exemplaresMock } from '../components/shared/exemplar-info-component/data-mock';
 
 export interface dataToDialogInfoSearch {
   data: mappingResultObject,
@@ -152,15 +152,20 @@ export class MapService {
       let listFeature: Feature[] = [];
       // console.log('Para cada feição no clique:');
       this.map.forEachFeatureAtPixel(evt.pixel, (feature, layer) => {
-        console.log('feature: ', feature);
-        console.log('layer: ', layer);
+        // console.log('feature: ', feature);
+        // console.log('layer: ', layer);
         if (typeof layer.get('id') === 'string') {
           if (['HLO', 'HLI'].some((e) => layer.get('id').includes(e))) return;
         }
         if (layer.get('id') != 2) return
+
         listFeature.push(feature as Feature);
+
+
       });
-      // console.log(listFeature);
+      // console.log('listFeature', listFeature);
+
+
       const evtPixelGlobal = [(evt as MapBrowserEvent<PointerEvent>).originalEvent.pageX, (evt as MapBrowserEvent<PointerEvent>).originalEvent.pageY];
       this.openOnClickComponent(listFeature, evtPixelGlobal);
     });
@@ -169,6 +174,9 @@ export class MapService {
 
   // Abrir diálogo de escolha caso o click contenha mais de uma camada e/ou feição
   openOnClickComponent(e: {}, position: number[]): void {
+
+    // console.log('e', e)
+
     const positioning = { left: (position[0] + 10).toString() + 'px', top: (position[1] + 10).toString() + 'px' };
     const dialogConfig = new MatDialogConfig();
     dialogConfig.minWidth = 0;
@@ -212,6 +220,8 @@ export class MapService {
 
   openGeneralFeatureInfo(item: mappingResultObject, zoomToFeature: boolean = false, typeOfDialog = 'info', panelClass: string[] = []) {
 
+    // console.log('openGeneralFeatureInfo', item)
+
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = false;
     dialogConfig.hasBackdrop = false;
@@ -245,8 +255,9 @@ export class MapService {
       // console.log('modal ainda não aberto')
       setTimeout(() => {
 
+
         this.generalInfoDialog = this.dialog.open(ExemplarInfoComponent, {
-          data: exemplarMock,
+          data: exemplaresMock.filter(e => e.exemplar.identificacao == item.pk_value)[0],
           maxWidth: '480px', // simula celular
           panelClass: 'mobile-dialog'
         });

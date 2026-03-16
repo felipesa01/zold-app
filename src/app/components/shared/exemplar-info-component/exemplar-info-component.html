@@ -1,141 +1,177 @@
 <div class="modal-container">
+
     <header class="header">
-        <h2>Exemplar #{{ data.exemplar.gid }}</h2>
+        <h2>
+            {{ data.exemplar.nm_comum }}
+            <span class="sub">{{ data.exemplar.nm_cientifico }}</span>
+        </h2>
+
         <button mat-icon-button (click)="close()">
             <mat-icon>close</mat-icon>
         </button>
     </header>
 
-    <!-- INFORMAÇÕES DO EXEMPLAR -->
+
+    <!-- DADOS DO EXEMPLAR -->
+
     <section class="section">
-        <h3>Informações do Exemplar</h3>
+
+        <h3>Dados do exemplar</h3>
+
         <div class="info-grid">
-            <div class="label">Nome Científico:</div>
-            <div class="value">{{ data.exemplar.nm_cientifico }}</div>
 
-            <div class="label">Nome Comum:</div>
-            <div class="value">{{ data.exemplar.nm_comum }}</div>
+            <div class="label">ID</div>
+            <div class="value">{{ data.exemplar.identificacao }}</div>
 
-            <div class="label">Endereço:</div>
+            <div class="label">Endereço</div>
             <div class="value">{{ data.exemplar.endereco }}</div>
 
-            <div class="label">Origem da Espécie:</div>
+            <div class="label">Origem</div>
             <div class="value">{{ data.exemplar.origem_esp }}</div>
 
-            <div class="label">Floração:</div>
+            <div class="label">Floração</div>
             <div class="value">{{ data.exemplar.floracao }}</div>
+
+            <div class="label">Cor da flor</div>
+            <div class="value">{{ data.exemplar.cor_flor }}</div>
+
+            <div class="label">DAP</div>
+            <div class="value">{{ data.exemplar.dap }} cm</div>
+
+            <div class="label">Altura</div>
+            <div class="value">{{ data.exemplar.altura }} m</div>
+
         </div>
+
     </section>
+
+
 
     <!-- AVALIAÇÃO -->
-    <section class="section">
-        <h3>Avaliação</h3>
 
-        <!-- CORREÇÃO: nada de two-way, usar [value] + (valueChange) -->
-        <mat-select class="select" [value]="selectedAvaliacao()" (valueChange)="setSelectedAvaliacao($event)">
-            <mat-option *ngFor="let av of data.avaliacoes" [value]="av">
-                {{ av.data | date:'dd/MM/yyyy' }}
-            </mat-option>
-        </mat-select>
+    <section class="section">
+
+        <h3>Avaliação do exemplar</h3>
+
+        <div class="info-grid" *ngIf="data.avaliacao as av">
+
+            <div class="label">Copa</div>
+            <div class="value">{{ av.copa }}</div>
+
+            <div class="label">Tronco</div>
+            <div class="value">{{ av.tronco }}</div>
+
+            <div class="label">Sistema radicular</div>
+            <div class="value">{{ av.sistema_radicular }}</div>
+
+            <div class="label">Pragas</div>
+            <div class="value">{{ av.pragas.presente ? 'Sim' : 'Não' }}</div>
+
+            <div class="label">Fungos</div>
+            <div class="value">{{ av.fungos.presente ? 'Sim' : 'Não' }}</div>
+
+            <div class="label">Bactérias</div>
+            <div class="value">{{ av.bacterias.presente ? 'Sim' : 'Não' }}</div>
+
+            <div class="label">Deficiência nutricional</div>
+            <div class="value">{{ av.deficiencia_nutricional.presente ? 'Sim' : 'Não' }}</div>
+
+        </div>
+
     </section>
 
 
-    <!-- CONDIÇÕES -->
+
+    <!-- RELATÓRIOS -->
+
     <section class="section">
-        <div class="section-header">
-            <h3>Condições na Data Selecionada</h3>
+
+        <h3>Relatórios técnicos</h3>
+
+        <div class="timeline">
+
+            <div class="timeline-item" *ngFor="let r of data.relatorios">
+
+                <div class="timeline-date">
+                    {{ r.data }}
+                </div>
+
+                <div class="timeline-content">
+                    {{ r.descricao }}
+                </div>
+
+            </div>
+
         </div>
 
-        <div class="info-grid" *ngIf="selectedAvaliacao() as av">
-            <div class="label">DAP:</div>
-            <div class="value">{{ av.dap }} cm</div>
-
-            <div class="label">Altura:</div>
-            <div class="value">{{ av.altura }} m</div>
-
-            <div class="label">Status Copa:</div>
-            <div class="value">{{ av.status_copa }}</div>
-
-            <div class="label">Status Tronco:</div>
-            <div class="value">{{ av.status_tronco }}</div>
-
-            <div class="label">Status Radicular:</div>
-            <div class="value">{{ av.status_radicular }}</div>
-
-            <div class="label">Pragas:</div>
-            <div class="value">{{ av.pragas.sim ? 'Sim - ' + av.pragas.desc : 'Não' }}</div>
-
-            <div class="label">Fungos:</div>
-            <div class="value">{{ av.fungos.sim ? 'Sim - ' + av.fungos.desc : 'Não' }}</div>
-
-            <div class="label">Bactérias:</div>
-            <div class="value">{{ av.bacterias.sim ? 'Sim - ' + av.bacterias.desc : 'Não' }}</div>
-
-            <div class="label">Deficiência Nutricional:</div>
-            <div class="value">{{ av.def_nutricional.sim ? 'Sim - ' + av.def_nutricional.desc : 'Não' }}</div>
-        </div>
-
-        <button mat-raised-button color="primary" (click)="togglePhotos()">Ver fotos</button>
     </section>
+
+
+
+    <!-- RECOMENDAÇÕES -->
+
+    <section class="section">
+
+        <h3>Recomendações</h3>
+
+        <div class="timeline">
+
+            <div class="timeline-item" *ngFor="let r of data.recomendacoes">
+
+                <div class="timeline-date">
+                    {{ r.data }}
+                </div>
+
+                <div class="timeline-content">
+                    {{ r.descricao }}
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
 
     <!-- FOTOS -->
-    @if (showPhotos() && selectedAvaliacao()?.fotos) {
-    <section class="section">
-        <div class="photo-overlay">
-            <button class="photo-close" (click)="togglePhotos()">✕</button>
-            <ngb-carousel>
-                @for (foto of selectedAvaliacao()?.fotos; track foto) {
-                <ng-template ngbSlide>
-                    <div class="picsum-img-wrapper">
-                        <img [src]="foto" alt="Random first slide" />
-                    </div>
-                    <div class="carousel-caption">
-                        <h3>Foto X</h3>
-                        <!-- <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p> -->
-                    </div>
-                </ng-template>
-                }
 
-            </ngb-carousel>
-        </div>
+    <section class="section" *ngIf="data.fotos?.length">
+
+        <h3>Fotos</h3>
+
+        <button mat-raised-button color="primary" (click)="togglePhotos()">
+            Ver fotos
+        </button>
+
     </section>
+
+
+
+    @if (showPhotos()) {
+
+    <section class="photo-overlay">
+
+        <button class="photo-close" (click)="togglePhotos()">✕</button>
+
+        <ngb-carousel>
+
+            @for (foto of data.fotos; track foto) {
+
+            <ng-template ngbSlide>
+
+                <div class="picsum-img-wrapper">
+                    <img [src]="foto">
+                </div>
+
+            </ng-template>
+
+            }
+
+        </ngb-carousel>
+
+    </section>
+
     }
 
-    <!-- <section class="section">
-        <button mat-stroked-button color="primary" (click)="toggleHistory()">Histórico</button>
-    </section> -->
-
-    <!-- HISTÓRICO -->
-    <!-- <section class="history-section" *ngIf="showHistory()">
-        <h3>Histórico de Avaliações</h3>
-        <mat-select class="select" [value]="selectedHistoryField()" (valueChange)="setSelectedHistoryField($event)">
-            <mat-option value="dap">DAP</mat-option>
-            <mat-option value="altura">Altura</mat-option>
-            <mat-option value="status_copa">Status da Copa</mat-option>
-            <mat-option value="status_tronco">Status do Tronco</mat-option>
-            <mat-option value="status_radicular">Status Radicular</mat-option>
-            <mat-option value="pragas">Ataque de Pragas</mat-option>
-            <mat-option value="fungos">Ataque de Fungos</mat-option>
-            <mat-option value="bacterias">Ataque de Bactérias</mat-option>
-            <mat-option value="def_nutricional">Def. Nutricional</mat-option>
-        </mat-select>
-
-        <canvas id="historicChart"></canvas>
-    </section> -->
-
-    <section class="history-section">
-        <h3>Histórico de Avaliações</h3>
-
-        <mat-select class="select" [value]="selectedHistoryField()" (valueChange)="setSelectedHistoryField($event)">
-            <mat-option value="dap">DAP</mat-option>
-            <mat-option value="altura">Altura</mat-option>
-            <mat-option value="pragas">Ataque de Pragas</mat-option>
-            <mat-option value="fungos">Ataque de Fungos</mat-option>
-            <mat-option value="bacterias">Ataque de Bactérias</mat-option>
-            <mat-option value="def_nutricional">Def. Nutricional</mat-option>
-        </mat-select>
-
-
-        <canvas id="historicChart"></canvas>
-    </section>
 </div>

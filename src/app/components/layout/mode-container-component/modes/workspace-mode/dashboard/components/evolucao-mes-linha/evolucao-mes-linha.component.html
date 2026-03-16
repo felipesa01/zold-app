@@ -1,0 +1,53 @@
+<div class="h-100">
+
+  <div class="chart-layout h-100">
+
+    <div class="d-flex">
+      <app-period-control (periodoChange)="onPeriodoChange($event)"></app-period-control>
+
+      <button class="chart-mode-btn ms-auto"
+              (click)="toggleDoughnut()"
+              [class.active]="showDoughnut">
+        <span class="material-symbols-outlined">donut_small</span>
+      </button>
+    </div>
+
+    <div class="title-container">
+      <h5>
+        Evolução Mensal: {{titulo()}}
+      </h5>
+
+      <p>{{periodoLabel()}}</p>
+    </div>
+
+    <div class="charts">
+
+      <div class="line">
+
+        <canvas
+          baseChart
+          class="chart-md"
+          [data]="chartData()"
+          [options]="chartOptions"
+          [type]="'line'">
+        </canvas>
+
+      </div>
+
+      <div class="doughnut" [class.deactived]="!showDoughnut">
+
+        <canvas
+          baseChart
+          class="chart-md"
+          [data]="doughnutData()"
+          [options]="doughnutOptions"
+          [type]="'doughnut'">
+        </canvas>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

@@ -1,0 +1,37 @@
+<div class="d-flex align-content-center mb-3">
+
+    <select class="month-input" (change)="calcularPeriodo($any($event.target).value)">
+
+        @for (opt of OPTIONS_DATA; track opt.modo) {
+        <option [value]="opt.modo">
+            {{ opt.nome }}
+        </option>
+        }
+
+    </select>
+
+    <div class="periodo-filtro mx-2">
+
+        <div #mesInicioInput class="flatpickr" [ngClass]="{'input-date-hide': optionSelected()?.modo != 'custom'}" >
+            <input type="text" placeholder="Mês inicial" class="month-input"
+                data-input>
+            <a class="input-button input-button-close" title="clear" data-clear>
+                @if (mesInicio()) {
+                <mat-icon style="font-size: 20px; height: 20px; width: 20px">close</mat-icon>
+                }
+            </a>
+            <a class="input-button" title="toggle" data-toggle></a>
+        </div>
+
+        <div #mesFimInput class="flatpickr" [ngClass]="{'input-date-hide': optionSelected()?.modo != 'custom'}">
+            <input type="text" placeholder="Mês final" class="month-input" data-input>
+            <a class="input-button input-button-close" title="clear" data-clear>
+                @if (mesFim()) {
+                <mat-icon style="font-size: 20px; height: 20px; width: 20px">close</mat-icon>
+                }
+            </a>
+            <a class="input-button" title="toggle" data-toggle></a>
+        </div>
+
+    </div>
+</div>

@@ -1,4 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
+@import "flatpickr/dist/flatpickr.css";
+@import "flatpickr/dist/plugins/monthSelect/style.css";
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
@@ -83,13 +85,23 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 
 
+.chart-sm {
+  height: 220px !important;
+}
+
+.chart-md {
+  height: 320px !important;
+}
+
+.chart-lg {
+  height: 420px !important;
+}
 
 
 
 
 
-
-canvas[baseChart] {
+/* canvas[baseChart] {
   display: block;
   height: 360px !important;
-}
+} */

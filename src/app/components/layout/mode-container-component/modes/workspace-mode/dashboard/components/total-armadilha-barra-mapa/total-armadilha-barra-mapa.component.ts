@@ -1,0 +1,496 @@
+import {
+    AfterViewInit,
+    Component,
+    ViewChild,
+    HostListener,
+    inject,
+    signal,
+    computed,
+    effect,
+    NgZone,
+    ElementRef
+} from '@angular/core';
+import { ptBR } from 'date-fns/locale';
+import { BaseChartDirective } from 'ng2-charts';
+import { ChartConfiguration } from 'chart.js';
+import { PeriodControlComponent } from '../shared/period-control/period-control.component';
+import { PeriodInterval } from '../../models/period-interval-model';
+import { ApiConnectionService } from '../../../../../../../../services/api-connection-service';
+import { ProjectContextService } from '../../../../../../../../services/project-context.service';
+import { MosquitosArmadilha } from '../../models/KPI-model';
+import { Armadilha } from '../../../entities/armadilhas/armadilha.model';
+import { Feature, Map, View } from 'ol';
+import TileLayer from 'ol/layer/Tile';
+import { Point } from 'ol/geom';
+import Style from 'ol/style/Style';
+import Circle from 'ol/style/Circle';
+import { Fill, Stroke } from 'ol/style';
+import VectorSource from 'ol/source/Vector';
+import VectorLayer from 'ol/layer/Vector';
+import Text from 'ol/style/Text';
+
+
+@Component({
+    selector: 'app-total-armadilha-barra-mapa',
+    standalone: true,
+    imports: [BaseChartDirective, PeriodControlComponent],
+    templateUrl: './total-armadilha-barra-mapa.component.html',
+    styleUrl: './total-armadilha-barra-mapa.component.css'
+})
+export class TotalArmadilhaBarraMapaComponent implements AfterViewInit {
+
+    @ViewChild(BaseChartDirective)
+    chart?: BaseChartDirective;
+    @ViewChild('mapElement') mapElement!: ElementRef<HTMLDivElement>;
+
+
+    @HostListener('window:resize')
+    onResize() {
+        this.chart?.chart?.resize();
+    }
+
+    periodo = signal<PeriodInterval>({})
+    periodoLabel = signal<string>('')
+    data = signal<MosquitosArmadilha[]>([]);
+    private armadilhas = signal<Armadilha[]>([]);
+
+    pageSize = 10
+
+    pagina = signal(0)
+
+    totalPaginas = computed(() =>
+        Math.ceil(this.armadilhas().length / this.pageSize)
+    )
+
+    armadilhasPagina = computed(() => {
+
+        const start = this.pagina() * this.pageSize
+        const end = start + this.pageSize
+
+        return this.data().slice(start, end)
+
+    })
+
+    private zone = inject(NgZone)
+    map = signal<Map | null>(null);
+    
+
+    datasetVisibility = signal<Record<string, boolean>>({})
+
+    private projectContext = inject(ProjectContextService);
+    private apiConnection = inject(ApiConnectionService);
+    selectedProject = this.projectContext.selected;
+
+
+    filtered = computed(() => {
+        const armadilhasPagina = this.armadilhasPagina()
+        const data = this.data()
+        const nomesPagina = new Set(armadilhasPagina.map(a => a.armadilha))
+        return data.filter(d => nomesPagina.has(d.armadilha))
+    })
+
+    titulo = computed(() => {
+
+        const visibilidade = this.datasetVisibility()
+        console.log(visibilidade)
+        const visiveis = Object.keys(visibilidade).sort().filter(d => visibilidade[d] !== false)
+        console.log(visiveis)
+
+
+        const periodo = this.periodo()
+
+        const inicio = periodo?.inicio
+        const fim = periodo?.fim
+
+
+        if (visiveis.length === 0)
+            return `Sem dados`
+
+        if (visiveis.length === 1)
+            return `${visiveis[0]}`
+
+        if (visiveis.length === 2)
+            return `${visiveis[0]} e ${visiveis[1]}`
+
+        if (visiveis.length >= 3)
+            return `${visiveis.slice(undefined, -2).join(', ')} e ${visiveis.slice(-2, undefined).join(' e ')}`
+
+        return `${visiveis.join(', ')}`
+
+    })
+
+    ngAfterViewInit() {
+        setTimeout(() => {
+            this.chart?.chart?.resize();
+        }, 0);
+
+        var datasetVisibleInit: Record<string, boolean> = {}
+        this.chart?.chart?.data.datasets.forEach((d, i) => {
+            datasetVisibleInit[d.label!] = this.chart!.chart!.isDatasetVisible(i)
+        })
+        this.datasetVisibility.set(datasetVisibleInit);
+    }
+
+    constructor() {
+        effect(() => {
+
+            const project = this.selectedProject();
+            const p = this.periodo()
+            if (project) {
+                this.loadData();
+            }
+
+            const map = this.map();
+            const armadilhas = this.armadilhasPagina();
+
+            if (!map) return;
+
+            this.armadilhaSource.clear();
+            if (!armadilhas.length) return;
+            const features = armadilhas.map(a => {
+                const feature = new Feature({
+                    geometry: new Point([a.lon, a.lat])
+                });
+                feature.set('armadilhaId', a.id);
+                feature.set('nome', a.armadilha);
+                return feature;
+            });
+
+            this.armadilhaSource.addFeatures(features);
+
+
+
+
+            this.zone.onStable.subscribe(() => {
+                if (!this.mapElement) return;
+                map.setTarget(this.mapElement.nativeElement);
+                map.updateSize();
+            });
+
+            map.getView().fit(
+                this.armadilhaSource.getExtent(),
+                { padding: [100, 100, 100, 100], maxZoom: 18 }
+            );
+        });
+
+
+    }
+
+    private armadilhaSource = new VectorSource();
+    private armadilhaLayer = new VectorLayer({
+        source: this.armadilhaSource,
+        style: (feature, resolution) => {
+
+            const nome = feature.get('nome');
+
+            const showLabel = resolution < 0.0001
+
+            return new Style({
+                image: new Circle({
+                    radius: 8,
+                    fill: new Fill({ color: 'rgba(209, 30, 48, 0.6)' }),
+                    stroke: new Stroke({
+                        color: '#ffffff',
+                        width: 2
+                    })
+                }),
+                text: showLabel ? new Text({
+                    text: nome,
+                    offsetY: -18,
+                    font: '12px Inter, Arial, sans-serif',
+                    fill: new Fill({ color: '#111827' }),
+                    stroke: new Stroke({
+                        color: '#ffffff',
+                        width: 3
+                    })
+                }) : undefined
+            });
+
+        },
+        zIndex: 99999
+    });
+
+
+    loadData() {
+        this.pagina.set(0);
+
+        this.apiConnection
+            .getMosquitosPorArmadilhas(this.selectedProject()?.id!, this.periodo().inicio, this.periodo().fim)
+            .subscribe(result => {
+                this.data.set(result);
+
+            });
+
+        const project = this.selectedProject();
+    }
+
+
+    onPeriodoChange(periodo: { period: PeriodInterval, periodLabel?: string }) {
+        this.periodo.set(periodo.period)
+        this.periodoLabel.set(periodo.periodLabel!)
+    }
+
+    showDoughnut = false
+    toggleDoughnut() {
+        this.showDoughnut = !this.showDoughnut
+    }
+
+    proximaPagina() {
+
+        if (this.pagina() < this.totalPaginas() - 1)
+            this.pagina.update(p => p + 1)
+
+    }
+
+    paginaAnterior() {
+
+        if (this.pagina() > 0)
+            this.pagina.update(p => p - 1)
+
+    }
+
+
+    // =============================
+    // BAR CHART
+    // =============================
+
+    chartData = computed<ChartConfiguration<'bar'>['data']>(() => {
+
+        const data = this.filtered();
+        const visibilidade = this.datasetVisibility()
+
+
+        const armadilhas = this.armadilhasPagina()
+
+        function soma(tipo: 'aedes' | 'culex' | 'outras', armadilhaNome: string) {
+            return data
+                .filter(d => d.armadilha === armadilhaNome)
+                .reduce((s, i) => s + i[tipo], 0)
+        }
+
+        return {
+            labels: this.armadilhasPagina().map(a => a.armadilha),
+
+            datasets: [
+
+                {
+                    label: 'Aedes',
+                    data: armadilhas.map(a => soma('aedes', a.armadilha)),
+                    backgroundColor: '#d84315',
+                    borderRadius: 4,
+                    // barThickness: 'flex',
+                    hidden: visibilidade['Aedes'] == false
+                },
+
+                {
+                    label: 'Culex',
+                    data: armadilhas.map(a => soma('culex', a.armadilha)),
+                    backgroundColor: '#fbc02d',
+                    borderRadius: 4,
+                    // barThickness: 'flex',
+                    hidden: visibilidade['Culex'] == false
+                },
+
+                {
+                    label: 'Outras Espécies',
+                    data: armadilhas.map(a => soma('outras', a.armadilha)),
+                    backgroundColor: '#d7c8ad',
+                    borderRadius: 4,
+                    // barThickness: 'flex',
+                    hidden: visibilidade['Outras Espécies'] == false
+                }
+
+            ]
+        };
+    });
+
+    chartOptions: ChartConfiguration['options'] = {
+
+        responsive: true,
+        maintainAspectRatio: false,
+        indexAxis: 'y',
+
+        plugins: {
+
+            tooltip: { enabled: true },
+            datalabels: {
+                anchor: 'end',
+                align: 'right',
+                padding: 1,
+                color: '#444',
+                font: {
+                    weight: 'bold',
+                    size: 12
+                },
+
+                formatter: (value: number) => {
+                    return value;
+                }
+
+            },
+            legend: {
+                onClick: (e, legendItem, legend) => {
+
+                    const chart = legend.chart
+                    const index = legendItem.datasetIndex!
+
+                    // const ci = legend.chart;
+                    if (chart.isDatasetVisible(index)) {
+                        chart.hide(index);
+                        legendItem.hidden = true;
+                    } else {
+                        chart.show(index);
+                        legendItem.hidden = false;
+                    }
+                    // legend.chart.toggleDataVisibility(index)
+                    // legend.chart.update()
+
+                    const label = chart.data.datasets[index].label!
+                    const current = { ...this.datasetVisibility() }
+                    current[label] = chart.isDatasetVisible(index)
+                    this.datasetVisibility.set(current)
+
+                },
+                position: 'bottom',
+                labels: {
+                    boxWidth: 10,
+                    padding: 12,
+                    usePointStyle: true
+                }
+            },
+
+
+        },
+
+
+        scales: {
+
+            x: {
+                beginAtZero: true,
+                ticks: {
+                    precision: 0,
+                    font: { size: 11 }
+                },
+                grid: {
+                    color: 'rgba(0,0,0,0.05)'
+                }
+            },
+            y: {
+                ticks: {
+                    font: { size: 11 }
+                },
+                grid: {
+                    display: false
+                }
+            }
+
+        }
+
+    };
+
+    doughnutData = computed<ChartConfiguration<'doughnut'>['data']>(() => {
+
+        const data = this.data();
+        const visibilidade = this.datasetVisibility();
+
+        const totalAedes = visibilidade['Aedes'] === false
+            ? 0
+            : data.reduce((s, i) => s + +i.aedes, 0);
+
+        const totalCulex = visibilidade['Culex'] === false
+            ? 0
+            : data.reduce((s, i) => s + +i.culex, 0);
+
+        const totalOutras = visibilidade['Outras Espécies'] === false
+            ? 0
+            : data.reduce((s, i) => s + +i.outras, 0);
+
+        return {
+
+            labels: ['Aedes', 'Culex', 'Outras Espécies'],
+
+            datasets: [
+                {
+                    data: [totalAedes, totalCulex, totalOutras],
+                    backgroundColor: [
+                        '#d84315',
+                        '#fbc02d',
+                        '#d7c8ad'
+                    ],
+                    borderWidth: 0
+                }
+            ]
+        };
+    });
+
+    doughnutOptions: ChartConfiguration<'doughnut'>['options'] = {
+
+        responsive: true,
+        maintainAspectRatio: false,
+
+        layout: {
+            padding: {
+                top: 40,
+                bottom: 40,
+                left: 40,
+                right: 40
+            }
+        },
+
+        plugins: {
+
+            legend: {
+                display: false
+            },
+
+            tooltip: {
+                callbacks: {
+                    label: (ctx) => {
+
+                        const dataset = ctx.dataset.data as number[]
+                        const total = dataset.reduce((a, b) => a + b, 0)
+
+                        const value = ctx.parsed
+                        const percent = total ? (value / total) * 100 : 0
+
+                        return `${ctx.label}: ${percent.toFixed(1)}%`
+                    }
+                }
+            },
+
+            datalabels: {
+
+                anchor: 'end',
+                align: 'end',
+
+                offset: 10,
+
+                color: '#444',
+
+                font: {
+                    weight: 'bold',
+                    size: 11
+                },
+
+                formatter: (value: number, ctx) => {
+
+                    const dataset = ctx.dataset.data as number[]
+                    const total = dataset.reduce((a, b) => a + b, 0)
+
+                    if (!value || !total) return ''
+
+                    const percent = (value / total) * 100
+
+                    return `${percent.toFixed(1)}%`
+                },
+
+                clamp: true,
+                clip: false
+
+            }
+
+        }
+
+    };
+
+}

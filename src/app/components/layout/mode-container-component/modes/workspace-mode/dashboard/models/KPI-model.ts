@@ -53,4 +53,37 @@ export interface DashboardTrocaStats {
 }
 
 
+// Modulo de Dashboard
+export interface MosquitosAgrupados {
+  timestamp: Date,
+  aedes: number,
+  culex: number,
+  outras: number
+}
+
+export interface EvoluçãoAgrupado {
+  timestamp: Date;
+  aedes: number;
+  culex: number;
+  outras: number;
+}
+
+export interface MosquitosRegiao {
+  regiao: string;
+  aedes: number;
+  culex: number;
+  outras: number;
+}
+
+export interface MosquitosArmadilha {
+  id: string,
+  armadilha: string;
+  lat: number;
+  lon: number;
+  aedes: number;
+  culex: number;
+  outras: number;
+}
+
+
 

@@ -1,7 +1,7 @@
 import { Component, inject } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { ActivatedRoute, Router } from "@angular/router";
-import { exemplarMock } from "../exemplar-info-component/data-mock";
+import { exemplaresMock } from "../exemplar-info-component/data-mock";
 import { ExemplarInfoComponent } from "../exemplar-info-component/exemplar-info-component";
 
 @Component({
@@ -18,6 +18,7 @@ export class QrScanComponent {
 
   ngOnInit() {
     const codigo = this.route.snapshot.paramMap.get('codigo');
+    console.log('Código: ', codigo);
 
 
     if (codigo) {
@@ -32,7 +33,7 @@ export class QrScanComponent {
   processarCodigo(codigo: string) {
     console.log('Código recebido do QR:', codigo);
     this.dialog.open(ExemplarInfoComponent, {
-      data: exemplarMock,
+      data: exemplaresMock.filter(e => e.exemplar.identificacao == Number(codigo))[0],
       maxWidth: '480px', // simula celular
       panelClass: 'mobile-dialog'
     });

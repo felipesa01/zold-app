@@ -371,6 +371,7 @@ export class ArmadilhasDetail implements AfterViewInit {
         intersect: true
       },
       plugins: {
+        datalabels: {display: false},
         tooltip: {
           callbacks: {
             label: (ctx) => {

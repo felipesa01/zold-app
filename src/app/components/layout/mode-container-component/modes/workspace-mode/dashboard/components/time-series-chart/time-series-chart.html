@@ -1,2 +1,15 @@
-<canvas baseChart [type]="'line'" [data]="chartData()" [options]="chartOptions">
-</canvas>
+<section class="chart-section">
+
+
+    <div class="chart-controls">
+        <button class="ms-auto" mat-stroked-button (click)="resetZoom()">
+            Resetar zoom
+        </button>
+    </div>
+
+    <div class="chart-wrapper">
+        <canvas baseChart class="chart-md" [type]="'line'" [data]="chartData()" [options]="chartOptions">
+        </canvas>
+    </div>
+
+</section>

@@ -27,7 +27,6 @@
 .chart-container {
   position: relative;
   width: 100%;
-  height: 420px; /* altura explícita é OBRIGATÓRIA */
 }
 
 /* Blocos analíticos */

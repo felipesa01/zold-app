@@ -1,0 +1,48 @@
+.periodo-filtro {
+  display: flex;
+  justify-content: center;
+}
+
+.month-input {
+
+    height: 32px;
+    padding: 4px 8px;
+
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+
+    font-size: 13px;
+
+    background: white;
+
+}
+
+.month-input:focus {
+
+    outline: none;
+    border-color: #0969da;
+
+}
+
+.flatpickr {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+}
+
+.input-button {
+  cursor: pointer;
+}
+
+.input-button-close {
+    position: absolute;
+    right: 10px;
+    text-decoration: none;
+    color: #a0a0a0;
+    display: flex;
+}
+
+.input-date-hide {
+    display: none;
+}
