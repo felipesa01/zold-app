@@ -11,7 +11,7 @@
 <div class="content p-4">
 
   @if (activeMenuItem()?.component) {
-    <ng-container *ngComponentOutlet="activeMenuItem()?.component"></ng-container>
+    <ng-container *ngComponentOutlet="activeMenuItem()?.component;  inputs: {servicosListaExpansivel: servicoExpansivel()}"></ng-container>
   } @else {
     <div class="empty">
       Selecione uma opção

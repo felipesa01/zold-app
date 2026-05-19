@@ -1,0 +1,206 @@
+<div class="page">
+
+  <button mat-button (click)="goBack()">
+    <mat-icon>arrow_back</mat-icon>
+    Workspace
+  </button>
+
+  <div class="page-header">
+    <div class="header-left">
+
+      <h1>Capturas</h1>
+    </div>
+
+    <button mat-flat-button color="primary" (click)="create()">
+      <mat-icon>add</mat-icon>
+      Nova captura
+    </button>
+
+  </div>
+
+  <!-- BUSCA PRINCIPAL -->
+  <!-- <div class="search-modern">
+    <mat-icon>search</mat-icon>
+    <input placeholder="Buscar capturas..." (input)="onSearch($event)" />
+  </div> -->
+
+  <div class="search-box">
+    <mat-icon>search</mat-icon>
+    <input placeholder="Buscar capturas..." (input)="onSearch($event)" [value]="search()" />
+  </div>
+
+  <!-- FILTROS -->
+  <div class="filters-modern">
+
+    <select class="filter-select" (change)="onArmadilha($event)">
+      <option value="">Todas as armadilhas</option>
+      <option *ngFor="let a of armadilhas()" [value]="a.id" [selected]="armadilhaId() === a.id">
+        {{ a.nome }}
+      </option>
+    </select>
+
+    <select class="filter-select" (change)="onStatus($event)">
+      <option value="">Todos os status</option>
+      <option *ngFor="let s of statusOptions()" [value]="s">
+        {{ s }}
+      </option>
+    </select>
+
+    <select class="filter-select" (change)="onSituacao($event)">
+      <option value="">Todas as situações</option>
+      <option *ngFor="let s of situacaoOptions()" [value]="s" [selected]="situacao() === s">
+        {{ s }}
+      </option>
+    </select>
+
+    <input type="date" class="filter-date" (change)="onInicio($event)"
+      [value]="dataInicio() ? dataInicio()!.toISOString().slice(0,10) : ''" />
+    <input type="date" class="filter-date" (change)="onFim($event)"
+      [value]="dataFim() ? dataFim()!.toISOString().slice(0,10) : ''" />
+
+    <!-- <div class="date-input-wrapper">
+      <input #inicioInput class="filter-date" [matDatepicker]="pickerInicio" placeholder="dd/mm/aaaa" maxlength="10"
+        (input)="onInicioDigitado($event)" (blur)="validarInicio($event)"
+        (dateChange)="onInicioPicker($event, inicioInput)" />
+
+      <button type="button" class="calendar-btn" (click)="pickerInicio.open()" aria-label="Abrir calendário">
+        <mat-icon
+          style="font-size: 14px;display: flex;align-items: center;justify-content: center;">calendar_today</mat-icon>
+      </button>
+    </div>
+
+    <mat-datepicker #pickerInicio></mat-datepicker> -->
+
+    <!-- Limpar -->
+    <button class="clear-btn" (click)="resetFilters()">Limpar</button>
+
+    <button mat-stroked-button class="clear-btn ms-auto" (click)="reload()">
+      <mat-icon>refresh</mat-icon>
+      Atualizar
+    </button>
+
+
+  </div>
+
+  @if (loading()) {
+  <div class="workspace-loading">
+    <mat-spinner diameter="40"></mat-spinner>
+    <span>Carregando capturas...</span>
+  </div>
+  }
+  @else {
+
+
+
+  @if (pagedData().length === 0) {
+  <div class="workspace-empty">
+    Nenhuma captura encontrada.
+  </div>
+  }
+  @else {
+
+  <table mat-table [dataSource]="pagedData()" matSort (matSortChange)="onSort($event)">
+
+    <!-- Armadilha -->
+    <ng-container matColumnDef="armadilha">
+      <th mat-header-cell *matHeaderCellDef>Armadilha</th>
+      <td mat-cell *matCellDef="let c">
+        {{ getArmadilha(c.armadilhaId)?.nome }}
+      </td>
+    </ng-container>
+
+    <!-- Data -->
+    <ng-container matColumnDef="data">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Data</th>
+      <td mat-cell *matCellDef="let c">
+        {{ c.data | date:'dd/MM/yyyy' }}
+      </td>
+    </ng-container>
+
+    <!-- Status -->
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Status</th>
+      <td mat-cell *matCellDef="let c">
+
+        <div>
+          <span class="material-symbols-outlined" [matTooltip]="c.status" matTooltipPosition="after">
+            {{c.status=='ATIVA' ? 'check_circle' : 'cancel'}}
+          </span>
+        </div>
+
+
+
+
+        <!-- <mat-chip [color]="statusColor(c.status)" selected>
+          {{ c.status }}
+        </mat-chip> -->
+      </td>
+    </ng-container>
+
+    <!-- Situação -->
+    <ng-container matColumnDef="situacao">
+      <th mat-header-cell *matHeaderCellDef>Situação</th>
+      <td mat-cell *matCellDef="let c">
+
+        <span>{{ c.situacaoFisica | titlecase }}</span>
+        <!-- <mat-chip [color]="situacaoColor(c.situacaoFisica)" selected>
+          {{ c.situacaoFisica }}
+        </mat-chip> -->
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="aedes">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Aedes</th>
+      <td mat-cell *matCellDef="let c" class="center">
+        {{ c.numAedes }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="culex">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Culex</th>
+      <td mat-cell *matCellDef="let c" class="center">
+        {{ c.numCulex }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="outras">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Outras</th>
+      <td mat-cell *matCellDef="let c" class="center">
+        {{ c.numOutras }}
+      </td>
+    </ng-container>
+
+    <!-- Total -->
+    <ng-container matColumnDef="total">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Total</th>
+      <td mat-cell *matCellDef="let c" class="center">
+        {{ c.numTotal }}
+      </td>
+    </ng-container>
+
+    <!-- Ações -->
+    <!-- <ng-container matColumnDef="acoes">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let c" class="actions-cell">
+        <button mat-icon-button (click)="open(c, $event)">
+          <mat-icon>open_in_new</mat-icon>
+        </button>
+      </td>
+    </ng-container> -->
+
+    <tr mat-header-row *matHeaderRowDef="cols"></tr>
+    <tr mat-row *matRowDef="let row; columns: cols" (click)="open(row)">
+    </tr>
+
+  </table>
+
+  <mat-paginator [length]="filtered().length" [pageSize]="pageSize()" [pageIndex]="pageIndex()"
+    [pageSizeOptions]="[10, 25, 50]" (page)="onPage($event)">
+  </mat-paginator>
+
+
+  }
+  }
+
+
+</div>

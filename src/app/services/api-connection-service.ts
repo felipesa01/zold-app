@@ -1,11 +1,14 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { delay, map, Observable } from "rxjs";
-import { Armadilha, CreateArmadilha } from "../components/layout/mode-container-component/modes/workspace-mode/entities/armadilhas/armadilha.model";
-import { Captura, CreateCaptura } from "../components/layout/mode-container-component/modes/workspace-mode/entities/capturas/captura.model";
+import { Armadilha, CreateArmadilha } from "../components/layout/mode-container-component/modes/workspace-mode/mosquitos/armadilhas/armadilha.model";
+import { Captura, CreateCaptura } from "../components/layout/mode-container-component/modes/workspace-mode/mosquitos/capturas/captura.model";
 import { environment } from "../../environments/environment";
 import { DashboardTimePoint, DashboardTrocaStats, EvoluçãoAgrupado, MosquitosAgrupados, MosquitosArmadilha, MosquitosRegiao } from "../components/layout/mode-container-component/modes/workspace-mode/dashboard/models/KPI-model";
 import { DashboardTrocaInterval } from "../components/layout/mode-container-component/modes/workspace-mode/dashboard/models/interval-stats-model";
+import { Exemplar } from "../components/layout/mode-container-component/modes/workspace-mode/inventarios/exemplares/exemplar.model";
+import { AnaliseInventario } from "../components/layout/mode-container-component/modes/workspace-mode/inventarios/analises/analise.model";
+import { FotoInventario } from "../components/layout/mode-container-component/modes/workspace-mode/inventarios/fotos/fotos.model";
 
 
 export interface Projeto {
@@ -21,6 +24,17 @@ export interface Projeto {
     cep: string
     cidade: string
     uf: string
+}
+
+export interface ProjetoServicos {
+    id: string;
+    nome: string;
+    hasData: boolean;
+    schema: string;
+    tabela: string;
+    campoProjeto: string;
+    itens: { label: string; icon: string; route: string }[];
+    route: string
 }
 
 @Injectable({ providedIn: 'root' })
@@ -53,12 +67,44 @@ export class ApiConnectionService {
         )
     }
 
+    listarExemplaresByProjeto(projetoId: string): Observable<Exemplar[]> {
+        return this.http.get<Exemplar[]>(`${this.apiURL}/projetos/${projetoId}/exemplares`).pipe(
+            // delay(2000)
+        )
+    }
+
+    listarAnalisesByProjeto(projetoId: string): Observable<AnaliseInventario[]> {
+        return this.http.get<AnaliseInventario[]>(`${this.apiURL}/projetos/${projetoId}/analises`).pipe(
+            // delay(2000)
+        )
+    }
+
+    listarAnalisesByExemplar(exemplarId: string): Observable<AnaliseInventario[]> {
+        return this.http.get<AnaliseInventario[]>(`${this.apiURL}/exemplares/${exemplarId}/analises`).pipe(
+            // delay(2000)
+        )
+    }
+
+    listarFotosByExemplar(exemplarId: string): Observable<FotoInventario[]> {
+        return this.http.get<FotoInventario[]>(`${this.apiURL}/exemplares/${exemplarId}/analises/fotos`).pipe(
+            // delay(2000)
+        )
+    }
+
     findArmadilha(id: string): Observable<Armadilha> {
         return this.http.get<Armadilha>(`${this.apiURL}/armadilhas/${id}`)
     }
 
     findCaptura(id: string): Observable<Captura> {
         return this.http.get<Captura>(`${this.apiURL}/capturas/${id}`)
+    }
+
+    findExemplar(id: string): Observable<Exemplar> {
+        return this.http.get<Exemplar>(`${this.apiURL}/exemplares/${id}`)
+    }
+
+    findAnalise(id: string): Observable<AnaliseInventario> {
+        return this.http.get<AnaliseInventario>(`${this.apiURL}/analises/${id}`)
     }
 
     findProjeto(id: string): Observable<Projeto> {
@@ -93,6 +139,10 @@ export class ApiConnectionService {
 
     removeArmadilha(armadilhaId: string): Observable<ArrayBuffer> {
         return this.http.delete<ArrayBuffer>(`${this.apiURL}/armadilhas/${armadilhaId}`)
+    }
+
+    removeExemplar(exemplarId: string): Observable<ArrayBuffer> {
+        return this.http.delete<ArrayBuffer>(`${this.apiURL}/exemplares/${exemplarId}`)
     }
 
 
@@ -217,6 +267,16 @@ export class ApiConnectionService {
         return this.http.get<MosquitosArmadilha[]>(
             `${this.apiURL}/dashboard/armadilhas?projetoId=${projetoId}${periodo}`
         );
+    }
+
+
+
+    getServicosByProject(projetoId: string): Observable<ProjetoServicos[]> {
+
+        return this.http.get<ProjetoServicos[]>(
+            `${this.apiURL}/projetos/${projetoId}/servicos`
+        );
+
     }
 
 }

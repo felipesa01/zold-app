@@ -13,6 +13,7 @@ import { MosquitosAgrupados } from "../../models/KPI-model";
 import { PeriodInterval } from "../../models/period-interval-model";
 import { PeriodControlComponent } from "../shared/period-control/period-control.component";
 import { ptBR } from 'date-fns/locale';
+import html2canvas from 'html2canvas';
 
 @Component({
     selector: 'app-total-monitoramento-barra',
@@ -127,6 +128,21 @@ export class TotalMonitoramentoBarraComponent implements AfterViewInit {
         this.showDoughnut = !this.showDoughnut
     }
 
+    exportar() {
+        const element = document.getElementById('grafico-container-total-monit');
+
+        html2canvas(element!, {
+            scale: 1
+        }).then(canvas => {
+            const url = canvas.toDataURL('image/png');
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `total_monit_${this.selectedProject()?.nome.toLowerCase().replaceAll(' ', '')}.png`;
+            a.click();
+        });
+    }
+
 
     // =============================
     // BAR CHART
@@ -229,7 +245,7 @@ export class TotalMonitoramentoBarraComponent implements AfterViewInit {
                     ctx.beginPath()
                     ctx.strokeStyle = 'rgba(0,0,0,0.3)'
                     ctx.lineWidth = 1
-                    
+
 
                     ctx.moveTo(startPixel, chartArea.top)
                     ctx.lineTo(startPixel, chartArea.bottom)

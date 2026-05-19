@@ -11,6 +11,8 @@ import { MAT_DATE_FORMATS, MAT_DATE_LOCALE, provideNativeDateAdapter } from '@an
 import { WorkspaceReuseStrategy } from './components/layout/mode-container-component/modes/workspace-mode/workspace-reuse.strategy';
 import { provideToastr } from 'ngx-toastr';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { MatPaginatorIntl } from '@angular/material/paginator';
+import { MatPaginatorIntlPtBr } from './utils/mat-paginator-pt-br';
 
 export const FORMATO_BR = {
   parse: { dateInput: 'DD/MM/YYYY' },
@@ -36,6 +38,7 @@ export const appConfig: ApplicationConfig = {
     provideToastr(),
     provideAnimations(),
     { provide: MAT_DATE_FORMATS, useValue: FORMATO_BR },
-     { provide: MAT_DATE_LOCALE, useValue: 'pt-BR' }
+    { provide: MAT_DATE_LOCALE, useValue: 'pt-BR' },
+    { provide: MatPaginatorIntl, useClass: MatPaginatorIntlPtBr }
   ]
 };

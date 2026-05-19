@@ -15,47 +15,54 @@
             </select>
         </div>
         <!-- <app-period-control (periodoChange)="onPeriodoChange($event)"></app-period-control> -->
-        <div class="title-container mb-3">
-            <h5>
-                Totais por armadilhas: {{titulo()}}
-            </h5>
-            @if (regiao()) {
-            <p class="mb-0">Região: {{regiao()}}</p>
+        <div id="grafico-container-armadilha-mapa" class="p-2">
+            <div class="title-container mb-3">
+                <h5>
+                    Total por Armadilha: {{titulo()}}
+                </h5>
+                @if (regiao()) {
+                <p class="mb-0">Região: {{regiao()}}</p>
 
-            }
-            <p class="mb-0">{{periodoLabel()}}</p>
-        </div>
-
-        <div class="charts">
-
-            <div class="bar">
-                <canvas baseChart class="chart-md" [data]="chartData()" [options]="chartOptions" [type]="'bar'">
-                </canvas>
+                }
+                <p class="mb-0">{{periodoLabel()}}</p>
             </div>
 
-            <div class="map-container">
-                <div #mapElement class="map"></div>
+            <div class="charts">
+
+                <div class="bar-container">
+                    <div class="bar">
+                        <canvas baseChart class="chart-md" [data]="chartData()" [options]="chartOptions" [type]="'bar'">
+                        </canvas>
+                    </div>
+
+
+                    <div class="paginacao">
+                        <button class="btn-nav" (click)="paginaAnterior()" [disabled]="pagina() === 0">
+                            ◀
+                        </button>
+                        <span style="font-size: 0.85em;">Página {{ pagina() + 1 }} de
+                            {{ totalPaginas() }}
+                        </span>
+                        <button class="btn-nav" (click)="proximaPagina()" [disabled]="pagina() === totalPaginas() - 1">
+                            ▶
+                        </button>
+                    </div>
+                </div>
+
+
+
+                <div class="map-container">
+                    <div #mapElement class="map"></div>
+                </div>
+
+
             </div>
-
-
-        </div>
-        <div class="paginacao">
-            <button class="btn-nav" (click)="paginaAnterior()" [disabled]="pagina() === 0">
-                ◀
-            </button>
-            <span>Página {{ pagina() + 1 }} de
-                {{ totalPaginas() }}
-            </span>
-            <button class="btn-nav" (click)="proximaPagina()" [disabled]="pagina() === totalPaginas() - 1">
-                ▶
-            </button>
         </div>
 
     </div>
 
-
-
-
-
+    <button class="chart-mode-btn" (click)="exportar()">
+        <span class="material-symbols-outlined">download</span>
+    </button>
 
 </div>

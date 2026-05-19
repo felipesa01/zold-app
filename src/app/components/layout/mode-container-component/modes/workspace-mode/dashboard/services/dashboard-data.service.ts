@@ -1,7 +1,7 @@
 import { inject, Injectable } from "@angular/core";
 import { Observable, of, map } from "rxjs";
-import { ARMADILHAS_MOCK } from "../../entities/armadilhas/armadilhas.mock";
-import { CAPTURAS_MOCK } from "../../entities/capturas/captura.mock";
+import { ARMADILHAS_MOCK } from "../../mosquitos/armadilhas/armadilhas.mock";
+import { CAPTURAS_MOCK } from "../../mosquitos/capturas/captura.mock";
 import { DashboardKpi, DashboardOperationalKpi, DashboardTimePoint, DashboardTrocaStats, MosquitosAgrupados } from "../models/KPI-model";
 import { DashboardMetricsService } from "./dashboard-metrics.service";
 import { DashboardCriticalTrap } from "../models/ranking-model";

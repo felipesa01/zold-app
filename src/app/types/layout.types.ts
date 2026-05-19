@@ -8,9 +8,10 @@ export type SideMenuItemId =
   | 'lists'
 
   // workspace
-  | 'entities'
+  | 'services'
   | 'reports'
-  | 'dashboard';
+  | 'dashboard'
+  | 'projects';
 
 
 export interface SideMenuItemConfig {

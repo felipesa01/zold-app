@@ -12,36 +12,40 @@
 
         </div>
 
-        <div class="title-container">
-            <h5>
-                Totais por Monitoramento: {{titulo()}}
-            </h5>
+        <div id="grafico-container-total-monit" class="p-2">
+            <div class="title-container">
+                <h5>
+                    Total por Monitoramento: {{titulo()}}
+                </h5>
 
-            <p>{{periodoLabel()}}</p>
-        </div>
-
-        <div class="charts">
-            <div class="bar">
-
-                <canvas baseChart class="chart-md" [data]="chartData()" [options]="chartOptions"
-                    [plugins]="[monthBandsPlugin]" [type]="'bar'">
-                </canvas>
-
+                <p>{{periodoLabel()}}</p>
             </div>
 
-            <div class="doughnut" [class.deactived]="!showDoughnut" >
+            <div class="charts">
+                <div class="bar">
 
-                <canvas  baseChart class="chart-md" [data]="doughnutData()" [options]="doughnutOptions"
-                    [type]="'doughnut'">
-                </canvas>
+                    <canvas baseChart class="chart-md" [data]="chartData()" [options]="chartOptions"
+                        [plugins]="[monthBandsPlugin]" [type]="'bar'">
+                    </canvas>
 
+                </div>
+
+                <div class="doughnut" [class.deactived]="!showDoughnut">
+
+                    <canvas baseChart class="chart-md" [data]="doughnutData()" [options]="doughnutOptions"
+                        [type]="'doughnut'">
+                    </canvas>
+
+                </div>
             </div>
         </div>
 
     </div>
 
 
-
+    <button class="chart-mode-btn" (click)="exportar()">
+        <span class="material-symbols-outlined">download</span>
+    </button>
 
 
 

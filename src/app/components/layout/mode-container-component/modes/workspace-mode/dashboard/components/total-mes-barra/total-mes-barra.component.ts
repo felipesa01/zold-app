@@ -23,6 +23,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { PeriodControlComponent } from '../shared/period-control/period-control.component';
 import { PeriodInterval } from '../../models/period-interval-model';
+import html2canvas from 'html2canvas';
 
 @Component({
     selector: 'app-total-mes-barra',
@@ -125,6 +126,21 @@ export class TotalMesBarraComponent implements AfterViewInit {
     showDoughnut = false
     toggleDoughnut() {
         this.showDoughnut = !this.showDoughnut
+    }
+
+    exportar() {
+        const element = document.getElementById('grafico-container-total-mes');
+
+        html2canvas(element!, {
+            scale: 1
+        }).then(canvas => {
+            const url = canvas.toDataURL('image/png');
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `total_mes_${this.selectedProject()?.nome.toLowerCase().replaceAll(' ', '')}.png`;
+            a.click();
+        });
     }
 
 

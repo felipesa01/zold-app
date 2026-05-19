@@ -27,11 +27,19 @@
   align-items: center;
   gap: 12px;
 }
+
 .header h2 {
   margin: 0;
   font-size: 1.25rem;
   font-weight: 600;
   color: var(--md-sys-color-on-surface, #0f1724);
+}
+
+.sub {
+  font-style: italic;
+  font-size: 0.9em;
+  font-weight: normal;
+  margin-bottom: 0;
 }
 
 /* ------------------------------
@@ -42,6 +50,7 @@
   flex-direction: column;
   gap: 10px;
 }
+
 .section h3 {
   margin: 0;
   font-size: 1.05rem;
@@ -100,7 +109,7 @@ button[mat-icon-button] {
   margin-top: 12px;
   overflow: hidden;
   border-radius: 14px;
-  background: linear-gradient(180deg, rgba(0,0,0,0.03), transparent);
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.03), transparent);
   padding: 10px 0;
 }
 
@@ -130,7 +139,7 @@ button[mat-icon-button] {
 .photo-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.85);
+  background: rgba(0, 0, 0, 0.85);
   z-index: 2000;
 
   display: flex;
@@ -190,7 +199,7 @@ button[mat-icon-button] {
   width: 100% !important;
   height: 220px !important;
   border-radius: 12px;
-  background: linear-gradient(180deg, rgba(6,90,220,0.02), transparent);
+  background: linear-gradient(180deg, rgba(6, 90, 220, 0.02), transparent);
   padding: 6px;
 }
 
@@ -198,8 +207,13 @@ button[mat-icon-button] {
    ANIMAÇÃO
 ------------------------------ */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 /* ------------------------------
@@ -210,13 +224,16 @@ button[mat-icon-button] {
     padding: 22px;
     gap: 26px;
   }
+
   .info-grid {
     grid-template-columns: 150px 1fr;
   }
+
   .carousel-track img {
     width: 320px;
     height: 200px;
   }
+
   .history-section canvas#historicChart {
     height: 260px !important;
   }

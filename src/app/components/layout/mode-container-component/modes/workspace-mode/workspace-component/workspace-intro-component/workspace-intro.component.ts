@@ -35,6 +35,6 @@ export class WorkspaceIntroComponent {
   }
 
   go(target: 'armadilhas' | 'capturas') {
-    this.router.navigate([`/workspace/entities/${target}`]);
+    this.router.navigate([`/workspace/mosquitos/${target}`]);
   }
 }

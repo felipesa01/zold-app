@@ -1,0 +1,117 @@
+.entities-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.entity-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  width: 100%;
+  padding: 12px 14px;
+
+  border-radius: 10px;
+  background: transparent;
+  border: none;
+
+  font-size: 14px;
+  /* font-weight: 500; */
+
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.05s ease;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.045);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  .icon {
+    font-size: 20px;
+    opacity: 0.85;
+  }
+
+  .label {
+    flex: 1;
+    text-align: left;
+  }
+
+  .arrow {
+    font-size: 18px;
+    opacity: 0.45;
+  }
+
+
+}
+
+.entities-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* HEADER */
+.entity-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  width: 100%;
+  padding: 10px 12px;
+
+  border: none;
+  background: transparent;
+  cursor: pointer;
+
+  /* font-weight: 500; */
+  text-align: left;
+  font-size: 14px;
+}
+
+.entity-header:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.entity-header.disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* ACCORDION */
+.entity-items {
+  display: flex;
+  flex-direction: column;
+  padding-left: 8px;
+}
+
+/* ITEM */
+.entity-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  width: 100%;
+  padding: 8px 12px;
+
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.entity-item:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.icon {
+  font-size: 18px;
+}
+
+.arrow {
+  margin-left: auto;
+  font-size: 18px;
+  opacity: 0.6;
+}

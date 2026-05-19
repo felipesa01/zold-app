@@ -22,7 +22,7 @@ export class WorkspaceComponent implements OnInit {
 
   constructor(private router: Router) {
     this.router.events.subscribe(() => {
-      this.isProject = this.router.url.startsWith('/workspace/entities/projetos') ? true : false;
+      this.isProject = this.router.url.startsWith('/workspace/projetos') ? true : false;
     });
 
   }

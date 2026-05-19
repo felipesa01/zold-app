@@ -4,7 +4,7 @@ import { ChartConfiguration } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { DashboardDataService } from '../../services/dashboard-data.service';
 import { ptBR } from 'date-fns/locale';
-import { APLICACOES_MOCK } from '../../../entities/aplicacoes/aplicacoes.mock';
+import { APLICACOES_MOCK } from '../../../mosquitos/aplicacoes/aplicacoes.mock';
 import { ProjectContextService } from '../../../../../../../../services/project-context.service';
 import { DashboardTimePoint } from '../../models/KPI-model';
 import { MatButtonModule } from '@angular/material/button';

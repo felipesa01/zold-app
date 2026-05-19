@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
-import { Armadilha } from "../../entities/armadilhas/armadilha.model";
-import { Captura } from "../../entities/capturas/captura.model";
+import { Armadilha } from "../../mosquitos/armadilhas/armadilha.model";
+import { Captura } from "../../mosquitos/capturas/captura.model";
 import { DashboardTimePoint, DashboardTrocaStats } from "../models/KPI-model";
 import { DashboardCriticalTrap } from "../models/ranking-model";
 import { DashboardTrocaInterval } from "../models/interval-stats-model";

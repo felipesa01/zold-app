@@ -12,6 +12,7 @@ import { ProjectContextService } from "../../../../../../../../services/project-
 import { MosquitosAgrupados } from "../../models/KPI-model";
 import { PeriodInterval } from "../../models/period-interval-model";
 import { PeriodControlComponent } from "../shared/period-control/period-control.component";
+import html2canvas from 'html2canvas';
 
 @Component({
     selector: 'app-evolucao-monitoramento-linha',
@@ -124,6 +125,23 @@ export class EvolucaoMonitoramentoLinhaComponent implements AfterViewInit {
     toggleDoughnut() {
         this.showDoughnut = !this.showDoughnut
     }
+
+
+    exportar() {
+        const element = document.getElementById('grafico-container-evolucao-monit');
+
+        html2canvas(element!, {
+            scale: 1
+        }).then(canvas => {
+            const url = canvas.toDataURL('image/png');
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `evolucao_monit_${this.selectedProject()?.nome.toLowerCase().replaceAll(' ', '')}.png`;
+            a.click();
+        });
+    }
+
 
     // =============================
     // LINE CHART

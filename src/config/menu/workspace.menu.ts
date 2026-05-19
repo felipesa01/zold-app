@@ -1,14 +1,21 @@
-import { ListasMenuComponent } from "../../app/components/layout/mode-container-component/sidebar-expandable-component/listas-menu-component/listas-menu-component";
+import { ServicosDetListaComponent } from "../../app/components/layout/mode-container-component/sidebar-expandable-component/servicos-det-lista-component/servicos-det-lista-component";
 import { SideMenuItemConfig } from "../../app/types/layout.types";
 
 
 export const WORKSPACE_MENU: SideMenuItemConfig[] = [
   {
-    id: 'lists',
-    nome: 'Listas',
-    icon: 'lists',
+    id: 'projects',
+    nome: 'Projetos',
+    icon: 'home_work',
+    expandible: false,
+    route: ['/workspace/projetos']
+  },
+  {
+    id: 'services',
+    nome: 'Serviços',
+    icon: 'list',
     expandible: true,
-    component: ListasMenuComponent
+    component: ServicosDetListaComponent
   },
   {
     id: 'reports',
@@ -21,8 +28,8 @@ export const WORKSPACE_MENU: SideMenuItemConfig[] = [
     id: 'dashboard',
     nome: 'Dashboard',
     icon: 'space_dashboard',
-    expandible: false,
-    route: ['/workspace/dashboard'],
+    expandible: true,
+    component: ServicosDetListaComponent,
     disabled: false
   }
 ];

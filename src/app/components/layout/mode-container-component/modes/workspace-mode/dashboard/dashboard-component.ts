@@ -10,6 +10,7 @@ import { EvolucaoMesLinhaComponent } from "./components/evolucao-mes-linha/evolu
 import { EvolucaoMonitoramentoLinhaComponent } from "./components/evolucao-monitoramento-linha/evolucao-monitoramento-linha.component";
 import { TotalRegiaoBarraComponent } from "./components/total-regiao-barra.component/total-regiao-barra.component";
 import { TotalArmadilhaBarraMapaComponent } from "./components/total-armadilha-barra-mapa/total-armadilha-barra-mapa.component";
+import { TotalArmadilhaMapaComponent } from "./components/total-armadilha-mapa/total-armadilha-mapa.component";
 
 @Component({
   selector: 'app-dashboard-component',
@@ -23,7 +24,8 @@ import { TotalArmadilhaBarraMapaComponent } from "./components/total-armadilha-b
     EvolucaoMesLinhaComponent,
     EvolucaoMonitoramentoLinhaComponent,
     TotalRegiaoBarraComponent,
-    TotalArmadilhaBarraMapaComponent],
+    TotalArmadilhaBarraMapaComponent,
+    TotalArmadilhaMapaComponent],
   templateUrl: './dashboard-component.html',
   styleUrl: './dashboard-component.css',
 })

@@ -1,0 +1,159 @@
+<div class="page">
+
+    <button mat-button (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+        Workspace
+    </button>
+
+    <div class="page-header">
+        <h1>Análises</h1>
+
+        <button mat-flat-button color="primary" (click)="create()" disabled>
+            <mat-icon>add</mat-icon>
+            Nova análise
+        </button>
+    </div>
+
+    <!-- BUSCA -->
+    <div class="search-box">
+        <mat-icon>search</mat-icon>
+        <input placeholder="Buscar análises..." (input)="onSearch($event)" [value]="search()" />
+    </div>
+
+    <!-- FILTROS -->
+    <div class="filters-modern">
+
+        <select class="filter-select" (change)="onExemplar($event)">
+            <option value="">Todos os exemplares</option>
+            <option *ngFor="let a of exemplares()" [value]="a.id" [selected]="exemplarId() === a.id">
+                {{ a.nm_comum }}
+            </option>
+        </select>
+        
+        <input type="date" class="filter-date" (change)="onInicio($event)" [value]="dataInicio() ? dataInicio()!.toISOString().slice(0,10) : ''"/>
+        <input type="date" class="filter-date" (change)="onFim($event)" [value]="dataInicio() ? dataInicio()!.toISOString().slice(0,10) : ''"/>
+
+        <button class="clear-btn" (click)="resetFilters()">Limpar</button>
+
+        <button mat-stroked-button class="clear-btn ms-auto" (click)="reload()">
+            <mat-icon>refresh</mat-icon>
+            Atualizar
+        </button>
+    </div>
+
+    @if (loading()) {
+    <div class="workspace-loading">
+        <mat-spinner diameter="40"></mat-spinner>
+        <span>Carregando análises...</span>
+    </div>
+    }
+    @else {
+
+    @if (pagedData().length === 0) {
+    <div class="workspace-empty">
+        Nenhuma análise encontrada.
+    </div>
+    }
+    @else {
+
+    <table mat-table [dataSource]="pagedData()" matSort (matSortChange)="onSort($event)">
+
+        <!-- Exemplar -->
+        <ng-container matColumnDef="exemplar">
+            <th mat-header-cell *matHeaderCellDef>Exemplar</th>
+            <td mat-cell *matCellDef="let a">
+                {{ getExemplar(a.exemplarId)?.nm_comum }}
+            </td>
+        </ng-container>
+
+        <!-- Data -->
+        <ng-container matColumnDef="data">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Data</th>
+            <td mat-cell *matCellDef="let a">
+                {{ a.data | date:'dd/MM/yyyy' }}
+            </td>
+        </ng-container>
+
+        <!-- DAP -->
+        <ng-container matColumnDef="dap">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>DAP</th>
+            <td mat-cell *matCellDef="let a">{{ a.dap }}</td>
+        </ng-container>
+
+        <!-- Altura -->
+        <ng-container matColumnDef="altura">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Altura</th>
+            <td mat-cell *matCellDef="let a">{{ a.altura }}</td>
+        </ng-container>
+
+        <!-- Pragas -->
+        <ng-container matColumnDef="pragas">
+            <th mat-header-cell *matHeaderCellDef>Pragas</th>
+            <td mat-cell *matCellDef="let a">
+                <div>
+                    <span class="material-symbols-outlined" [matTooltip]="!a.ataque_praga ? 'Saudável' : 'Infectado'" matTooltipPosition="after">
+                        {{!a.ataque_praga ? 'health_and_safety' : 'warning'}}
+                    </span>
+                </div>
+            </td>
+        </ng-container>
+
+        <!-- Fungos -->
+        <ng-container matColumnDef="fungos">
+            <th mat-header-cell *matHeaderCellDef>Fungos</th>
+            <td mat-cell *matCellDef="let a">
+                <div>
+                    <span class="material-symbols-outlined" [matTooltip]="!a.ataque_fungo ? 'Saudável' : 'Infectado'" matTooltipPosition="after">
+                        {{!a.ataque_fungo? 'health_and_safety' : 'warning'}}
+                    </span>
+                </div>
+            </td>
+        </ng-container>
+
+        <!-- Bacterias -->
+        <ng-container matColumnDef="bacterias">
+            <th mat-header-cell *matHeaderCellDef>Bacterias</th>
+            <td mat-cell *matCellDef="let a">
+                <div>
+                    <span class="material-symbols-outlined" [matTooltip]="!a.ataque_bacteria ? 'Saudável' : 'Infectado'" matTooltipPosition="after">
+                        {{!a.ataque_bacteria? 'health_and_safety' : 'warning'}}
+                    </span>
+                </div>
+            </td>
+        </ng-container>
+
+        <!-- Problemas -->
+        <ng-container matColumnDef="problemas">
+            <th mat-header-cell *matHeaderCellDef>Deficiência nutricional</th>
+            <td mat-cell *matCellDef="let a">
+                <div>
+                    <span class="material-symbols-outlined" [matTooltip]="!a.deficiencia_nutricional ? 'Saudável' : 'Deficiente'"
+                        matTooltipPosition="after">
+                        {{!a.deficiencia_nutricional? 'health_and_safety' : 'warning'}}
+                    </span>
+                </div>
+            </td>
+        </ng-container>
+
+        <!-- Ações -->
+        <!-- <ng-container matColumnDef="acoes">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let a">
+                <button mat-icon-button (click)="open(a, $event)">
+                    <mat-icon>open_in_new</mat-icon>
+                </button>
+            </td>
+        </ng-container> -->
+
+        <tr mat-header-row *matHeaderRowDef="cols"></tr>
+        <tr mat-row *matRowDef="let row; columns: cols"></tr>
+
+    </table>
+
+    <mat-paginator [length]="filtered().length" [pageSize]="pageSize()" [pageIndex]="pageIndex()"
+        [pageSizeOptions]="[10, 25, 50]" (page)="onPage($event)">
+    </mat-paginator>
+
+    }
+    }
+</div>

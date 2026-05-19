@@ -1,0 +1,227 @@
+<div class="page">
+
+    <!-- Header -->
+    <div class="page-header">
+        <button mat-button class="back-btn" (click)="voltar()">
+            <mat-icon>arrow_back</mat-icon>
+            Voltar
+        </button>
+
+    </div>
+
+    <!-- Meta -->
+    <section class="meta">
+
+        <div class="title">
+            <h1>{{ exemplar()?.nm_comum }}</h1>
+            <span class="subtitle">
+                {{ exemplar()?.nm_cientifico }}
+            </span>
+        </div>
+
+        <!-- <div class="d-flex align-content-center ms-auto">
+            <button mat-flat-button color="primary" [routerLink]="['edit']">
+                <mat-icon>edit</mat-icon>
+                Editar
+            </button>
+
+            <button class="btn btn-outline-danger d-flex" style="border-radius: 2em;" (click)="delete()">
+                <mat-icon>delete</mat-icon>
+                Excluir
+            </button>
+        </div> -->
+    </section>
+
+
+    <!-- Visual -->
+    <section class="visual-grid">
+
+        <div class="modal-container">
+
+            <!-- DADOS DO EXEMPLAR -->
+
+            <section class="section">
+
+                <h3>Dados do exemplar</h3>
+
+                <div class="info-grid">
+
+                    <div class="label">ID</div>
+                    <div class="value">{{ exemplar()!.id }}</div>
+
+                    <div class="label">Endereço</div>
+                    <div class="value">{{ exemplar()!.endereco }}</div>
+
+                    <div class="label">Origem</div>
+                    <div class="value">{{ exemplar()!.origem_esp }}</div>
+
+                    <div class="label">Floração</div>
+                    <div class="value">{{ exemplar()!.floracao }}</div>
+
+                    <div class="label">Cor da flor</div>
+                    <div class="value">{{ exemplar()!.cor_flor }}</div>
+
+                    <div class="label" *ngIf="analisesOrdenadas()[analisesOrdenadas().length - 1]">DAP</div>
+                <div class="value" *ngIf="analisesOrdenadas()[analisesOrdenadas().length - 1] ">{{ (analisesOrdenadas()[analisesOrdenadas().length - 1]).dap  }} cm</div>
+
+                <div class="label" *ngIf="analisesOrdenadas()[analisesOrdenadas().length - 1]">Altura</div>
+                <div class="value" *ngIf="analisesOrdenadas()[analisesOrdenadas().length - 1]">{{ (analisesOrdenadas()[analisesOrdenadas().length - 1]).altura }} m</div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- AVALIAÇÃO -->
+
+            <section class="section">
+
+                <h3>Avaliação mais recente do exemplar</h3>
+                <span style="font-size:12px;">{{analisesOrdenadas()[analisesOrdenadas().length - 1].data |
+                    date:'dd/MM/yyyy'}}</span>
+
+                <div class="info-grid" *ngIf="analisesOrdenadas()[analisesOrdenadas().length - 1] as av">
+
+                    <div class="label">Copa</div>
+                    <div class="value">{{ av.copa_descricao }}</div>
+
+                    <div class="label">Tronco</div>
+                    <div class="value">{{ av.tronco_descricao }}</div>
+
+                    <div class="label">Sistema radicular</div>
+                    <div class="value">{{ av.sistema_radicular_descricao }}</div>
+
+                    <div class="label">Pragas</div>
+                    <div class="value">
+                        <span class="material-symbols-outlined"
+                            [matTooltip]="!av.ataque_praga ? 'Saudável' : 'Infectado'" matTooltipPosition="after">
+                            {{ !av.ataque_praga ? 'health_and_safety' : 'warning'}}
+                        </span>
+                    </div>
+
+                    <div class="label">Fungos</div>
+                    <div class="value">
+                        <span class="material-symbols-outlined"
+                            [matTooltip]="!av.ataque_fungo ? 'Saudável' : 'Infectado'" matTooltipPosition="after">
+                            {{ !av.ataque_fungo ? 'health_and_safety' : 'warning'}}
+                        </span>
+                    </div>
+
+                    <div class="label">Bactérias</div>
+                    <div class="value">
+                        <span class="material-symbols-outlined"
+                            [matTooltip]="!av.ataque_bacteria ? 'Saudável' : 'Infectado'"
+                            matTooltipPosition="after">
+                            {{ !av.ataque_bacteria ? 'health_and_safety' : 'warning'}}
+                        </span>
+                    </div>
+
+                    <div class="label">Deficiência nutricional</div>
+                    <div class="value">
+                        <span class="material-symbols-outlined"
+                            [matTooltip]="!av.deficiencia_nutricional ? 'Saudável' : 'Deficiente'"
+                            matTooltipPosition="after">
+                            {{ !av.deficiencia_nutricional ? 'health_and_safety' : 'warning'}}
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- FOTOS -->
+
+            <section class="section" *ngIf="fotos().length">
+
+                <button mat-raised-button color="primary" (click)="togglePhotos()">
+                    Ver fotos
+                </button>
+
+            </section>
+
+
+            @if (showPhotos()) {
+            <section class="photo-overlay">
+                <button class="photo-close" (click)="togglePhotos()">✕</button>
+                <ngb-carousel>
+                    @for (foto of fotos(); track foto) {
+                    <ng-template ngbSlide>
+                        <div class="picsum-img-wrapper">
+                            <img [src]="foto.path">
+                        </div>
+                    </ng-template>
+                    }
+
+                </ngb-carousel>
+            </section>
+            }
+
+
+        </div>
+
+        <!-- Mapa -->
+        <div id="map-exemplar-detail" class="map-container"></div>
+
+    </section>
+
+    <div class="modal-container">
+        <!-- RELATÓRIOS -->
+
+        <section class="section">
+
+            <h3>Relatórios técnicos</h3>
+
+            <div class="timeline">
+
+                <div class="timeline-item" *ngFor="let r of analisesOrdenadas()">
+
+                    <div class="timeline-date">
+                        {{ r.data | date:'dd/MM/yyyy'}}
+                    </div>
+
+                    <div class="timeline-content">
+                        {{ r.relatorio }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- RECOMENDAÇÕES -->
+        <section class="section">
+
+            <h3>Recomendações</h3>
+
+            <div class="timeline">
+
+                <div class="timeline-item" *ngFor="let r of analisesOrdenadas()">
+
+                    <div class="timeline-date">
+                        {{ r.data | date:'dd/MM/yyyy'}}
+                    </div>
+
+                    <div class="timeline-content">
+                        {{ r.recomendacoes }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+    </div>
+
+
+
+
+
+
+
+</div>

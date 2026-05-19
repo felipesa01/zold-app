@@ -1,0 +1,74 @@
+<div class="h-100">
+    <div class="chart-layout h-100">
+        <div class="d-flex">
+            <app-period-control (periodoChange)="onPeriodoChange($event)"></app-period-control>
+        </div>
+
+        <div>
+            <select class="regiao-select" (change)="onRegiao($event)">
+                <option value="">Todas as regiões</option>
+                @for (s of regiaoOptions(); track s) {
+                <option [value]="s" [selected]="regiao() === s">
+                    {{ s }}
+                </option>
+                }
+            </select>
+        </div>
+        <!-- <app-period-control (periodoChange)="onPeriodoChange($event)"></app-period-control> -->
+        <div id="grafico-container-armadilha-mapa-c" class="p-2">
+            <div class="title-container mb-3">
+                <h5>
+                    Distribuição Espacial: {{titulo()}}
+                </h5>
+                @if (regiao()) {
+                <p class="mb-0">Região: {{regiao()}}</p>
+
+                }
+                <p class="mb-0">{{periodoLabel()}}</p>
+            </div>
+
+            <div class="charts">
+
+       
+                <div class="map-container">
+                    <div #mapElement class="map"></div>
+                </div>
+
+
+
+            </div>
+            <div class="custom-legend">
+                @for (item of legendItems; track item.label) {
+                <div class="legend-item" [class.disabled]="datasetVisibility()[item.label] === false"
+                    (click)="toggleDataset(item.label)">
+                    <span class="legend-color" [style.background]="item.color"></span>
+
+                    <span class="legend-label">
+                        {{ item.label }}
+                    </span>
+                </div>
+                }
+            </div>
+
+
+            <div class="size-legend">
+                @for (item of sizeLegend(); track item.value) {
+                <div class="size-item">
+
+                    <div class="circle" [style.width.px]="normalize(item.value) * 2"
+                        [style.height.px]="normalize(item.value) * 2"></div>
+
+                    <span>{{ item.label }}</span>
+
+                </div>
+                }
+            </div>
+        </div>
+
+    </div>
+
+    <button class="chart-mode-btn" (click)="exportar()">
+        <span class="material-symbols-outlined">download</span>
+    </button>
+
+</div>

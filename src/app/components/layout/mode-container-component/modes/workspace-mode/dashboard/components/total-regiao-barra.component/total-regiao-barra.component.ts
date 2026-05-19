@@ -12,6 +12,7 @@ import { ProjectContextService } from "../../../../../../../../services/project-
 import { PeriodInterval } from "../../models/period-interval-model";
 import { PeriodControlComponent } from "../shared/period-control/period-control.component";
 import { MosquitosRegiao } from "../../models/KPI-model";
+import html2canvas from 'html2canvas';
 
 @Component({
     selector: 'app-total-regiao-barra',
@@ -128,6 +129,22 @@ export class TotalRegiaoBarraComponent implements AfterViewInit {
     toggleDoughnut() {
         this.showDoughnut = !this.showDoughnut
     }
+
+    exportar() {
+        const element = document.getElementById('grafico-container-total-regiao');
+
+        html2canvas(element!, {
+            scale: 1
+        }).then(canvas => {
+            const url = canvas.toDataURL('image/png');
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `total_regiao_${this.selectedProject()?.nome.toLowerCase().replaceAll(' ', '')}.png`;
+            a.click();
+        });
+    }
+
 
     // =============================
     // BAR CHART

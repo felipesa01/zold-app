@@ -1,9 +1,10 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, effect, inject } from '@angular/core';
 import { ResponsiveService } from '../../../../services/responsive-service';
 import { MatIcon } from '@angular/material/icon';
 import { LayoutService } from '../../../../services/layout-service';
 import { ModeService } from '../../../../services/mode-service';
 import { NgComponentOutlet } from '@angular/common';
+import { ProjectContextService } from '../../../../services/project-context.service';
 
 @Component({
   selector: 'app-sidebar-expandable-component',
@@ -12,6 +13,7 @@ import { NgComponentOutlet } from '@angular/common';
   styleUrl: './sidebar-expandable-component.css',
 })
 export class SidebarExpandableComponent {
+  
   private responsive = inject(ResponsiveService);
   isMobile = computed(() => this.responsive.isSmallScreen());
 
@@ -28,6 +30,10 @@ export class SidebarExpandableComponent {
       item => item.id === this.activeFeature()
     )
   );
+
+  servicoExpansivel = computed(() => {
+    return this.activeFeature() == 'dashboard' ? false : true
+  })
 
 
   close() {

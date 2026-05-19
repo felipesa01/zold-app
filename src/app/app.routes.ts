@@ -29,94 +29,112 @@ export const routes: Routes = [
                         .then(m => m.WorkspaceIntroComponent)
             },
             {
-                path: 'entities/capturas',
+                path: 'mosquitos/capturas',
                 loadComponent: () =>
-                    import('./components/layout/mode-container-component/modes/workspace-mode/entities/capturas/capturas-list/capturas-list')
+                    import('./components/layout/mode-container-component/modes/workspace-mode/mosquitos/capturas/capturas-list/capturas-list')
                         .then(m => m.CapturasList),
                 data: { reuse: true }
             },
             {
-                path: 'entities/capturas/new',
+                path: 'mosquitos/capturas/new',
                 loadComponent: () =>
-                    import('./components/layout/mode-container-component/modes/workspace-mode/entities/capturas/capturas-form/capturas-form')
+                    import('./components/layout/mode-container-component/modes/workspace-mode/mosquitos/capturas/capturas-form/capturas-form')
                         .then(m => m.CapturasForm)
             },
             {
-                path: 'entities/capturas/:id',
+                path: 'mosquitos/capturas/:id',
                 loadComponent: () =>
-                    import('./components/layout/mode-container-component/modes/workspace-mode/entities/capturas/capturas-detail/capturas-detail')
+                    import('./components/layout/mode-container-component/modes/workspace-mode/mosquitos/capturas/capturas-detail/capturas-detail')
                         .then(m => m.CapturasDetail)
             },
             {
-                path: 'entities/capturas/:id/edit',
+                path: 'mosquitos/capturas/:id/edit',
                 loadComponent: () =>
-                    import('./components/layout/mode-container-component/modes/workspace-mode/entities/capturas/capturas-form/capturas-form')
+                    import('./components/layout/mode-container-component/modes/workspace-mode/mosquitos/capturas/capturas-form/capturas-form')
                         .then(m => m.CapturasForm)
             },
             {
-                path: 'entities/armadilhas',
+                path: 'mosquitos/armadilhas',
                 loadComponent: () =>
-                    import('./components/layout/mode-container-component/modes/workspace-mode/entities/armadilhas/armadilhas-list/armadilhas-list')
+                    import('./components/layout/mode-container-component/modes/workspace-mode/mosquitos/armadilhas/armadilhas-list/armadilhas-list')
                         .then(m => m.ArmadilhasList),
                 data: { reuse: true }
             },
             {
-                path: 'entities/armadilhas/new',
+                path: 'mosquitos/armadilhas/new',
                 loadComponent: () =>
-                    import('./components/layout/mode-container-component/modes/workspace-mode/entities/armadilhas/armadilhas-form/armadilhas-form')
+                    import('./components/layout/mode-container-component/modes/workspace-mode/mosquitos/armadilhas/armadilhas-form/armadilhas-form')
                         .then(m => m.ArmadilhasForm)
             },
             {
-                path: 'entities/armadilhas/:id',
+                path: 'mosquitos/armadilhas/:id',
                 loadComponent: () =>
-                    import('./components/layout/mode-container-component/modes/workspace-mode/entities/armadilhas/armadilhas-detail/armadilhas-detail')
+                    import('./components/layout/mode-container-component/modes/workspace-mode/mosquitos/armadilhas/armadilhas-detail/armadilhas-detail')
                         .then(m => m.ArmadilhasDetail)
             },
             {
-                path: 'entities/armadilhas/:id/edit',
+                path: 'mosquitos/armadilhas/:id/edit',
                 loadComponent: () =>
-                    import('./components/layout/mode-container-component/modes/workspace-mode/entities/armadilhas/armadilhas-form/armadilhas-form')
+                    import('./components/layout/mode-container-component/modes/workspace-mode/mosquitos/armadilhas/armadilhas-form/armadilhas-form')
                         .then(m => m.ArmadilhasForm)
             },
             {
-                path: 'entities/armadilhas/new',
+                path: 'mosquitos/armadilhas/new',
                 loadComponent: () =>
-                    import('./components/layout/mode-container-component/modes/workspace-mode/entities/armadilhas/armadilhas-form/armadilhas-form')
+                    import('./components/layout/mode-container-component/modes/workspace-mode/mosquitos/armadilhas/armadilhas-form/armadilhas-form')
                         .then(m => m.ArmadilhasForm)
             },
             {
-                path: 'entities/projetos',
+                path: 'inventario/exemplares',
                 loadComponent: () =>
-                    import('./components/layout/mode-container-component/modes/workspace-mode/entities/projetos/projetos-list/projetos-list')
+                    import('./components/layout/mode-container-component/modes/workspace-mode/inventarios/exemplares/exemplar-list/exemplar-list')
+                        .then(m => m.ExemplaresList)
+            },
+            {
+                path: 'inventario/exemplares/:id',
+                loadComponent: () =>
+                    import('./components/layout/mode-container-component/modes/workspace-mode/inventarios/exemplares/exemplar-detail/exemplar-detail')
+                        .then(m => m.ExemplaresDetail)
+            },
+            {
+                path: 'inventario/analises',
+                loadComponent: () =>
+                    import('./components/layout/mode-container-component/modes/workspace-mode/inventarios/analises/analises-list/analises-list')
+                        .then(m => m.AnalisesList)
+            },
+            {
+                path: 'projetos',
+                loadComponent: () =>
+                    import('./components/layout/mode-container-component/modes/workspace-mode/projetos/projetos-list/projetos-list')
                         .then(m => m.ProjetosList),
                 data: { reuse: true }
             },
             {
-                path: 'entities/projetos/new',
+                path: 'projetos/new',
                 loadComponent: () =>
-                    import('./components/layout/mode-container-component/modes/workspace-mode/entities/projetos/projetos-form/projetos-form')
+                    import('./components/layout/mode-container-component/modes/workspace-mode/projetos/projetos-form/projetos-form')
                         .then(m => m.ProjetosForm)
             },
             {
-                path: 'entities/projetos/:id',
+                path: 'projetos/:id',
                 loadComponent: () =>
-                    import('./components/layout/mode-container-component/modes/workspace-mode/entities/projetos/projetos-detail/projetos-detail')
+                    import('./components/layout/mode-container-component/modes/workspace-mode/projetos/projetos-detail/projetos-detail')
                         .then(m => m.ProjetosDetail)
             },
             {
-                path: 'entities/projetos/:id/edit',
+                path: 'projetos/:id/edit',
                 loadComponent: () =>
-                    import('./components/layout/mode-container-component/modes/workspace-mode/entities/projetos/projetos-form/projetos-form')
+                    import('./components/layout/mode-container-component/modes/workspace-mode/projetos/projetos-form/projetos-form')
                         .then(m => m.ProjetosForm)
             },
             {
-                path: 'entities/projetos/new',
+                path: 'projetos/new',
                 loadComponent: () =>
-                    import('./components/layout/mode-container-component/modes/workspace-mode/entities/projetos/projetos-form/projetos-form')
+                    import('./components/layout/mode-container-component/modes/workspace-mode/projetos/projetos-form/projetos-form')
                         .then(m => m.ProjetosForm)
             },
             {
-                path: 'dashboard',
+                path: 'mosquitos/dashboard',
                 loadComponent: () =>
                     import('./components/layout/mode-container-component/modes/workspace-mode/dashboard/dashboard-component')
                         .then(m => m.DashboardComponent)

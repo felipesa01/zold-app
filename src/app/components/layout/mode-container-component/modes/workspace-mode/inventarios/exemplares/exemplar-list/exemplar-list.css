@@ -1,0 +1,196 @@
+ .page {
+   padding: 24px;
+   /* max-width: 1200px; */
+   margin-right: auto;
+   margin-left: auto;
+ }
+
+ .page-header {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   gap: 16px;
+   margin-bottom: 16px;
+ }
+
+ .back-btn {
+   min-width: auto;
+   padding: 0 8px;
+   color: #555;
+ }
+
+ .search {
+   width: 320px;
+   margin-bottom: 12px;
+ }
+
+ table {
+   /* width: 100%; */
+   table-layout: fixed;
+ }
+
+ td.mat-cell {
+   white-space: nowrap;
+   overflow: hidden;
+   text-overflow: ellipsis;
+   vertical-align: middle;
+ }
+
+ .filters {
+   display: grid;
+   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+   gap: 12px;
+   margin-bottom: 16px;
+ }
+
+
+
+ /* células */
+ td.mat-cell,
+ th.mat-header-cell {
+   white-space: nowrap;
+   overflow: hidden;
+   text-overflow: ellipsis;
+   vertical-align: middle;
+   padding-top: 4px;
+   padding-bottom: 4px;
+ }
+
+ /* coluna ações */
+ .mat-column-acoes {
+   width: 48px;
+   min-width: 48px;
+   max-width: 48px;
+   text-align: center;
+ }
+
+ /* botão centralizado */
+ .mat-column-acoes button {
+   margin: 0 auto;
+ }
+
+ /* altura compacta */
+ tr.mat-row,
+ tr.mat-header-row {
+   height: 40px;
+ }
+
+
+
+ .header-left {
+   display: flex;
+   align-items: center;
+   gap: 12px;
+ }
+
+ .workspace-loading {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: #666;
+}
+
+.workspace-empty {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #777;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* BUSCA MODERNA */
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  min-width: 240px;
+  margin-bottom: 10px;
+}
+
+.search-box input {
+  border: none;
+  outline: none;
+  font-size: 13px;
+  width: 100%;
+}
+
+/* FILTROS MODERNOS */
+.filters-modern {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+/* SELECTS */
+.filter-select {
+  height: 34px;
+  padding: 0 10px;
+  font-size: 13px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: white;
+  min-width: 160px;
+  cursor: pointer;
+}
+
+/* DATAS */
+.filter-date {
+  height: 34px;
+  padding: 0 8px;
+  font-size: 13px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+/* BOTÃO LIMPAR */
+.clear-btn {
+  height: 34px;
+  padding: 0 12px;
+  font-size: 13px;
+  border-radius: 8px;
+  border: none;
+  background: #f3f4f6;
+  cursor: pointer;
+}
+
+.clear-btn:hover {
+  background: #e5e7eb;
+}
+
+
+/* Container geral das abas */
+.entities-tabs {
+  margin-top: 16px;
+}
+
+/* Espaçamento interno */
+.tab-content {
+  padding-top: 16px;
+}
+
+/* Container do mapa */
+.map-container {
+  height: calc(100vh - 320px); /* ajuste se necessário */
+  width: 100%;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+}
+
+/* Div onde o OpenLayers será renderizado */
+.map {
+  width: 100%;
+  height: 100%;
+}

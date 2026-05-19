@@ -18,7 +18,7 @@ import { PeriodInterval } from '../../models/period-interval-model';
 import { ApiConnectionService } from '../../../../../../../../services/api-connection-service';
 import { ProjectContextService } from '../../../../../../../../services/project-context.service';
 import { MosquitosArmadilha } from '../../models/KPI-model';
-import { Armadilha } from '../../../entities/armadilhas/armadilha.model';
+import { Armadilha } from '../../../mosquitos/armadilhas/armadilha.model';
 import { Feature, Map, View } from 'ol';
 import TileLayer from 'ol/layer/Tile';
 import { Point } from 'ol/geom';
@@ -32,6 +32,8 @@ import { defaults as defaultControls } from 'ol/control';
 import { defaults as defaultInteractions } from 'ol/interaction';
 import { XYZ } from 'ol/source';
 import { CommonModule } from '@angular/common';
+import html2canvas from 'html2canvas';
+import OsmSource from 'ol/source/OSM';
 
 
 @Component({
@@ -65,16 +67,16 @@ export class TotalArmadilhaBarraMapaComponent implements AfterViewInit {
 
     totalPaginas = computed(() => {
         var data;
-        if (this.regiao()) {data = this.data().filter(e => e.a_regiao == this.regiao())}
-        else {data = this.data()}
+        if (this.regiao()) { data = this.data().filter(e => e.a_regiao == this.regiao()) }
+        else { data = this.data() }
 
         return Math.ceil(data.length / this.pageSize)
     })
 
     armadilhasPagina = computed(() => {
         var data;
-        if (this.regiao()) {data = this.data().filter(e => e.a_regiao == this.regiao())}
-        else {data = this.data()}
+        if (this.regiao()) { data = this.data().filter(e => e.a_regiao == this.regiao()) }
+        else { data = this.data() }
 
         const start = this.pagina() * this.pageSize
         const end = start + this.pageSize
@@ -154,12 +156,21 @@ export class TotalArmadilhaBarraMapaComponent implements AfterViewInit {
             moveTolerance: 3,
             interactions: defaultInteractions(undefined),
             layers: [
+                // new TileLayer({
+                //     source: new XYZ({
+                //         url: 'https://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}',
+                //         attributions: '© Google'
+                //     })
+                // }),
                 new TileLayer({
                     source: new XYZ({
-                        url: 'https://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}',
-                        attributions: '© Google'
+                        url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+                        crossOrigin: 'anonymous'
                     })
                 }),
+                // new TileLayer(
+                //     { source: new OsmSource(), properties: { name: 'OSM', imgThumb: '.assets/images/tileThumbs/osm.png', categoria: 'OSM' } }
+                // ),
                 this.armadilhaLayer
             ],
             view: new View({
@@ -301,6 +312,22 @@ export class TotalArmadilhaBarraMapaComponent implements AfterViewInit {
     }
 
 
+    exportar() {
+        const element = document.getElementById('grafico-container-armadilha-mapa');
+
+        html2canvas(element!, {
+            scale: 1
+        }).then(canvas => {
+            const url = canvas.toDataURL('image/png');
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `armadilha_mapa_${this.selectedProject()?.nome.toLowerCase().replaceAll(' ', '')}.png`;
+            a.click();
+        });
+    }
+
+
     // =============================
     // BAR CHART
     // =============================
@@ -314,7 +341,7 @@ export class TotalArmadilhaBarraMapaComponent implements AfterViewInit {
         function soma(tipo: 'aedes' | 'culex' | 'outras', armadilhaNome: string) {
             return data
                 .filter(d => d.armadilha === armadilhaNome)
-                .reduce((s, i) => s + i[tipo], 0)
+                .reduce((s, i) => s + +i[tipo], 0)
         }
 
         return {
@@ -326,8 +353,8 @@ export class TotalArmadilhaBarraMapaComponent implements AfterViewInit {
                     label: 'Aedes',
                     data: armadilhas.map(a => soma('aedes', a.armadilha)),
                     backgroundColor: '#d84315',
-                    borderRadius: 4,
-                    // barThickness: 'flex',
+                    // borderRadius: 4,
+                    // barThickness: 15,
                     hidden: visibilidade['Aedes'] == false
                 },
 
@@ -336,6 +363,7 @@ export class TotalArmadilhaBarraMapaComponent implements AfterViewInit {
                     data: armadilhas.map(a => soma('culex', a.armadilha)),
                     backgroundColor: '#fbc02d',
                     borderRadius: 4,
+                    // barThickness: 15,
                     // barThickness: 'flex',
                     hidden: visibilidade['Culex'] == false
                 },
@@ -345,6 +373,7 @@ export class TotalArmadilhaBarraMapaComponent implements AfterViewInit {
                     data: armadilhas.map(a => soma('outras', a.armadilha)),
                     backgroundColor: '#d7c8ad',
                     borderRadius: 4,
+                    // barThickness: 15,
                     // barThickness: 'flex',
                     hidden: visibilidade['Outras Espécies'] == false
                 }
@@ -415,6 +444,7 @@ export class TotalArmadilhaBarraMapaComponent implements AfterViewInit {
         scales: {
 
             x: {
+                offset: true,
                 beginAtZero: true,
                 ticks: {
                     precision: 0,
@@ -425,6 +455,7 @@ export class TotalArmadilhaBarraMapaComponent implements AfterViewInit {
                 }
             },
             y: {
+                
                 ticks: {
                     font: { size: 11 }
                 },
