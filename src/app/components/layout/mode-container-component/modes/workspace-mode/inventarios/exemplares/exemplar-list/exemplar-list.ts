@@ -176,7 +176,7 @@ export class ExemplaresList implements AfterViewInit {
             this.source.addFeatures(features);
 
             if (features.length) {
-                map.getView().fit(this.source.getExtent(), {
+                map.getView().fit(this.source.getExtent()!, {
                     padding: [100, 100, 100, 100],
                     maxZoom: 18
                 });

@@ -214,7 +214,7 @@ export class TotalArmadilhaBarraMapaComponent implements AfterViewInit {
             this.armadilhaSource.addFeatures(features);
 
             map.getView().fit(
-                this.armadilhaSource.getExtent(),
+                this.armadilhaSource.getExtent()!,
                 { padding: [100, 100, 100, 100], maxZoom: 18 }
             );
 
