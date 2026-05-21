@@ -9,6 +9,7 @@ import { DashboardTrocaInterval } from "../components/layout/mode-container-comp
 import { Exemplar } from "../components/layout/mode-container-component/modes/workspace-mode/inventarios/exemplares/exemplar.model";
 import { AnaliseInventario } from "../components/layout/mode-container-component/modes/workspace-mode/inventarios/analises/analise.model";
 import { FotoInventario } from "../components/layout/mode-container-component/modes/workspace-mode/inventarios/fotos/fotos.model";
+import { ArmadilhaCarrapato } from "../components/layout/mode-container-component/modes/workspace-mode/carrapatos/armadilhas/armadilha-carrapato.model";
 
 
 export interface Projeto {
@@ -67,6 +68,12 @@ export class ApiConnectionService {
         )
     }
 
+    listarCapturasByArmadilhaCarrapato(armadilhaId: string): Observable<Captura[]> {
+        return this.http.get<Captura[]>(`${this.apiURL}/-carrapatos/${armadilhaId}/capturas`).pipe(
+            // delay(2000)
+        )
+    }
+
     listarExemplaresByProjeto(projetoId: string): Observable<Exemplar[]> {
         return this.http.get<Exemplar[]>(`${this.apiURL}/projetos/${projetoId}/exemplares`).pipe(
             // delay(2000)
@@ -97,6 +104,10 @@ export class ApiConnectionService {
 
     findCaptura(id: string): Observable<Captura> {
         return this.http.get<Captura>(`${this.apiURL}/capturas/${id}`)
+    }
+
+    findArmadilhaCarrapatos(id: string): Observable<ArmadilhaCarrapato> {
+        return this.http.get<Armadilha>(`${this.apiURL}/armadilhas-carrapatos/${id}`)
     }
 
     findExemplar(id: string): Observable<Exemplar> {
