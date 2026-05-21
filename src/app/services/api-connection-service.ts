@@ -56,6 +56,12 @@ export class ApiConnectionService {
         )
     }
 
+    listarArmadilhasCarrapatosByProjeto(projetoId: string): Observable<ArmadilhaCarrapato[]> {
+        return this.http.get<ArmadilhaCarrapato[]>(`${this.apiURL}/projetos/${projetoId}/armadilhas-carrapatos`).pipe(
+            // delay(20000)
+        )
+    }
+
     listarCapturasByProjeto(projetoId: string): Observable<Captura[]> {
         return this.http.get<Captura[]>(`${this.apiURL}/projetos/${projetoId}/capturas`).pipe(
             // delay(2000)
@@ -69,7 +75,7 @@ export class ApiConnectionService {
     }
 
     listarCapturasByArmadilhaCarrapato(armadilhaId: string): Observable<Captura[]> {
-        return this.http.get<Captura[]>(`${this.apiURL}/-carrapatos/${armadilhaId}/capturas`).pipe(
+        return this.http.get<Captura[]>(`${this.apiURL}/armadilhas-carrapatos/${armadilhaId}/capturas`).pipe(
             // delay(2000)
         )
     }
@@ -134,6 +140,10 @@ export class ApiConnectionService {
         return this.http.post<ArrayBuffer>(`${this.apiURL}/armadilhas`, payload)
     }
 
+    addArmadilhaCarrapatos(payload: CreateArmadilha): Observable<ArrayBuffer> {
+        return this.http.post<ArrayBuffer>(`${this.apiURL}/armadilhas-carrapatos`, payload)
+    }
+
     updateCaptura(capturaId: string, payload: object): Observable<ArrayBuffer> {
         return this.http.patch<ArrayBuffer>(`${this.apiURL}/capturas/${capturaId}`, payload).pipe(
             // delay(2000)
@@ -143,6 +153,11 @@ export class ApiConnectionService {
     updateArmadilha(armadilhaId: string, payload: object): Observable<ArrayBuffer> {
         return this.http.patch<ArrayBuffer>(`${this.apiURL}/armadilhas/${armadilhaId}`, payload)
     }
+
+    updateArmadilhCarrapatos(armadilhaId: string, payload: object): Observable<ArrayBuffer> {
+        return this.http.patch<ArrayBuffer>(`${this.apiURL}/armadilhas-carrapatos/${armadilhaId}`, payload)
+    }
+
 
     updateProjeto(projetoId: string, payload: object): Observable<ArrayBuffer> {
         return this.http.patch<ArrayBuffer>(`${this.apiURL}/projetos/${projetoId}`, payload)
