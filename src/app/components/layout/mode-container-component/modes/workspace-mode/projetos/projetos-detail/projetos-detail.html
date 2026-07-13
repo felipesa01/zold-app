@@ -1,64 +1,194 @@
-<div class="page" *ngIf="projeto()">
+<div class="project-page" *ngIf="projeto()">
 
-  <div class="page-header">
-    <button mat-button class="back-btn" (click)="voltar()">
-      <mat-icon>arrow_back</mat-icon>
-      Voltar
-    </button>
+  <header class="project-header">
 
-    <h1>Projeto</h1>
+    <div class="header-top">
 
-    <p class="subtitle">
-      {{ projeto()?.nome }} — {{ projeto()?.cidade }}/{{ projeto()?.uf }}
-    </p>
-  </div>
-
-  <section class="meta">
-
-    <div>
-      <strong>Responsável:</strong>
-      {{ projeto()?.responsavel }}
-    </div>
-
-    <div>
-      <strong>Latitude:</strong>
-      {{ projeto()?.lat }}
-    </div>
-
-    <div>
-      <strong>Longitude:</strong>
-      {{ projeto()?.lon }}
-    </div>
-
-    <div class="chips">
-      <mat-chip [color]="statusColor(projeto()!.status)" selected>
-        {{ projeto()?.status }}
-      </mat-chip>
-    </div>
-
-    <div class="d-flex align-content-center">
-      <button mat-flat-button color="primary" class="edit-btn" [routerLink]="['edit']">
-        <mat-icon>edit</mat-icon>
-        Editar
+      <button
+        mat-button
+        class="back-btn"
+        (click)="voltar()"
+      >
+        <mat-icon>arrow_back</mat-icon>
+        Voltar
       </button>
 
-      <button class="btn btn-outline-danger d-flex" style="border-radius: 2em;" (click)="delete()">
-        <mat-icon>delete</mat-icon>
-        Excluir
-      </button>
+      <div class="header-actions">
+
+        <button
+          mat-flat-button
+          color="primary"
+          [routerLink]="['edit']"
+        >
+          <mat-icon>edit</mat-icon>
+          Editar
+        </button>
+
+        <button
+          class="btn-delete"
+          (click)="delete()"
+        >
+          <mat-icon>delete</mat-icon>
+          Excluir
+        </button>
+
+      </div>
+
     </div>
 
-  </section>
+    <div class="project-info">
 
-  <section class="operacional">
-    <h2>Endereço</h2>
+      <div class="title-area">
 
-    <ul>
-      <li><strong>Logradouro:</strong> {{ projeto()?.logradouro }}, {{ projeto()?.numero }}</li>
-      <li><strong>Complemento:</strong> {{ projeto()?.complemento }}</li>
-      <li><strong>CEP:</strong> {{ projeto()?.cep }}</li>
-      <li><strong>Cidade:</strong> {{ projeto()?.cidade }}/{{ projeto()?.uf }}</li>
-    </ul>
+        <h1>
+          {{ projeto()?.nome }}
+        </h1>
+
+        <div class="subtitle">
+          {{ projeto()?.cidade }}/{{ projeto()?.uf }}
+        </div>
+
+      </div>
+
+      <div class="status-area">
+
+        <mat-chip
+          [color]="statusColor(projeto()!.status)"
+          selected
+        >
+          {{ projeto()?.status }}
+        </mat-chip>
+
+      </div>
+
+    </div>
+
+    <div class="project-meta">
+
+      <div class="meta-card">
+        <span class="meta-label">Responsável</span>
+        <span class="meta-value">
+          {{ projeto()?.responsavel }}
+        </span>
+      </div>
+
+      <div class="meta-card">
+        <span class="meta-label">Latitude</span>
+        <span class="meta-value">
+          {{ projeto()?.lat }}
+        </span>
+      </div>
+
+      <div class="meta-card">
+        <span class="meta-label">Longitude</span>
+        <span class="meta-value">
+          {{ projeto()?.lon }}
+        </span>
+      </div>
+
+      <div class="meta-card">
+        <span class="meta-label">CEP</span>
+        <span class="meta-value">
+          {{ projeto()?.cep }}
+        </span>
+      </div>
+
+    </div>
+
+  </header>
+
+  <section class="content-card">
+
+    <div class="section-header">
+
+      <div>
+        <h2>Serviços do Projeto</h2>
+
+        <p>
+          Habilite ou desabilite os serviços disponíveis
+          para este projeto.
+        </p>
+      </div>
+
+    </div>
+
+    <div class="services-list">
+
+      <div
+        class="service-item"
+        *ngFor="let servico of servicosDisponiveis()?.servicos"
+      >
+
+        <div class="service-left">
+
+          <div class="service-name">
+            {{ servico.nome }}
+          </div>
+
+          <div class="service-route">
+            {{ servico.route }}
+          </div>
+
+          <!-- <div
+            class="service-menu"
+            *ngIf="servico.itens?.length"
+          >
+
+            <div class="menu-title">
+              Menus disponíveis
+            </div>
+
+            <div class="menu-items">
+
+              <div
+                class="menu-item"
+                *ngFor="let item of servico.itens"
+              >
+
+                <mat-icon>
+                  {{ item.icon }}
+                </mat-icon>
+
+                <span>
+                  {{ item.label }}
+                </span>
+
+              </div>
+
+            </div>
+
+          </div> -->
+
+        </div>
+
+        <div class="service-right">
+
+          <div class="toggle-container">
+
+            <span class="toggle-label">
+
+              {{
+                isServicoHabilitado(servico.id)
+                  ? 'Habilitado'
+                  : 'Desabilitado'
+              }}
+
+            </span>
+
+            <mat-slide-toggle
+              color="primary"
+              [checked]="isServicoHabilitado(servico.id)"
+              (change)="toggleServico(servico, $event.checked)"
+            >
+            </mat-slide-toggle>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
 
   </section>
 

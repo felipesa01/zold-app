@@ -1,0 +1,49 @@
+<div class="login-page">
+
+    <div class="login-card">
+
+        <div class="logo">
+            ZÖLD
+        </div>
+
+        <h1>Entrar</h1>
+
+        <p class="subtitle">
+            Faça login para acessar a plataforma.
+        </p>
+
+        <form [formGroup]="form" (ngSubmit)="login()">
+
+            <div class="field">
+
+                <label>Email</label>
+
+                <input type="email" formControlName="email" autocomplete="username">
+
+            </div>
+
+            <div class="field">
+
+                <label>Senha</label>
+
+                <input type="password" formControlName="senha" autocomplete="current-password">
+
+            </div>
+
+            <div *ngIf="error" class="error">
+
+                {{ error }}
+
+            </div>
+
+            <button type="submit" [disabled]="loading || form.invalid">
+
+                {{ loading ? 'Entrando...' : 'Entrar' }}
+
+            </button>
+
+        </form>
+
+    </div>
+
+</div>

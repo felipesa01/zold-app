@@ -1,0 +1,309 @@
+.account-sidebar {
+
+    height: 100%;
+
+    display: flex;
+
+    flex-direction: column;
+
+    background: white;
+
+}
+
+h2 {
+
+    text-align: center;
+
+    font-size: 30px;
+
+    font-weight: 300;
+
+    margin: 28px 0;
+
+    color: #243447;
+
+}
+
+.profile {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 18px;
+
+    padding: 0 28px 28px;
+
+}
+
+.avatar {
+
+    width: 62px;
+
+    height: 62px;
+
+    border-radius: 50%;
+
+    background: #1565c0;
+
+    color: white;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    font-size: 26px;
+
+    font-weight: 700;
+
+}
+
+.info {
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+.name {
+
+    font-weight: 600;
+
+    color: #243447;
+
+}
+
+.role {
+
+    margin-top: 3px;
+
+    font-size: 14px;
+
+    color: #6b7280;
+
+}
+
+.email {
+
+    margin-top: 2px;
+
+    font-size: 13px;
+
+    color: #94a3b8;
+
+}
+
+.divider {
+
+    height: 1px;
+
+    background: #e6ebf2;
+
+    margin: 8px 0;
+
+}
+
+.menu-item {
+
+    height: 54px;
+
+    border: none;
+
+    background: transparent;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 16px;
+
+    padding: 0 28px;
+
+    cursor: pointer;
+
+    font-size: 15px;
+
+    color: #243447;
+
+    transition: .15s;
+
+}
+
+.menu-item:hover {
+
+    background: #f4f7fb;
+
+}
+
+.menu-item i {
+
+    width: 22px;
+
+}
+
+.logout {
+
+    margin-top: auto;
+
+    color: #d32f2f;
+
+    border-top: 1px solid #e6ebf2;
+
+}.account-sidebar {
+
+    height: 100%;
+
+    display: flex;
+
+    flex-direction: column;
+
+    background: white;
+
+}
+
+h2 {
+
+    text-align: center;
+
+    font-size: 30px;
+
+    font-weight: 300;
+
+    margin: 28px 0;
+
+    color: #243447;
+
+}
+
+.profile {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 18px;
+
+    padding: 0 28px 28px;
+
+}
+
+.avatar {
+
+    width: 62px;
+
+    height: 62px;
+
+    border-radius: 50%;
+
+    background: #1565c0;
+
+    color: white;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    font-size: 26px;
+
+    font-weight: 700;
+
+}
+
+.info {
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+.name {
+
+    font-weight: 600;
+
+    color: #243447;
+
+}
+
+.role {
+
+    margin-top: 3px;
+
+    font-size: 14px;
+
+    color: #6b7280;
+
+}
+
+.email {
+
+    margin-top: 2px;
+
+    font-size: 13px;
+
+    color: #94a3b8;
+
+}
+
+.divider {
+
+    height: 1px;
+
+    background: #e6ebf2;
+
+    margin: 8px 0;
+
+}
+
+.menu-item {
+
+    height: 54px;
+
+    border: none;
+
+    background: transparent;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 16px;
+
+    padding: 0 28px;
+
+    cursor: pointer;
+
+    font-size: 15px;
+
+    color: #243447;
+
+    transition: .15s;
+
+}
+
+.menu-item:hover {
+
+    background: #f4f7fb;
+
+}
+
+.menu-item i {
+
+    width: 22px;
+
+}
+
+.logout {
+
+    margin-top: auto;
+
+    color: #d32f2f;
+
+    border-top: 1px solid #e6ebf2;
+
+}

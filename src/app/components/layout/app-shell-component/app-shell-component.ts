@@ -10,6 +10,8 @@ import { TopbarComponent } from '../bars/topbar-component/topbar-component';
 import { LayoutService } from '../../../services/layout-service';
 import { textHeights } from 'ol/render/canvas';
 import { ModeService } from '../../../services/mode-service';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter } from 'rxjs';
 
 
 @Component({
@@ -26,16 +28,43 @@ export class AppShellComponent {
   fixedSidebarOpened = this.sidebarControls.fixedSidebarOpened;
   expandableSidebarOpened = this.sidebarControls.expandableSidebarOpened;
 
+  private readonly router = inject(Router);
+  public readonly isLoginPage = signal(false);
 
+  public readonly sidebarOpened = computed(() => {
+
+    if (this.isLoginPage()) {
+      return false;
+    }
+    if (!this.isMobile()) {
+      return true;
+    }
+    return this.fixedSidebarOpened();
+  });
 
   // referênica para o componente do material
   @ViewChild('sidenav') sidenav!: MatSidenav;
 
   constructor() {
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+
+        this.isLoginPage.set(
+          this.router.url.startsWith('/login')
+        );
+
+      });
+
     effect(() => {
-      if (this.isMobile()) {
-        this.sidebarControls.fixedSidebarOpened.set(false);
-      }
+
+      const login = this.isLoginPage();
+      const mobile = this.isMobile();
+
+      this.sidebarControls.fixedSidebarOpened.set(
+        !login && !mobile
+      );
+
     });
   }
 

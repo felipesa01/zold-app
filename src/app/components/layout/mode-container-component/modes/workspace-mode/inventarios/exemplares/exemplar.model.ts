@@ -1,3 +1,6 @@
+import { AnaliseInventario } from "../analises/analise.model"
+import { UploadFotoDto } from "../fotos/fotos.model"
+
 export interface Exemplar {
     id: string
     nm_comum: string
@@ -10,6 +13,8 @@ export interface Exemplar {
     cor_flor: string
     idade_aproximada: number
     valor: number
+    fotos?: UploadFotoDto[];
+    analises: AnaliseInventario[];
     projetoId: string;
     createdAt: string;
     updatedAt: string;

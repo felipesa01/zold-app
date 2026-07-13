@@ -1,0 +1,73 @@
+<div class="page" *ngIf="captura()">
+
+    <!-- Header -->
+    <div class="page-header">
+        <button mat-button class="back-btn" (click)="voltar()">
+            <mat-icon>arrow_back</mat-icon>
+            Voltar
+        </button>
+
+        <h1>
+            Captura
+        </h1>
+
+        <p class="subtitle">
+            Armadilha <strong>{{ armadilha()?.nome }}</strong>
+            — {{ captura()?.data }}
+        </p>
+
+    </div>
+
+    <!-- Meta -->
+    <section class="meta">
+
+        <div>
+            <strong>Armadilha:</strong>
+            {{ armadilha()?.nome }} – {{ armadilha()?.referencia }}
+        </div>
+
+        <div>
+            <strong>Data da captura:</strong>
+            {{ captura()?.data | date:'dd/MM/yyyy' }}
+        </div>
+
+        <div class="d-flex align-content-center">
+            <button mat-flat-button color="primary" class="edit-btn" [routerLink]="['edit']">
+                <mat-icon>edit</mat-icon>
+                Editar
+            </button>
+
+            <button class="btn btn-outline-danger d-flex" style="border-radius: 2em;" (click)="delete()">
+                <mat-icon>delete</mat-icon>
+                Excluir
+            </button>
+        </div>
+
+    </section>
+
+    <!-- Contagem -->
+    <section class="counts">
+
+        <div class="count">
+            <span class="label">Larva</span>
+            <span class="value">{{ captura()?.numLarva }}</span>
+        </div>
+
+        <div class="count">
+            <span class="label">Ninfa</span>
+            <span class="value">{{ captura()?.numNinfa }}</span>
+        </div>
+
+        <div class="count">
+            <span class="label">Adulto</span>
+            <span class="value">{{ captura()?.numAdulto }}</span>
+        </div>
+
+        <div class="count total">
+            <span class="label">Total</span>
+            <span class="value">{{ captura()?.numTotal }}</span>
+        </div>
+
+    </section>
+
+</div>

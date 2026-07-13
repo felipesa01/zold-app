@@ -6,10 +6,12 @@ import { Captura, CreateCaptura } from "../components/layout/mode-container-comp
 import { environment } from "../../environments/environment";
 import { DashboardTimePoint, DashboardTrocaStats, EvoluçãoAgrupado, MosquitosAgrupados, MosquitosArmadilha, MosquitosRegiao } from "../components/layout/mode-container-component/modes/workspace-mode/dashboard/models/KPI-model";
 import { DashboardTrocaInterval } from "../components/layout/mode-container-component/modes/workspace-mode/dashboard/models/interval-stats-model";
-import { Exemplar } from "../components/layout/mode-container-component/modes/workspace-mode/inventarios/exemplares/exemplar.model";
-import { AnaliseInventario } from "../components/layout/mode-container-component/modes/workspace-mode/inventarios/analises/analise.model";
+import { CreateExemplar, Exemplar } from "../components/layout/mode-container-component/modes/workspace-mode/inventarios/exemplares/exemplar.model";
+import { AnaliseInventario, CreateAnaliseInventario } from "../components/layout/mode-container-component/modes/workspace-mode/inventarios/analises/analise.model";
 import { FotoInventario } from "../components/layout/mode-container-component/modes/workspace-mode/inventarios/fotos/fotos.model";
 import { ArmadilhaCarrapato } from "../components/layout/mode-container-component/modes/workspace-mode/carrapatos/armadilhas/armadilha-carrapato.model";
+import { CapturaCarrapato, CreateCapturaCarrapato } from "../components/layout/mode-container-component/modes/workspace-mode/carrapatos/capturas/captura-carrapato.model";
+import { CreateRecomendacaoInventario, RecomendacaoInventario, UpdateRecomendacaoInventario } from "../components/layout/mode-container-component/modes/workspace-mode/inventarios/recomendacoes/recomendacoes.model";
 
 
 export interface Projeto {
@@ -27,21 +29,51 @@ export interface Projeto {
     uf: string
 }
 
-export interface ProjetoServicos {
+// export interface ProjetoServicos {
+//     id: string;
+//     nome: string;
+//     hasData: boolean;
+//     schema: string;
+//     tabela: string;
+//     campoProjeto: string;
+//     itens: { label: string; icon: string; route: string }[];
+//     route: string
+// }
+
+export interface ProjetoServicoItem {
+    label: string;
+    icon: string;
+    route: string;
+}
+
+export interface ProjetoServico {
     id: string;
+    is_name: string;
     nome: string;
-    hasData: boolean;
     schema: string;
     tabela: string;
     campoProjeto: string;
-    itens: { label: string; icon: string; route: string }[];
-    route: string
+    route: string;
+    dashboard: boolean;
+    itens: ProjetoServicoItem[];
+}
+
+export interface ProjetoServicosAtivos {
+    projetoId: string;
+    servicosAtivos: ProjetoServico[];
+}
+
+export interface ProjetoServicosDisponiveis {
+    projetoId: string;
+    servicos: ProjetoServico[];
 }
 
 @Injectable({ providedIn: 'root' })
 export class ApiConnectionService {
 
     apiURL = `${environment.apiUrl}`
+    filesURL = `${environment.filesUrl}`
+
 
     constructor(private http: HttpClient) { }
 
@@ -68,14 +100,20 @@ export class ApiConnectionService {
         )
     }
 
+    listarCapturasCarrapatosByProjeto(projetoId: string): Observable<CapturaCarrapato[]> {
+        return this.http.get<CapturaCarrapato[]>(`${this.apiURL}/projetos/${projetoId}/capturas-carrapatos`).pipe(
+            // delay(2000)
+        )
+    }
+
     listarCapturasByArmadilha(armadilhaId: string): Observable<Captura[]> {
         return this.http.get<Captura[]>(`${this.apiURL}/armadilhas/${armadilhaId}/capturas`).pipe(
             // delay(2000)
         )
     }
 
-    listarCapturasByArmadilhaCarrapato(armadilhaId: string): Observable<Captura[]> {
-        return this.http.get<Captura[]>(`${this.apiURL}/armadilhas-carrapatos/${armadilhaId}/capturas`).pipe(
+    listarCapturasByArmadilhaCarrapato(armadilhaId: string): Observable<CapturaCarrapato[]> {
+        return this.http.get<CapturaCarrapato[]>(`${this.apiURL}/armadilhas-carrapatos/${armadilhaId}/capturas`).pipe(
             // delay(2000)
         )
     }
@@ -92,17 +130,17 @@ export class ApiConnectionService {
         )
     }
 
-    listarAnalisesByExemplar(exemplarId: string): Observable<AnaliseInventario[]> {
-        return this.http.get<AnaliseInventario[]>(`${this.apiURL}/exemplares/${exemplarId}/analises`).pipe(
-            // delay(2000)
-        )
-    }
+    // listarAnalisesByExemplar(exemplarId: string): Observable<AnaliseInventario[]> {
+    //     return this.http.get<AnaliseInventario[]>(`${this.apiURL}/analises/exemplar/${exemplarId}`).pipe(
+    //         // delay(2000)
+    //     )
+    // }
 
-    listarFotosByExemplar(exemplarId: string): Observable<FotoInventario[]> {
-        return this.http.get<FotoInventario[]>(`${this.apiURL}/exemplares/${exemplarId}/analises/fotos`).pipe(
-            // delay(2000)
-        )
-    }
+    // listarFotosByExemplar(exemplarId: string): Observable<FotoInventario[]> {
+    //     return this.http.get<FotoInventario[]>(`${this.apiURL}/exemplares/${exemplarId}/analises/fotos`).pipe(
+    //         // delay(2000)
+    //     )
+    // }
 
     findArmadilha(id: string): Observable<Armadilha> {
         return this.http.get<Armadilha>(`${this.apiURL}/armadilhas/${id}`)
@@ -110,6 +148,14 @@ export class ApiConnectionService {
 
     findCaptura(id: string): Observable<Captura> {
         return this.http.get<Captura>(`${this.apiURL}/capturas/${id}`)
+    }
+
+    findAnaliseInventario(id: string): Observable<AnaliseInventario> {
+        return this.http.get<AnaliseInventario>(`${this.apiURL}/analises/${id}`)
+    }
+
+    findCapturaCarrapatos(id: string): Observable<CapturaCarrapato> {
+        return this.http.get<CapturaCarrapato>(`${this.apiURL}/capturas-carrapatos/${id}`)
     }
 
     findArmadilhaCarrapatos(id: string): Observable<ArmadilhaCarrapato> {
@@ -128,16 +174,30 @@ export class ApiConnectionService {
         return this.http.get<Projeto>(`${this.apiURL}/projetos/${id}`)
     }
 
+
     addCaptura(payload: CreateCaptura): Observable<ArrayBuffer> {
         return this.http.post<ArrayBuffer>(`${this.apiURL}/capturas`, payload)
+    }
+
+    addCapturaCarrapatos(payload: CreateCapturaCarrapato): Observable<ArrayBuffer> {
+        return this.http.post<ArrayBuffer>(`${this.apiURL}/capturas-carrapatos`, payload)
     }
 
     addProjeto(payload: CreateCaptura): Observable<ArrayBuffer> {
         return this.http.post<ArrayBuffer>(`${this.apiURL}/projetos`, payload)
     }
 
+    addExemplar(payload: CreateExemplar): Observable<ArrayBuffer> {
+        return this.http.post<ArrayBuffer>(`${this.apiURL}/exemplares`, payload)
+    }
+
+
     addArmadilha(payload: CreateArmadilha): Observable<ArrayBuffer> {
         return this.http.post<ArrayBuffer>(`${this.apiURL}/armadilhas`, payload)
+    }
+
+    addAnaliseInventario(payload: CreateAnaliseInventario): Observable<AnaliseInventario> {
+        return this.http.post<AnaliseInventario>(`${this.apiURL}/analises`, payload)
     }
 
     addArmadilhaCarrapatos(payload: CreateArmadilha): Observable<ArrayBuffer> {
@@ -150,11 +210,27 @@ export class ApiConnectionService {
         )
     }
 
+    updateAnaliseInventario(analiseId: string, payload: object): Observable<AnaliseInventario> {
+        return this.http.patch<AnaliseInventario>(`${this.apiURL}/analises/${analiseId}`, payload).pipe(
+            // delay(2000)
+        )
+    }
+
+    updateCapturaCarrapatos(capturaId: string, payload: object): Observable<ArrayBuffer> {
+        return this.http.patch<ArrayBuffer>(`${this.apiURL}/capturas-carrapatos/${capturaId}`, payload).pipe(
+            // delay(2000)
+        )
+    }
+
+    updateExemplar(exemplarId: string, payload: object) {
+        return this.http.patch<ArrayBuffer>(`${this.apiURL}/exemplares/${exemplarId}`, payload)
+    }
+
     updateArmadilha(armadilhaId: string, payload: object): Observable<ArrayBuffer> {
         return this.http.patch<ArrayBuffer>(`${this.apiURL}/armadilhas/${armadilhaId}`, payload)
     }
 
-    updateArmadilhCarrapatos(armadilhaId: string, payload: object): Observable<ArrayBuffer> {
+    updateArmadilhaCarrapatos(armadilhaId: string, payload: object): Observable<ArrayBuffer> {
         return this.http.patch<ArrayBuffer>(`${this.apiURL}/armadilhas-carrapatos/${armadilhaId}`, payload)
     }
 
@@ -165,6 +241,10 @@ export class ApiConnectionService {
 
     removeArmadilha(armadilhaId: string): Observable<ArrayBuffer> {
         return this.http.delete<ArrayBuffer>(`${this.apiURL}/armadilhas/${armadilhaId}`)
+    }
+
+    removeArmadilhaCarrapato(armadilhaId: string): Observable<ArrayBuffer> {
+        return this.http.delete<ArrayBuffer>(`${this.apiURL}/armadilhas-carrapatos/${armadilhaId}`)
     }
 
     removeExemplar(exemplarId: string): Observable<ArrayBuffer> {
@@ -179,6 +259,25 @@ export class ApiConnectionService {
     removeProjeto(projetoId: string): Observable<ArrayBuffer> {
         return this.http.delete<ArrayBuffer>(`${this.apiURL}/projetos/${projetoId}`)
     }
+
+
+    addRecomendacaoInventario(dto: CreateRecomendacaoInventario): Observable<RecomendacaoInventario> {
+        return this.http.post<RecomendacaoInventario>(`${this.apiURL}/inventario/recomendacoes`, dto);
+      }
+      
+      updateRecomendacaoInventario(id: string, dto: UpdateRecomendacaoInventario): Observable<RecomendacaoInventario> {
+        return this.http.patch<RecomendacaoInventario>(`${this.apiURL}/inventario/recomendacoes/${id}`, dto);
+      }
+      
+      deleteRecomendacaoInventario(id: string): Observable<void> {
+        return this.http.delete<void>(`${this.apiURL}/inventario/recomendacoes/${id}`);
+      }
+      
+      findRecomendacoesInventario(analiseId: string): Observable<RecomendacaoInventario[]> {
+        return this.http.get<RecomendacaoInventario[]>(`${this.apiURL}/inventario/recomendacoes/analise/${analiseId}`);
+      }
+
+
 
     countArmCapMosq(projetoId: string): Observable<{
         armadilhas: number,
@@ -297,12 +396,147 @@ export class ApiConnectionService {
 
 
 
-    getServicosByProject(projetoId: string): Observable<ProjetoServicos[]> {
+    getServicosByProject(projetoId: string): Observable<ProjetoServicosAtivos[]> {
 
-        return this.http.get<ProjetoServicos[]>(
+        return this.http.get<ProjetoServicosAtivos[]>(
             `${this.apiURL}/projetos/${projetoId}/servicos`
         );
 
+    }
+
+    getServicosByProject_new(projetoId: string): Observable<ProjetoServicosAtivos> {
+
+        return this.http.get<ProjetoServico[]>(
+            `${this.apiURL}/projetos/${projetoId}/servicos`
+        ).pipe(
+            map(result => {
+                return {
+                    projetoId: projetoId,
+                    servicosAtivos: result
+                } as ProjetoServicosAtivos
+            })
+        );
+
+    }
+
+    findProjetoServicos(
+        projetoId: string
+    ): Observable<ProjetoServicosDisponiveis> {
+
+        return this.http.get<ProjetoServico[]>(
+            `${this.apiURL}/projetos/${projetoId}/servicos/disponiveis`
+        ).pipe(
+            map(result => {
+
+                return {
+                    projetoId,
+                    servicos: result
+                } as ProjetoServicosDisponiveis;
+
+            })
+        );
+
+    }
+
+    enableProjetoServico(
+        projetoId: string,
+        servicoId: string
+    ): Observable<void> {
+
+        return this.http.post<void>(
+            `${this.apiURL}/projetos/${projetoId}/servicos/${servicoId}`,
+            {}
+        );
+
+    }
+
+    disableProjetoServico(
+        projetoId: string,
+        servicoId: string
+    ): Observable<void> {
+
+        return this.http.delete<void>(
+            `${this.apiURL}/projetos/${projetoId}/servicos/${servicoId}`
+        );
+
+    }
+
+
+
+    exportarMosquitos(
+        projetoId: string
+    ): Observable<Blob> {
+    
+        return this.http.get(
+            `${this.apiURL}/dashboard/exportacao/mosquitos/${projetoId}`,
+            {
+                responseType: 'blob'
+            }
+        );
+    
+    }
+
+    uploadImage(
+        file: File,
+        folder: string
+    ) {
+    
+        const formData = new FormData();
+    
+        formData.append(
+            'file',
+            file
+        );
+    
+        formData.append(
+            'folder',
+            folder
+        );
+    
+        return this.http.post<{
+    
+            nome: string;
+    
+            path: string;
+    
+            mimeType: string;
+    
+            size: number;
+    
+        }>(
+            `${this.apiURL}/uploads/image`,
+            formData
+        );
+    
+    }
+
+    public getImageUrl(path?: string): string {
+
+        if (!path) {
+            return '';
+        }
+    
+        // Preview local
+        if (path.startsWith('blob:')) {
+            return path;
+        }
+    
+        // Fotos antigas do Angular
+        if (path.startsWith('./assets')) {
+            return path.replace('./', '');
+        }
+    
+        if (path.startsWith('assets/')) {
+            return path;
+        }
+    
+        // URL absoluta
+        if (path.startsWith('http')) {
+            return path;
+        }
+    
+        // Fotos do servidor
+        return `${this.filesURL}${path}`;
     }
 
 }

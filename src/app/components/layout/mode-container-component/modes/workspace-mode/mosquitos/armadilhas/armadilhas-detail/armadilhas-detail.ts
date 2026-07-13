@@ -67,12 +67,6 @@ export class ArmadilhasDetail implements AfterViewInit {
     )
   );
 
-  // capturas = computed<Captura[]>(() =>
-  //   CAPTURAS_MOCK
-  //     .filter(c => c.armadilhaId === this.armadilhaId())
-  //     .sort((a, b) => a.data.localeCompare(b.data))
-  // );
-
   constructor(private api: ApiConnectionService, private location: Location, private dialog: MatDialog) {
     effect((onCleanup) => {
       const armadilhaId = this.armadilhaId();

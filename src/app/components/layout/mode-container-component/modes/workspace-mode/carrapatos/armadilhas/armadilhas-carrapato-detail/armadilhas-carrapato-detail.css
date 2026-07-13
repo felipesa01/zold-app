@@ -1,0 +1,128 @@
+.page {
+    padding: 24px;
+    /* max-width: 1200px; */
+    margin-right: auto;
+    margin-left: auto;
+}
+
+/* Header */
+.page-header {
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.back-btn {
+    min-width: auto;
+    padding: 0 8px;
+    color: #555;
+}
+
+.title h1 {
+    margin: 0;
+    font-weight: 500;
+}
+
+.subtitle {
+    font-size: 13px;
+    color: #666;
+}
+
+/* Meta */
+.meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    color: #444;
+}
+
+/* Grid visual (mapa + foto) */
+.visual-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+/* Containers */
+.map-container,
+.photo-container {
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    background: #fafafa;
+    min-height: 260px;
+    position: relative;
+}
+
+/* Placeholder genérico */
+.placeholder {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #888;
+    gap: 8px;
+    font-size: 13px;
+}
+
+.placeholder mat-icon {
+    font-size: 36px;
+}
+
+/* Chart */
+.chart-section {
+    margin-top: 24px;
+}
+
+.chart-section h2 {
+    font-weight: 500;
+    margin-bottom: 12px;
+}
+
+.chart-wrapper {
+    height: 360px;
+}
+
+/* Responsivo */
+@media (max-width: 900px) {
+    .visual-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-wrapper {
+        height: 100%;
+    }
+}
+
+.placeholder-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: #555;
+}
+
+.placeholder-subtitle {
+    font-size: 12px;
+    color: #888;
+}
+
+.chart-controls {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 12px;
+    color: #444;
+}
+
+.drawer-container {
+    height: 100%;
+    background: #fafafa;
+}
+
+.captura-drawer {
+    width: 420px;
+    max-width: 90vw;
+    padding: 24px;
+    background: #ffffff;
+    box-shadow: -8px 0 24px rgba(0, 0, 0, 0.08);
+}

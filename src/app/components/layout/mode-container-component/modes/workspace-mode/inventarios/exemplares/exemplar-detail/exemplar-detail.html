@@ -19,7 +19,7 @@
             </span>
         </div>
 
-        <!-- <div class="d-flex align-content-center ms-auto">
+        <div class="d-flex align-content-center ms-auto">
             <button mat-flat-button color="primary" [routerLink]="['edit']">
                 <mat-icon>edit</mat-icon>
                 Editar
@@ -29,7 +29,7 @@
                 <mat-icon>delete</mat-icon>
                 Excluir
             </button>
-        </div> -->
+        </div>
     </section>
 
 
@@ -61,11 +61,15 @@
                     <div class="label">Cor da flor</div>
                     <div class="value">{{ exemplar()!.cor_flor }}</div>
 
-                    <div class="label" *ngIf="analisesOrdenadas()[analisesOrdenadas().length - 1]">DAP</div>
-                <div class="value" *ngIf="analisesOrdenadas()[analisesOrdenadas().length - 1] ">{{ (analisesOrdenadas()[analisesOrdenadas().length - 1]).dap  }} cm</div>
+                    @if (ultimaAnalise()) {
+                    <div class="label">DAP</div>
+                    <div class="value">{{
+                        ultimaAnalise()?.dap }} cm</div>
 
-                <div class="label" *ngIf="analisesOrdenadas()[analisesOrdenadas().length - 1]">Altura</div>
-                <div class="value" *ngIf="analisesOrdenadas()[analisesOrdenadas().length - 1]">{{ (analisesOrdenadas()[analisesOrdenadas().length - 1]).altura }} m</div>
+                    <div class="label">Altura</div>
+                    <div class="value">{{ultimaAnalise()?.altura }} m</div>
+                    }
+
 
                 </div>
 
@@ -78,10 +82,15 @@
             <section class="section">
 
                 <h3>Avaliação mais recente do exemplar</h3>
-                <span style="font-size:12px;">{{analisesOrdenadas()[analisesOrdenadas().length - 1].data |
-                    date:'dd/MM/yyyy'}}</span>
 
-                <div class="info-grid" *ngIf="analisesOrdenadas()[analisesOrdenadas().length - 1] as av">
+
+                @if (ultimaAnalise(); as av) {
+
+                <span style="font-size:12px;">
+                    {{ultimaAnalise()?.data | date:'dd/MM/yyyy'}}
+                </span>
+
+                <div class="info-grid">
 
                     <div class="label">Copa</div>
                     <div class="value">{{ av.copa_descricao }}</div>
@@ -111,8 +120,7 @@
                     <div class="label">Bactérias</div>
                     <div class="value">
                         <span class="material-symbols-outlined"
-                            [matTooltip]="!av.ataque_bacteria ? 'Saudável' : 'Infectado'"
-                            matTooltipPosition="after">
+                            [matTooltip]="!av.ataque_bacteria ? 'Saudável' : 'Infectado'" matTooltipPosition="after">
                             {{ !av.ataque_bacteria ? 'health_and_safety' : 'warning'}}
                         </span>
                     </div>
@@ -128,6 +136,8 @@
                     </div>
 
                 </div>
+                }
+
 
             </section>
 
@@ -163,65 +173,199 @@
         </div>
 
         <!-- Mapa -->
+        <!-- <app-map-location 
+            [lat]="exemplar()?.lat ?? null" 
+            [lon]="exemplar()?.lon ?? null" 
+            [editable]="false"
+            baseLayerInput="satellite"
+            >
+        </app-map-location> -->
         <div id="map-exemplar-detail" class="map-container"></div>
 
     </section>
 
-    <div class="modal-container">
-        <!-- RELATÓRIOS -->
+    <!-- <div class="modal-container">
 
         <section class="section">
-
             <h3>Relatórios técnicos</h3>
-
             <div class="timeline">
-
                 <div class="timeline-item" *ngFor="let r of analisesOrdenadas()">
-
                     <div class="timeline-date">
                         {{ r.data | date:'dd/MM/yyyy'}}
                     </div>
-
                     <div class="timeline-content">
                         {{ r.relatorio }}
                     </div>
-
                 </div>
-
             </div>
-
         </section>
 
-        <!-- RECOMENDAÇÕES -->
         <section class="section">
-
             <h3>Recomendações</h3>
-
             <div class="timeline">
-
                 <div class="timeline-item" *ngFor="let r of analisesOrdenadas()">
-
                     <div class="timeline-date">
                         {{ r.data | date:'dd/MM/yyyy'}}
                     </div>
-
                     <div class="timeline-content">
                         {{ r.recomendacoes }}
                     </div>
+                </div>
+            </div>
+        </section>
+    </div> -->
+
+    <!-- HISTÓRICO DE VISTORIAS -->
+
+    <section class="section">
+
+        <div class="section">
+
+            <h3>Histórico de vistorias</h3>
+
+            <button (click)="addAnalise()">Add</button>
+
+        </div>
+        
+        <div class="timeline">
+            @for (analise of analisesOrdenadas(); track analise.id) {
+            <div class="timeline-item">
+
+                <div class="timeline-dot"></div>
+                <div class="analysis-card">
+
+                    <!-- Cabeçalho -->
+                    <div class="analysis-header" (click)="toggleAnalise(analise.id)">
+                        <div class="analysis-info">
+                            <div class="analysis-date">
+                                {{ analise.data | date:'dd/MM/yyyy' }}
+                            </div>
+                            <div class="analysis-preview">
+                                {{ analise.relatorio || 'Sem relatório técnico.' }}
+                            </div>
+                        </div>
+
+                        <div class="analysis-actions">
+                            @if (analise.recomendacoes) {
+                            <span class="badge badge-warning">
+                                <mat-icon>assignment</mat-icon>
+                                Recomendações
+                            </span>
+                            }
+
+                            <!-- @if (analise.fotos?.length) {
+                            <span class="badge">
+                                <mat-icon>photo_camera</mat-icon>
+                                {{ analise.fotos.length }}
+                            </span>
+
+                            } -->
+
+                            <mat-icon>
+                                {{ isExpanded(analise.id)
+                                ? 'expand_less'
+                                : 'expand_more'
+                                }}
+                            </mat-icon>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Corpo -->
+
+                    @if (isExpanded(analise.id)) {
+
+                    <div class="analysis-body">
+                        <div class="analysis-info-list">
+                            <div class="info-row">
+                                <span class="label">DAP</span>
+                                <span class="value">{{ analise.dap }} cm</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Altura</span>
+                                <span class="value">{{ analise.altura }} m</span>
+                            </div>
+
+                            <div class="info-row">
+                                <span class="label">Copa</span>
+                                <span class="value">{{ analise.copa_descricao }}</span>
+                            </div>
+
+                            <div class="info-row">
+                                <span class="label">Tronco</span>
+                                <span class="value">{{ analise.tronco_descricao }}</span>
+                            </div>
+
+                            <div class="info-row">
+                                <span class="label">Sistema radicular</span>
+                                <span class="value">{{ analise.sistema_radicular_descricao }}</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            
+                        </div>
+
+                        <div class="analysis-status">
+
+                            <span class="status" [class.ok]="!analise.ataque_praga"
+                                [class.alerta]="analise.ataque_praga">
+                                {{ analise.ataque_praga ? 'Pragas detectadas' : 'Sem pragas' }}
+                            </span>
+
+                            <span class="status" [class.ok]="!analise.ataque_fungo"
+                                [class.alerta]="analise.ataque_fungo">
+                                {{ analise.ataque_fungo ? 'Fungos detectados' : 'Sem fungos' }}
+                            </span>
+
+                            <span class="status" [class.ok]="!analise.ataque_bacteria"
+                                [class.alerta]="analise.ataque_bacteria">
+                                {{ analise.ataque_bacteria ? 'Bactérias detectadas' : 'Sem bactérias' }}
+                            </span>
+
+                            <span class="status" [class.ok]="!analise.deficiencia_nutricional"
+                                [class.alerta]="analise.deficiencia_nutricional">
+                                {{ analise.deficiencia_nutricional ? 'Deficiência nutricional' : 'Nutrição adequada' }}
+                            </span>
+
+                        </div>
+
+                        @if (analise.recomendacoes) {
+
+                        <div class="recommendations">
+                            <h4>Recomendações</h4>
+                            <div class="recommendation">
+                                <mat-icon color="warn">
+                                    assignment
+                                </mat-icon>
+                                <div>
+                                    {{ analise.recomendacoes }}
+                                </div>
+                            </div>
+                        </div>
+                        }
+                        <!-- @if (analise.fotos?.length) {
+                        <div class="analysis-photos">
+                            <h4>Fotos da vistoria</h4>
+                            <div class="photo-list">
+                                @for (foto of analise.fotos; track foto.path) {
+                                <img [src]="foto.path" [alt]="foto.nome">
+                                }
+                            </div>
+                        </div>
+                        } -->
+                    </div>
+                    }
 
                 </div>
 
             </div>
 
-        </section>
+            }
 
+        </div>
 
-    </div>
-
-
-
-
-
-
+    </section>
 
 </div>

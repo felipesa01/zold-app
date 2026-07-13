@@ -3,7 +3,7 @@ import { provideRouter, RouteReuseStrategy } from '@angular/router';
 
 import { routes } from './app.routes';
 import { registerMaterialSymbols } from './material-symbols.config';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { Overlay, OverlayContainer, OverlayModule } from '@angular/cdk/overlay';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
@@ -13,6 +13,10 @@ import { provideToastr } from 'ngx-toastr';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { MatPaginatorIntl } from '@angular/material/paginator';
 import { MatPaginatorIntlPtBr } from './utils/mat-paginator-pt-br';
+import { authInterceptor } from '../auth/interceptors/auth.interceptor';
+import { errorInterceptor } from '../auth/interceptors/error.interceptor';
+
+
 
 export const FORMATO_BR = {
   parse: { dateInput: 'DD/MM/YYYY' },
@@ -39,6 +43,13 @@ export const appConfig: ApplicationConfig = {
     provideAnimations(),
     { provide: MAT_DATE_FORMATS, useValue: FORMATO_BR },
     { provide: MAT_DATE_LOCALE, useValue: 'pt-BR' },
-    { provide: MatPaginatorIntl, useClass: MatPaginatorIntlPtBr }
+    { provide: MatPaginatorIntl, useClass: MatPaginatorIntlPtBr },
+    provideHttpClient(
+      withInterceptors([
+        authInterceptor,
+        errorInterceptor
+
+      ])
+    )
   ]
 };

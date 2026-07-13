@@ -1,13 +1,13 @@
-import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, computed, inject, signal, Input, effect } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
-import { Router } from '@angular/router';
-import { LayoutService } from '../../../../../services/layout-service';
-import { ResponsiveService } from '../../../../../services/responsive-service';
-import { ApiConnectionService, ProjetoServicos } from '../../../../../services/api-connection-service';
-import { ProjectContextService } from '../../../../../services/project-context.service';
-import { ModeService } from '../../../../../services/mode-service';
-
+import { CommonModule } from "@angular/common";
+import { Component, AfterViewInit, Input, inject, computed, signal, effect } from "@angular/core";
+import { MatIconModule } from "@angular/material/icon";
+import { Router } from "@angular/router";
+import { ProjetoServico, ApiConnectionService } from "../../../../../services/api-connection-service";
+import { LayoutService } from "../../../../../services/layout-service";
+import { ModeService } from "../../../../../services/mode-service";
+import { ProjectContextService } from "../../../../../services/project-context.service";
+import { ResponsiveService } from "../../../../../services/responsive-service";
+import { forkJoin } from "rxjs";
 
 @Component({
   selector: 'app-servicos-det-lista-component',
@@ -17,69 +17,168 @@ import { ModeService } from '../../../../../services/mode-service';
 })
 export class ServicosDetListaComponent implements AfterViewInit {
 
-  @Input() servicosListaExpansivel!: boolean
+  @Input() servicosListaExpansivel!: boolean;
 
   private sidebarControls = inject(LayoutService);
   private responsive = inject(ResponsiveService);
-  private projectContext = inject(ProjectContextService)
+  private projectContext = inject(ProjectContextService);
+
   isMobile = computed(() => this.responsive.isSmallScreen());
 
-
   private modeControl = inject(ModeService);
+
   modeTurn = this.modeControl.mode;
 
   activeFeature = this.sidebarControls.activeFeature;
+
   activeMenuItem = computed(() =>
-    this.sidebarControls.getMenu(this.modeTurn()).find(
-      item => item.id === this.activeFeature()
-    )
+    this.sidebarControls
+      .getMenu(this.modeTurn())
+      .find(item => item.id === this.activeFeature())
   );
 
-  selectedProject = this.projectContext.selected
+  selectedProject = this.projectContext.selected;
 
-  selectedServico!: ProjetoServicos;
+  selectedServico!: ProjetoServico;
 
-  data = signal<ProjetoServicos[]>([])
+  data = signal<ProjetoServico[]>([]);
+
   expandedId: string | null = null;
 
-  constructor(private router: Router, private apiConnection: ApiConnectionService) {
+  constructor(
+    private router: Router,
+    private apiConnection: ApiConnectionService
+  ) {
+
     effect(() => {
       this.selectedProject();
-      this.loadData()
-    })
+      this.loadData();
+    });
+
   }
 
   ngAfterViewInit(): void {
-    this.loadData()
+    this.loadData();
   }
 
+  ordenarProjetoServicos = (
+    a: ProjetoServico,
+    b: ProjetoServico
+  ): number => {
+    return a.nome.localeCompare(b.nome, "pt-BR");
+  };
+
+  // loadData() {
+
+  //   const projectId = this.selectedProject()?.id;
+
+  //   if (!projectId) return;
+
+
+  //   this.apiConnection
+  //     .getServicosByProject_new(projectId)
+  //     .subscribe(result => {
+
+  //       const servicos = result.servicosAtivos || [];
+
+  //       servicos.sort(this.ordenarProjetoServicos);
+
+  //       this.data.set(servicos);
+
+  //     });
+
+  //   this.expandedId = null;
+
+  // }
 
   loadData() {
 
-    this.apiConnection
-      .getServicosByProject(this.selectedProject()?.id!)
-      .subscribe(result => {
-        this.data.set(result)
-      })
+    const projectId = this.selectedProject()?.id;
+
+    if (!projectId) return;
+
+    const isDashboard =
+      this.activeMenuItem()?.id == 'dashboard';
+
+    if (isDashboard) {
+
+      forkJoin({
+        ativos: this.apiConnection.getServicosByProject_new(
+          projectId
+        ),
+        disponiveis: this.apiConnection.findProjetoServicos(
+          projectId
+        )
+      }).subscribe(result => {
+
+        const servicosAtivosIds =
+          result.ativos.servicosAtivos.map(
+            servico => servico.id
+          );
+
+        const servicos =
+          result.disponiveis.servicos.filter(
+            servico =>
+              servico.dashboard &&
+              servicosAtivosIds.includes(servico.id)
+          );
+
+        servicos.sort(this.ordenarProjetoServicos);
+
+        this.data.set(servicos);
+
+      });
+
+    } else {
+
+      this.apiConnection
+        .getServicosByProject_new(projectId)
+        .subscribe(result => {
+
+          const servicos =
+            result.servicosAtivos || [];
+
+          servicos.sort(this.ordenarProjetoServicos);
+
+          this.data.set(servicos);
+
+        });
+
+    }
+
+    this.expandedId = null;
 
   }
+
 
   goTo(routeSevico: string, route: string) {
-    this.router.navigate([`${routeSevico + route}`]);
+
+    this.router.navigate([
+      `${routeSevico + route}`
+    ]);
+
     if (this.isMobile()) {
-      this.sidebarControls.closeExpandable()
+      this.sidebarControls.closeExpandable();
     }
+
   }
 
-  toggle(entity: ProjetoServicos) {
+  toggle(entity: ProjetoServico) {
+
     if (this.servicosListaExpansivel) {
-      if (!entity.hasData) return;
+
       this.expandedId =
-        this.expandedId === entity.id ? null : entity.id;
+        this.expandedId === entity.id
+          ? null
+          : entity.id;
+
+      return;
     }
-    else {
-      this.router.navigate([entity.route, this.activeFeature()]);
-    }
+
+    this.router.navigate([
+      entity.route,
+      this.activeFeature()
+    ]);
 
   }
 

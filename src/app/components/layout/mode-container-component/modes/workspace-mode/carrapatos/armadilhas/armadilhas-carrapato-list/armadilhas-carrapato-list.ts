@@ -163,7 +163,7 @@ import { filter } from "rxjs";
     this.router.events
       .pipe(filter(e => e instanceof NavigationEnd))
       .subscribe(() => {
-        if (this.router.url.includes('/workspace/mosquitos/armadilhas-carrapatos')) {
+        if (this.router.url.includes('/workspace/carrapatos/armadilhas-carrapatos')) {
           this.loadData();
         }
 
@@ -302,7 +302,7 @@ import { filter } from "rxjs";
         const id = feature.get('armadilhaId');
 
         if (id) {
-          this.router.navigate(['/workspace/mosquitos/armadilhas-carrapatos', id]);
+          this.router.navigate(['/workspace/carrapatos/armadilhas-carrapatos', id]);
         }
 
       });
@@ -355,7 +355,7 @@ import { filter } from "rxjs";
 
   open(a: ArmadilhaCarrapato, e?: Event) {
     e?.stopPropagation();
-    this.router.navigate(['/workspace/mosquitos/armadilhas-carrapatos', a.id]);
+    this.router.navigate(['/workspace/carrapatos/armadilhas-carrapatos', a.id]);
   }
 
   goBack() {
@@ -433,7 +433,7 @@ import { filter } from "rxjs";
   }
 
   create() {
-    this.router.navigate(['/workspace/mosquitos/armadilhas-carrapatos/new']);
+    this.router.navigate(['/workspace/carrapatos/armadilhas-carrapatos/new']);
   }
 
 

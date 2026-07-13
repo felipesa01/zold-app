@@ -12,8 +12,7 @@ import { finalize } from "rxjs";
 import { ApiConnectionService } from "../../../../../../../../services/api-connection-service";
 import { ProjectContextService } from "../../../../../../../../services/project-context.service";
 import { ConfirmDialogComponent } from "../../../../../../../shared/confirm-dialog-component/confirm-dialog-component";
-import { CreateArmadilha } from "../../../mosquitos/armadilhas/armadilha.model";
-import { ArmadilhaCarrapato } from "../armadilha-carrapato.model";
+import { ArmadilhaCarrapato, CreateArmadilhaCarrapato } from "../armadilha-carrapato.model";
 
 @Component({
   selector: 'app-armadilhas-carrapatos-form',
@@ -29,7 +28,7 @@ import { ArmadilhaCarrapato } from "../armadilha-carrapato.model";
   templateUrl: './armadilhas-carrapato-form.html',
   styleUrl: './armadilhas-carrapato-form.css'
 })
-export class ArmadilhasForm implements OnInit {
+export class ArmadilhasCarrapatosForm implements OnInit {
 
   toastr = inject(ToastrService);
   private projectContext = inject(ProjectContextService);
@@ -139,7 +138,7 @@ export class ArmadilhasForm implements OnInit {
       if (!confirmado) return
       this.loadingSave.set(true)
       if (this.isEditMode()) {
-        this.api.updateArmadilhCarrapatos(this.armadilhaId ?? '', payload as CreateArmadilha).pipe(
+        this.api.updateArmadilhaCarrapatos(this.armadilhaId ?? '', payload as CreateArmadilhaCarrapato).pipe(
           finalize(() => this.loadingSave.set(false))).subscribe({
             next: (result) => {
               this.showSuccess('As alterações foram salvas com sucesso!')

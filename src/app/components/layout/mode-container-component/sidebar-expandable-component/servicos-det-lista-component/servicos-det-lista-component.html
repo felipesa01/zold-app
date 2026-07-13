@@ -1,27 +1,54 @@
 <div class="entities-list">
 
   <div class="d-flex justify-content-center mb-2">
-    <span>{{activeMenuItem()?.nome}}</span>
+    <span>{{ activeMenuItem()?.nome }}</span>
   </div>
 
-  <div class="entity-group" *ngFor="let entity of data()">
+  <div
+    class="entity-group"
+    *ngFor="let entity of data()"
+  >
 
-    <!-- HEADER -->
-    <button class="entity-header" [class.disabled]="!entity.hasData" (click)="toggle(entity)" [disabled]="this.activeFeature() == 'dashboard' && entity.id == 'inventario'">
-      <span class="title">{{ entity.nome }}</span>
+    <button
+      class="entity-header"
+      (click)="toggle(entity)"
+    >
 
-      <mat-icon *ngIf="entity.hasData && servicosListaExpansivel">
+      <span class="title">
+        {{ entity.nome }}
+      </span>
+
+      <mat-icon *ngIf="servicosListaExpansivel">
         {{ expandedId === entity.id ? 'expand_less' : 'expand_more' }}
       </mat-icon>
+
     </button>
 
-    <!-- ACCORDION -->
-    <div class="entity-items" *ngIf="expandedId === entity.id && servicosListaExpansivel">
-      <button class="entity-item" *ngFor="let item of entity.itens" (click)="goTo(entity.route!, item.route)">
-        <mat-icon class="icon">{{ item.icon }}</mat-icon>
-        <span class="label">{{ item.label }}</span>
-        <mat-icon class="arrow">chevron_right</mat-icon>
+    <div
+      class="entity-items"
+      *ngIf="expandedId === entity.id && servicosListaExpansivel"
+    >
+
+      <button
+        class="entity-item"
+        *ngFor="let item of entity.itens"
+        (click)="goTo(entity.route, item.route)"
+      >
+
+        <mat-icon class="icon">
+          {{ item.icon }}
+        </mat-icon>
+
+        <span class="label">
+          {{ item.label }}
+        </span>
+
+        <mat-icon class="arrow">
+          chevron_right
+        </mat-icon>
+
       </button>
+
     </div>
 
   </div>

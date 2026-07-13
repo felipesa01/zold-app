@@ -1,0 +1,94 @@
+<div class="page">
+
+    <button mat-button class="back-btn" (click)="voltar()">
+        <mat-icon>arrow_back</mat-icon>
+        Voltar
+    </button>
+
+    <form [formGroup]="form" class="form-card" (submit)="apply()">
+
+        <h2>@if (isEditMode()) {
+            Editar Captura
+            } @else {
+            Nova Captura
+            }
+        </h2>
+
+        <!-- ARMADILHA -->
+        <div class="field">
+            <label>Armadilha *</label>
+            <input type="text" class="form-control" formControlName="armadilhaDisplay" [ngbTypeahead]="search"
+                [inputFormatter]="inputFormatter" [resultFormatter]="resultFormatter" (selectItem)="onSelect($event)"
+                (focus)="focus$.next($any($event.target).value)" (click)="click$.next($any($event.target).value)"
+                #instance="ngbTypeahead" placeholder="Buscar armadilha" />
+
+
+            @if (hasError('armadilhaDisplay', 'required')) {
+            <small class="text-danger">Você deve selecionar uma armadilha</small>
+            }
+        </div>
+
+        <!-- Data -->
+        <div class="field">
+            <label>Data *</label>
+            <input type="date" class="form-control" formControlName="data" />
+
+            @if (hasError('data', 'required')) {
+            <small class="text-danger">Data é obrigatório</small>
+            }
+        </div>
+
+        <!-- Números -->
+        <div class="numbers">
+            <div class="field">
+                <label>Ninfa</label>
+                <input type="number" class="form-control" formControlName="numNinfa" />
+
+                @if (hasError('numNinfa', 'required')) {
+                <small class="text-danger">Voce deve informar o número de carrapatos, use 0 (zero) em caso de
+                    ausência</small>
+                }
+            </div>
+
+            <div class="field">
+                <label>Larva</label>
+                <input type="number" class="form-control" formControlName="numLarva" />
+
+                @if (hasError('numLarva', 'required')) {
+                <small class="text-danger">Voce deve informar o número de carrapatos, use 0 (zero) em caso de
+                    ausência</small>
+                }
+            </div>
+
+            <div class="field">
+                <label>Adulto</label>
+                <input type="number" class="form-control" formControlName="numAdulto" />
+
+                @if (hasError('numAdulto', 'required')) {
+                <small class="text-danger">Voce deve informar o número de carrapatos, use 0 (zero) em caso de
+                    ausência</small>
+                }
+            </div>
+
+            <div class="field">
+                <label>Total</label>
+                <input type="number" class="form-control" formControlName="numTotal" />
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-primary d-flex" type="submit" [disabled]="form.invalid || loadingSave()">
+                @if (loadingSave()) {
+                <div class="spinner-grow text-light" style="width: 1.5em; height: 1.5em;" role="status"></div>
+                } @else {
+                @if (isEditMode()) {
+                Salvar Alterações
+                } @else {
+                Criar Captura
+                }}
+
+            </button>
+        </div>
+
+    </form>
+</div>

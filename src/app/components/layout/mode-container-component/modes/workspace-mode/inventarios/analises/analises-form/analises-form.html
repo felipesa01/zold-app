@@ -1,0 +1,202 @@
+<div class="page">
+
+    <button mat-button class="back-btn" (click)="voltar()">
+        <mat-icon>arrow_back</mat-icon>
+        Voltar
+    </button>
+
+    <form [formGroup]="form" class="form-card" (submit)="apply()">
+
+
+        <h2>
+            @if (isEditMode()) {
+            Editar Análise
+            } @else {
+            Nova Análise
+            }
+        </h2>
+
+        <div class="exemplar-summary">
+            <div class="summary-item">
+                <span class="label">Espécie</span>
+                <span>{{ exemplar()?.nm_comum }}</span>
+            </div>
+
+            <div class="summary-item">
+                <span class="label">Nome científico</span>
+                <span><i>{{ exemplar()?.nm_cientifico }}</i></span>
+            </div>
+
+            <div class="summary-item">
+                <span class="label">Endereço</span>
+                <span>{{ exemplar()?.endereco }}</span>
+            </div>
+
+        </div>
+
+        <!-- Dados gerais -->
+        <div class="section full">
+            <hr>
+        </div>
+
+        <div class="numbers">
+            <div class="field">
+                <label>Data *</label>
+                <input type="date" class="form-control" formControlName="data">
+
+                @if (hasError('data', 'required')) {
+                <small class="text-danger">Informe a data.</small>
+                }
+            </div>
+
+            <div class="field">
+                <label>DAP (cm)</label>
+                <input type="number" class="form-control" formControlName="dap">
+            </div>
+
+            <div class="field">
+                <label>Altura (m)</label>
+                <input type="number" class="form-control" formControlName="altura">
+            </div>
+        </div>
+
+        <!-- Estrutura -->
+        <div class="section full">
+            <hr>
+        </div>
+
+        <div class="field full">
+            <label>Descrição da copa</label>
+            <textarea rows="3" class="form-control" formControlName="copa_descricao"></textarea>
+        </div>
+
+        <div class="field full">
+            <label>Descrição do tronco</label>
+            <textarea rows="3" class="form-control" formControlName="tronco_descricao"></textarea>
+        </div>
+
+        <div class="field full">
+            <label>Descrição do sistema radicular</label>
+            <textarea rows="3" class="form-control" formControlName="sistema_radicular_descricao"></textarea>
+        </div>
+
+        <!-- Diagnóstico -->
+        <div class="section full">
+            <hr>
+        </div>
+
+        <div class="checks">
+            <label>
+                <input type="checkbox" formControlName="ataque_praga">
+                Ataque de pragas
+            </label>
+
+            <label>
+                <input type="checkbox" formControlName="ataque_fungo">
+                Ataque de fungos
+            </label>
+
+            <label>
+                <input type="checkbox" formControlName="ataque_bacteria">
+                Ataque de bactérias
+            </label>
+
+            <label>
+                <input type="checkbox" formControlName="deficiencia_nutricional">
+                Deficiência nutricional
+            </label>
+        </div>
+
+        <!-- Relatório -->
+        <div class="section full">
+            <hr>
+        </div>
+
+        <div class="field full">
+            <label>Relatório</label>
+            <textarea rows="6" class="form-control" formControlName="relatorio"></textarea>
+        </div>
+
+        <!-- Recomendações -->
+        <div class="section full">
+            <hr>
+        </div>
+
+        <div formArrayName="recomendacoes">
+
+            @for (rec of recomendacoes.controls; track $index) {
+
+            <div class="recommendation" [formGroupName]="$index">
+
+                <div class="field full">
+                    <label>Título *</label>
+                    <input class="form-control" formControlName="titulo">
+                </div>
+
+                <div class="field full">
+                    <label>Descrição</label>
+                    <textarea rows="3" class="form-control" formControlName="descricao"></textarea>
+                </div>
+
+                <div class="recommendation-footer">
+
+                    <div class="field">
+                        <label>Status</label>
+
+                        <select class="form-control" formControlName="status">
+                            <option value="PENDENTE">Pendente</option>
+                            <option value="EM_EXECUCAO">Em execução</option>
+                            <option value="CONCLUIDA">Concluída</option>
+                            <option value="CANCELADA">Cancelada</option>
+                        </select>
+                    </div>
+
+                    <div class="actions-inline">
+                        <button type="button" class="btn btn-outline-danger" (click)="removeRecomendacao($index)">
+                            Remover
+                        </button>
+                    </div>
+
+                </div>
+
+                <hr>
+
+            </div>
+
+            }
+
+        </div>
+
+        <div class="recommendations-actions">
+            <button type="button" class="btn btn-outline-primary" (click)="addRecomendacao()">
+                + Adicionar recomendação
+            </button>
+        </div>
+
+        <!-- Fotos -->
+        <div class="section full">
+            <hr>
+        </div>
+
+        <app-image-upload folder="analise" formControlName="fotos">
+        </app-image-upload>
+
+        <div class="actions">
+            <button class="btn btn-primary d-flex" type="submit" [disabled]="form.invalid || loadingSave()">
+
+                @if (loadingSave()) {
+                <div class="spinner-grow text-light" style="width:1.5em;height:1.5em" role="status"></div>
+                } @else {
+                @if (isEditMode()) {
+                Salvar Alterações
+                } @else {
+                Criar Análise
+                }
+                }
+
+            </button>
+        </div>
+
+    </form>
+
+</div>

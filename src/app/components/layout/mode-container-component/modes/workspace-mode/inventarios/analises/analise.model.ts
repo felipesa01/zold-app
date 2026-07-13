@@ -1,3 +1,5 @@
+import { RecomendacaoInventario } from "../recomendacoes/recomendacoes.model";
+
 export interface AnaliseInventario {
     id: string;
     data: string;
@@ -11,7 +13,7 @@ export interface AnaliseInventario {
     ataque_bacteria: boolean
     deficiencia_nutricional: boolean
     relatorio: string
-    recomendacoes: string
+    recomendacoes: RecomendacaoInventario[];
     exemplarId: string
 }
 

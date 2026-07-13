@@ -105,3 +105,13 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   display: block;
   height: 360px !important;
 } */
+
+.map-dialog .mat-mdc-dialog-content {
+  padding: 16px 24px;
+  max-height: none;
+  overflow: hidden;
+}
+
+.map-dialog .mat-mdc-dialog-container {
+  overflow: hidden;
+}

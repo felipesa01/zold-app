@@ -23,6 +23,7 @@ import { AnaliseInventario } from "../../analises/analise.model";
 import { FotoInventario } from "../../fotos/fotos.model";
 import { NgbCarouselModule } from "@ng-bootstrap/ng-bootstrap";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { MapLocationComponent } from "../../../../../../../shared/map-location/map-location.component";
 
 @Component({
   selector: 'app-exemplares-detail',
@@ -32,7 +33,8 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     MatIconModule,
     RouterModule,
     NgbCarouselModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MapLocationComponent
   ],
   templateUrl: './exemplar-detail.html',
   styleUrl: './exemplar-detail.css',
@@ -54,15 +56,24 @@ export class ExemplaresDetail implements AfterViewInit {
   );
 
   exemplar = signal<Exemplar | undefined>(undefined);
-  analises = signal<AnaliseInventario[]>([])
-  fotos = signal<FotoInventario[]>([])
+  analises = computed(() => this.exemplar()?.analises ?? []);
+  fotos = computed(() => this.exemplar()?.fotos ?? []);
+  // analises = signal<AnaliseInventario[]>([])
+  // fotos = signal<FotoInventario[]>([])
+
+  expandedAnalises = signal<Set<string>>(new Set());
 
 
-  analisesOrdenadas = computed<AnaliseInventario[]>(() =>
+  analisesOrdenadas = computed(() =>
     [...this.analises()].sort(
-      (a, b) => new Date(a.data).getTime() - new Date(b.data).getTime()
+      (a, b) => new Date(b.data).getTime() - new Date(a.data).getTime()
     )
   );
+
+  ultimaAnalise = computed(() => {
+    const analises = this.analisesOrdenadas();
+    return analises.length ? analises[0] : undefined;
+  });
 
   map!: Map;
 
@@ -83,27 +94,27 @@ export class ExemplaresDetail implements AfterViewInit {
         error: () => this.exemplar.set(undefined)
       });
 
-      const sub2 = this.api.listarAnalisesByExemplar(id).subscribe({
-        next: (analises) => {
-          this.analises.set(analises);
+      // const sub2 = this.api.listarAnalisesByExemplar(id).subscribe({
+      //   next: (analises) => {
+      //     this.analises.set(analises);
 
-        },
-        error: () => this.analises.set([])
-      });
+      //   },
+      //   error: () => this.analises.set([])
+      // });
 
-         const sub3 = this.api.listarFotosByExemplar(id).subscribe({
-        next: (fotos) => {
-          this.fotos.set(fotos);
+      // const sub3 = this.api.listarFotosByExemplar(id).subscribe({
+      //   next: (fotos) => {
+      //     this.fotos.set(fotos);
 
-        },
-        error: () => this.analises.set([])
-      });
+      //   },
+      //   error: () => this.analises.set([])
+      // });
 
-  
+
       onCleanup(() => {
         sub.unsubscribe()
-        sub2.unsubscribe()
-        sub3.unsubscribe()
+        // sub2.unsubscribe()
+        // sub3.unsubscribe()
 
       });
     });
@@ -129,8 +140,6 @@ export class ExemplaresDetail implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-
-
     this.map.setTarget('map-exemplar-detail');
     this.map.updateSize();
   }
@@ -197,5 +206,24 @@ export class ExemplaresDetail implements AfterViewInit {
 
   voltar() {
     this.location.back();
+  }
+
+  addAnalise() {
+    console.log(`/workspace?inventario/exemplares/${this.exemplarId()}/analises/new`)
+    this.router.navigate([`/workspace/inventario/exemplares/${this.exemplarId()}/analises/new`]);
+  }
+
+  toggleAnalise(id: string) {
+    const expanded = new Set(this.expandedAnalises());
+    if (expanded.has(id)) {
+      expanded.delete(id);
+    } else {
+      expanded.add(id);
+    }
+    this.expandedAnalises.set(expanded);
+  }
+
+  isExpanded(id: string) {
+    return this.expandedAnalises().has(id);
   }
 }

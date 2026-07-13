@@ -1,3 +1,4 @@
+import { AccountSidebarComponent } from "../../app/components/layout/mode-container-component/sidebar-expandable-component/account-sidebar/account-sidebar.component";
 import { ServicosDetListaComponent } from "../../app/components/layout/mode-container-component/sidebar-expandable-component/servicos-det-lista-component/servicos-det-lista-component";
 import { SideMenuItemConfig } from "../../app/types/layout.types";
 
@@ -31,5 +32,12 @@ export const WORKSPACE_MENU: SideMenuItemConfig[] = [
     expandible: true,
     component: ServicosDetListaComponent,
     disabled: false
+  },
+  {
+    id: 'account',
+    nome: 'Conta',
+    icon: 'account_circle',
+    expandible: true,
+    component: AccountSidebarComponent
   }
 ];

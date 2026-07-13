@@ -1,0 +1,206 @@
+<div class="page">
+
+  <button mat-button class="back-btn" (click)="voltar()">
+    <mat-icon>arrow_back</mat-icon>
+    Voltar
+  </button>
+
+
+
+  <form [formGroup]="form" class="form-card" (submit)="apply()">
+
+    <h2>
+      @if (isEditMode()) {
+      Editar Exemplar
+      } @else {
+      Novo Exemplar
+      }
+    </h2>
+
+    <!-- Nome comum -->
+    <div class="field full">
+      <label>Nome comum *</label>
+
+      <input type="text" class="form-control" formControlName="nm_comum">
+
+      @if (hasError('nm_comum','required')) {
+      <small class="text-danger">
+        Nome comum é obrigatório
+      </small>
+      }
+    </div>
+
+    <!-- Nome científico -->
+    <div class="field full">
+      <label>Nome científico *</label>
+
+      <input type="text" class="form-control" formControlName="nm_cientifico">
+
+      @if (hasError('nm_cientifico','required')) {
+      <small class="text-danger">
+        Nome científico é obrigatório
+      </small>
+      }
+    </div>
+
+    <!-- Endereço -->
+    <div class="field full">
+      <label>Endereço *</label>
+
+      <input type="text" class="form-control" formControlName="endereco">
+
+      @if (hasError('endereco','required')) {
+      <small class="text-danger">
+        Endereço é obrigatório
+      </small>
+      }
+    </div>
+
+
+
+    <!-- Latitude -->
+    <div class="field">
+      <label>Latitude *</label>
+
+      <input class="form-control" formControlName="lat" (input)="onCoordinateInput('lat',$event)">
+
+      @if (hasError('lat','required')) {
+      <small class="text-danger">
+        Latitude é obrigatória
+      </small>
+      }
+
+      @if (hasError('lat','min') || hasError('lat','max')) {
+      <small class="text-danger">
+        Latitude deve estar entre -90 e 90
+      </small>
+      }
+    </div>
+
+    <!-- Longitude -->
+    <div class="field">
+      <label>Longitude *</label>
+
+      <input class="form-control" formControlName="lon" (input)="onCoordinateInput('lon',$event)">
+
+      @if (hasError('lon','required')) {
+      <small class="text-danger">
+        Longitude é obrigatória
+      </small>
+      }
+
+      @if (hasError('lon','min') || hasError('lon','max')) {
+      <small class="text-danger">
+        Longitude deve estar entre -180 e 180
+      </small>
+      }
+    </div>
+
+    <div class="d-flex full justify-content-end section">
+      <button mat-stroked-button type="button" color="primary" (click)="openMap(mapDialog)">
+        <mat-icon>map</mat-icon>
+        Escolher no mapa
+      </button>
+    </div>
+
+    <!-- Origem -->
+    <div class="field">
+      <label>Origem da espécie</label>
+
+      <input type="text" class="form-control" formControlName="origem_esp">
+    </div>
+
+    <!-- Floração -->
+    <div class="field">
+      <label>Floração</label>
+
+      <input type="text" class="form-control" formControlName="floracao">
+    </div>
+
+    <!-- Cor da flor -->
+    <div class="field">
+      <label>Cor da flor</label>
+
+      <input type="text" class="form-control" formControlName="cor_flor">
+    </div>
+
+    <!-- Idade -->
+    <div class="field">
+      <label>Idade aproximada (anos)</label>
+
+      <input type="number" class="form-control" formControlName="idade_aproximada">
+    </div>
+
+    <!-- Valor -->
+    <div class="field">
+      <label>Valor estimado (R$)</label>
+
+      <input type="number" step="0.01" class="form-control" formControlName="valor">
+    </div>
+
+    <div>
+      <span style="font-size: .8em">
+        * campos obrigatórios
+      </span>
+    </div>
+
+
+
+    <div class="section full">
+      <hr>
+      <app-image-upload title="Fotografias do exemplar"
+        description="Inclua imagens que ajudem na identificação da árvore." folder="inventario" formControlName="fotos">
+      </app-image-upload>
+
+
+    </div>
+
+    <div class="actions">
+
+      <button class="btn btn-primary d-flex" type="submit" [disabled]="form.invalid || loadingSave()">
+
+        @if (loadingSave()) {
+
+        <mat-spinner diameter="20" class="spinner-custom" style="width:1.5em;height:1.5em;">
+        </mat-spinner>
+
+        } @else {
+
+        @if (isEditMode()) {
+
+        Salvar Alterações
+
+        } @else {
+
+        Criar Exemplar
+
+        }
+
+        }
+
+      </button>
+
+    </div>
+
+  </form>
+
+</div>
+
+
+<ng-template #mapDialog>
+
+  <h2 mat-dialog-title>Selecionar localização</h2>
+  <mat-dialog-content>
+    <app-map-location [lat]="form.controls['lat'].value" [lon]="form.controls['lon'].value"
+      (latChange)="form.controls['lat'].setValue($event)" (lonChange)="form.controls['lon'].setValue($event)">
+    </app-map-location>
+
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>
+      Fechar
+    </button>
+
+  </mat-dialog-actions>
+
+</ng-template>

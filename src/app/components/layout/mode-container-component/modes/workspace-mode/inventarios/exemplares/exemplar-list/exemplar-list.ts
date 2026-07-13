@@ -19,6 +19,7 @@ import { ProjectContextService } from "../../../../../../../../services/project-
 import { Exemplar } from "../exemplar.model";
 import { Feature, Map, View } from 'ol';
 import { Point } from "ol/geom";
+import { AuthService } from "../../../../../../../../../auth/services/auth.service";
 
 @Component({
     selector: 'app-exemplares-list',
@@ -41,6 +42,9 @@ export class ExemplaresList implements AfterViewInit {
     private projectContext = inject(ProjectContextService);
     private api = inject(ApiConnectionService);
     private zone = inject(NgZone);
+    private readonly authService = inject(AuthService);
+    
+    public readonly user = this.authService.currentUser;
 
     selectedProject = this.projectContext.selected;
 
@@ -61,7 +65,7 @@ export class ExemplaresList implements AfterViewInit {
         return this.exemplares().filter(e => {
 
             if (this.search()) {
-                const text = `${e.nm_comum} ${e.nm_cientifico}`.toLowerCase();
+                const text = `${e.id} ${e.nm_comum} ${e.nm_cientifico}`.toLowerCase();
                 if (!text.includes(this.search())) return false;
             }
 
@@ -150,7 +154,11 @@ export class ExemplaresList implements AfterViewInit {
     constructor(private router: Router) {
 
         effect(() => {
-            this.selectedProject();
+            const project = this.selectedProject();
+            if (!project) {
+                this.exemplares.set([]);
+                return;
+            }
             this.loadData();
         });
 
@@ -194,7 +202,14 @@ export class ExemplaresList implements AfterViewInit {
         if (index !== 1) return;
 
         if (this.map()) {
-            setTimeout(() => this.map()?.updateSize());
+            const map = this.map()!;
+        
+            setTimeout(() => {
+                map.setTarget(this.mapElement.nativeElement);
+                map.updateSize();
+                map.renderSync();
+            });
+        
             return;
         }
 
@@ -227,7 +242,7 @@ export class ExemplaresList implements AfterViewInit {
 
         this.map.set(map);
 
-        setTimeout(() => map.updateSize());
+        setTimeout(() => map.updateSize(), 10);
     }
 
     loadData() {
@@ -243,13 +258,21 @@ export class ExemplaresList implements AfterViewInit {
         this.api.listarExemplaresByProjeto(project.id).subscribe({
             next: data => {
                 this.exemplares.set(data);
-                this.loading.set(false);
+                this.loading.set(false);  
+                
+                setTimeout(() => {
+                    this.map()?.setTarget(this.mapElement.nativeElement);
+                    this.map()?.updateSize();
+                    this.map()?.renderSync();
+                }, 100);
             },
             error: () => {
                 this.exemplares.set([]);
                 this.loading.set(false);
             }
         });
+
+ 
     }
 
     nmComum = signal<string | null>(null);

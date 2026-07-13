@@ -1,0 +1,35 @@
+<div class="map-location">
+    @if (editable()) {
+    <div class="actions">
+
+        <button mat-stroked-button type="button" (click)="getCurrentLocation()">
+            <div class="d-flex align-items-center">
+                @if (loadingLocation()) {
+                <mat-spinner diameter="18"></mat-spinner>
+                } @else {
+                <mat-icon>my_location</mat-icon>
+                }
+                <span class="ms-1">{{ loadingLocation() ? 'Obtendo localização...' : 'Usar localização atual' }}</span>
+            </div>
+        </button>
+
+        <button mat-button type="button" color="warn" (click)="clearLocation()">
+            Limpar localização
+        </button>
+
+
+
+    </div>
+    }
+
+    <div #map class="map">
+        <div class='slider-satelite'>
+            <mat-slide-toggle [checked]="layerType() === 'satellite'" (change)="toggleLayer()">
+                Satélite
+            </mat-slide-toggle>
+        </div>
+
+
+    </div>
+
+</div>

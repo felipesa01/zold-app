@@ -1,5 +1,31 @@
 <section class="dashboard">
 
+  <header class="dashboard-toolbar">
+
+    <div class="toolbar-title">
+      <h2>Dashboard</h2>
+  
+      <span>
+        Visualização e exportação dos dados de monitoramento
+      </span>
+    </div>
+  
+    <button
+      class="export-button"
+      (click)="handleExportarMosquitos()"
+      [disabled]="loadingExportacao"
+    >
+  
+      @if (loadingExportacao) {
+        Exportando...
+      } @else {
+        Exportar dados
+      }
+  
+    </button>
+  
+  </header>
+
   <!-- KPIs -->
   <!-- <header class="dashboard-section kpis">
     <h4>Dados gerais</h4>

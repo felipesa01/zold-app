@@ -5,3 +5,8 @@ export interface FotoInventario {
     analiseId: string;
 
 }
+
+export interface UploadFotoDto {
+    nome: string;
+    path: string;
+}

@@ -1,0 +1,106 @@
+<div class="image-upload">
+
+    <input #fileInput hidden type="file" multiple accept="image/*" capture="environment" (change)="selectFiles($event)"
+        [disabled]="disabled">
+
+    @if(images().length === 0){
+
+    <label class="drop-zone" (click)="fileInput.click()">
+
+        <mat-icon>cloud_upload</mat-icon>
+
+        <h4>{{ title }}</h4>
+
+        <p>{{ description }}</p>
+
+    </label>
+
+    } @else {
+
+    <div class="toolbar">
+
+        <button type="button" mat-raised-button color="primary" (click)="fileInput.click()" [disabled]="disabled">
+
+            <mat-icon>add_a_photo</mat-icon>
+
+            Adicionar fotografias
+
+        </button>
+
+    </div>
+
+    }
+
+    @if(images().length){
+
+    <div class="gallery">
+
+        @for(image of images(); track trackByImage($index, image)){
+
+        <div class="image-card">
+
+            <img [src]="getImageUrl(image)" [alt]="image.nome" (click)="open(image)">>
+
+            @if(image.uploading){
+
+            <div class="uploading">
+
+                <mat-spinner diameter="36"></mat-spinner>
+
+            </div>
+
+            }
+
+            <button type="button" class="remove-btn" mat-mini-fab color="warn" (click)="remove(image)"
+                [disabled]="image.uploading">
+
+                <mat-icon>close</mat-icon>
+
+            </button>
+
+            <div class="image-name">
+                {{ image.nome }}
+            </div>
+
+        </div>
+
+        }
+
+    </div>
+
+    }
+
+</div>
+
+
+@if(showGallery()){
+
+<section class="photo-overlay">
+
+    <button class="photo-close" (click)="closeGallery()"  type="button">
+
+        ✕
+
+    </button>
+
+    <ngb-carousel [activeId]="selectedSlide()">
+
+        @for(image of images(); track trackByImage($index,image)){
+
+        <ng-template ngbSlide [id]="$index.toString()">
+
+            <div class="picsum-img-wrapper">
+
+                <img [src]="getImageUrl(image)" [alt]="image.nome">
+
+            </div>
+
+        </ng-template>
+
+        }
+
+    </ngb-carousel>
+
+</section>
+
+}

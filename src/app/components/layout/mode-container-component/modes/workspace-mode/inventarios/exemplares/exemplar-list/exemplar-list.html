@@ -10,7 +10,7 @@
       <h1>Exemplares</h1>
     </div>
 
-    <button mat-flat-button color="primary" (click)="create()" disabled>
+    <button mat-flat-button color="primary" (click)="create()" [disabled]="['CLIENTE_ADMIN', 'CLIENTE_EXECUTOR'].includes(user?.role!)">
       <mat-icon>add</mat-icon>
       Novo exemplar
     </button>
@@ -57,7 +57,7 @@
   }
   @else {
 
-  <mat-tab-group (selectedIndexChange)="onTabChange($event)" [selectedIndex]="selectedTab()" preserveContent>
+  <mat-tab-group (selectedIndexChange)="onTabChange($event)" [selectedIndex]="selectedTab()" [preserveContent]="true">
 
     <!-- TABELA -->
     <mat-tab label="Tabela">

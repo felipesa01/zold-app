@@ -24,8 +24,8 @@ import { Style, Fill, Stroke, Circle } from "ol/style";
 import { finalize, map } from "rxjs";
 import { ProjectContextService } from "../../../../../../../../services/project-context.service";
 import { ConfirmDialogComponent } from "../../../../../../../shared/confirm-dialog-component/confirm-dialog-component";
-import { Captura } from "../../../mosquitos/capturas/captura.model";
 import { ArmadilhaCarrapato } from "../armadilha-carrapato.model";
+import { CapturaCarrapato } from "../../capturas/captura-carrapato.model";
 
 @Component({
     selector: 'app-armadilhas-carrapato-detail',
@@ -46,8 +46,7 @@ export class ArmadilhasCarrapatoDetail implements AfterViewInit {
     private router = inject(Router);
     toastr = inject(ToastrService);
   
-    showRefil = signal(true);
-    showAtrativo = signal(true);
+
     loadingRemove = signal(false);
   
     private projectContext = inject(ProjectContextService);
@@ -65,20 +64,15 @@ export class ArmadilhasCarrapatoDetail implements AfterViewInit {
     );
   
     armadilha = signal<ArmadilhaCarrapato | undefined>(undefined);
-    capturas = signal<Captura[]>([]);
+    capturas = signal<CapturaCarrapato[]>([]);
   
-    capturasOrdenadas = computed<Captura[]>(() =>
+    capturasOrdenadas = computed<CapturaCarrapato[]>(() =>
       [...this.capturas()].sort(
         (a, b) => new Date(a.data).getTime() - new Date(b.data).getTime()
       )
     );
   
-    // capturas = computed<Captura[]>(() =>
-    //   CAPTURAS_MOCK
-    //     .filter(c => c.armadilhaId === this.armadilhaId())
-    //     .sort((a, b) => a.data.localeCompare(b.data))
-    // );
-  
+
     constructor(private api: ApiConnectionService, private location: Location, private dialog: MatDialog) {
       effect((onCleanup) => {
         const armadilhaId = this.armadilhaId();
@@ -183,7 +177,7 @@ export class ArmadilhasCarrapatoDetail implements AfterViewInit {
         if (!confirmado) return
         this.loadingRemove.set(true)
   
-        this.api.removeArmadilha(this.armadilhaId() ?? '').pipe(
+        this.api.removeArmadilhaCarrapato(this.armadilhaId() ?? '').pipe(
           finalize(() => this.loadingRemove.set(false))).subscribe({
             next: (result) => {
               this.showSuccess('Armadilha apagada!')
@@ -236,62 +230,18 @@ export class ArmadilhasCarrapatoDetail implements AfterViewInit {
       if (!captura) return;
   
       this.router.navigate(
-        ['/workspace/mosquitos/capturas', captura.id],
+        ['/workspace/carrapatos/capturas', captura.id],
         { replaceUrl: false }
       );
     }
   
-  
-    refilDataset = computed<ChartDataset<'line', { x: number; y: number }[]>>(() => {
-  
-      return {
-        label: 'Troca de refil',
-        data: this.capturasOrdenadas()
-          .filter(c => c.trocaRefil)
-          .map(c => ({
-            x: new Date(c.data).getTime(),
-            y: c.numTotal
-          })),
-        showLine: false,
-        hidden: !this.showRefil(),
-        animation: false,
-        pointRadius: 10,
-        pointHoverRadius: 8,
-        backgroundColor: 'rgba(255, 255, 255, 0)',
-        borderColor: '#000000ff',
-        borderWidth: 2,
-        borderDash: [0.3, 0.3],
-      }
-    });
-  
-    atrativoDataset = computed<ChartDataset<'line', { x: number; y: number }[]>>(() => {
-  
-      return {
-        label: 'Troca de atrativo',
-        data: this.capturasOrdenadas()
-          .filter(c => c.trocaAtrativo)
-          .map(c => ({
-            x: new Date(c.data).getTime(),
-            y: c.numTotal
-          })),
-        showLine: false,
-        hidden: !this.showAtrativo(),
-        animation: false,
-        pointStyle: 'rectRot',
-        pointRadius: 10,
-        pointHoverRadius: 8,
-        backgroundColor: 'rgba(255, 255, 255, 0)',
-        borderColor: '#000000ff',
-        borderWidth: 2
-      };
-    });
   
     baseDataset = computed<ChartDataset<'line', { x: number; y: number }[]>[]>(() => [
       {
         label: 'Aedes',
         data: this.capturasOrdenadas().map(c => ({
           x: new Date(c.data).getTime(),
-          y: c.numAedes
+          y: c.numNinfa
         })),
         borderColor: '#1e88e5',
         backgroundColor: 'rgba(30, 136, 229, 0.5)',
@@ -307,7 +257,7 @@ export class ArmadilhasCarrapatoDetail implements AfterViewInit {
         label: 'Culex',
         data: this.capturasOrdenadas().map(c => ({
           x: new Date(c.data).getTime(),
-          y: c.numCulex
+          y: c.numLarva
         })),
         borderColor: '#8e24aa',
         backgroundColor: 'rgba(141, 36, 170, 0.5)',
@@ -322,7 +272,7 @@ export class ArmadilhasCarrapatoDetail implements AfterViewInit {
         label: 'Outras',
         data: this.capturasOrdenadas().map(c => ({
           x: new Date(c.data).getTime(),
-          y: c.numOutras
+          y: c.numAdulto
         })),
         borderColor: '#546e7a',
         backgroundColor: 'rgba(84, 110, 122, 0.5)',
@@ -354,14 +304,6 @@ export class ArmadilhasCarrapatoDetail implements AfterViewInit {
   
     chartData = computed<ChartConfiguration<'line', { x: number; y: number }[]>['data']>(() => {
       const datasets = [...this.baseDataset()];
-  
-      if (this.refilDataset()) {
-        datasets.push(this.refilDataset()!);
-      }
-  
-      if (this.atrativoDataset()) {
-        datasets.push(this.atrativoDataset()!);
-      }
   
       return { datasets }
   
@@ -471,7 +413,7 @@ export class ArmadilhasCarrapatoDetail implements AfterViewInit {
           y: {
             title: {
               display: true,
-              text: 'Quantidade de mosquitos'
+              text: 'Quantidade de carrapatos'
             }
           }
         }
@@ -479,7 +421,7 @@ export class ArmadilhasCarrapatoDetail implements AfterViewInit {
     })
   
     goBack() {
-      this.router.navigate(['/workspace/mosquitos/armadilhas']);
+      this.router.navigate(['/workspace/carrapatos/armadilhas']);
     }
   
     voltar() {

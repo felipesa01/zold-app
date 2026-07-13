@@ -2,6 +2,7 @@
 export type AppMode = 'map' | 'workspace';
 
 export type SideMenuItemId =
+  | 'account'
   // mapa
   | 'layers'
   | 'modules'
