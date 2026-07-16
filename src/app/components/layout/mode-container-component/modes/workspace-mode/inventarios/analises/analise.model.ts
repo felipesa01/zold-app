@@ -1,3 +1,5 @@
+import { UploadedImage } from "../../../../../../shared/image-upload/image-upload.component";
+import { FotoInventario } from "../fotos/fotos.model";
 import { RecomendacaoInventario } from "../recomendacoes/recomendacoes.model";
 
 export interface AnaliseInventario {
@@ -13,6 +15,7 @@ export interface AnaliseInventario {
     ataque_bacteria: boolean
     deficiencia_nutricional: boolean
     relatorio: string
+    fotos: FotoInventario[];
     recomendacoes: RecomendacaoInventario[];
     exemplarId: string
 }
@@ -29,6 +32,6 @@ export interface CreateAnaliseInventario {
     ataque_bacteria: boolean
     deficiencia_nutricional: boolean
     relatorio: string
-    recomendacoes: string
+    fotos: UploadedImage[];
     exemplarId: string
 }

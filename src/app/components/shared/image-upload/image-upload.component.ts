@@ -84,7 +84,7 @@ export class ImageUploadComponent implements ControlValueAccessor {
 
     writeValue(value: UploadedImage[] | null): void {
 
-        console.log('writeValue', value);
+        // console.log('writeValue', value);
         const images = (value ?? []).map(image => ({
             ...image,
             persisted: true,

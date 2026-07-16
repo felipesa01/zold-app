@@ -261,8 +261,8 @@ export class ApiConnectionService {
     }
 
 
-    addRecomendacaoInventario(dto: CreateRecomendacaoInventario): Observable<RecomendacaoInventario> {
-        return this.http.post<RecomendacaoInventario>(`${this.apiURL}/inventario/recomendacoes`, dto);
+    addRecomendacaoInventario(dto: CreateRecomendacaoInventario, analiseId: string): Observable<RecomendacaoInventario> {
+        return this.http.post<RecomendacaoInventario>(`${this.apiURL}/inventario/recomendacoes/${analiseId}`, dto);
       }
       
       updateRecomendacaoInventario(id: string, dto: UpdateRecomendacaoInventario): Observable<RecomendacaoInventario> {

@@ -25,7 +25,7 @@ export interface RecomendacaoInventario {
 export interface CreateRecomendacaoInventario {
     titulo: string;
     descricao?: string;
-    analiseId: string;
+    status?: StatusRecomendacao;
   }
   
   export interface UpdateRecomendacaoInventario {

@@ -193,6 +193,12 @@ export const routes: Routes = [
                         .then(m => m.AnaliseForm)
             },
             {
+                path: 'inventario/exemplares/:exemplarId/analises/:id/edit',
+                loadComponent: () =>
+                    import('./components/layout/mode-container-component/modes/workspace-mode/inventarios/analises/analises-form/analises-form')
+                        .then(m => m.AnaliseForm)
+            },
+            {
                 path: 'projetos',
                 loadComponent: () =>
                     import('./components/layout/mode-container-component/modes/workspace-mode/projetos/projetos-list/projetos-list')

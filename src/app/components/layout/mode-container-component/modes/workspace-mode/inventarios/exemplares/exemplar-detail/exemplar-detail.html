@@ -226,7 +226,7 @@
             <button (click)="addAnalise()">Add</button>
 
         </div>
-        
+
         <div class="timeline">
             @for (analise of analisesOrdenadas(); track analise.id) {
             <div class="timeline-item">
@@ -253,13 +253,19 @@
                             </span>
                             }
 
-                            <!-- @if (analise.fotos?.length) {
+                            @if (analise.fotos?.length) {
                             <span class="badge">
                                 <mat-icon>photo_camera</mat-icon>
                                 {{ analise.fotos.length }}
                             </span>
+                            }
 
-                            } -->
+                            @if (isExpanded(analise.id)) {
+                            <button mat-icon-button type="button" (click)="editAnalise(analise.id)"
+                                matTooltip="Editar análise">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                            }
 
                             <mat-icon>
                                 {{ isExpanded(analise.id)
@@ -304,7 +310,7 @@
                         </div>
 
                         <div>
-                            
+
                         </div>
 
                         <div class="analysis-status">

@@ -1,4 +1,4 @@
-import { CommonModule, Location } from '@angular/common';
+import { CommonModule, DATE_PIPE_DEFAULT_OPTIONS, Location } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import {
   FormArray,
@@ -72,6 +72,7 @@ export class AnaliseForm implements OnInit {
       ataque_bacteria: [false],
       deficiencia_nutricional: [false],
       relatorio: [''],
+      fotos: [[]],
       recomendacoes: this.fb.array([])
 
     });
@@ -103,17 +104,17 @@ export class AnaliseForm implements OnInit {
     );
 
   }
-  
+
   removeRecomendacao(index: number): void {
 
     const rec = this.recomendacoes.at(index).value;
-  
+
     if (rec.id) {
       this.recomendacoesRemovidas.push(rec.id);
     }
-  
+
     this.recomendacoes.removeAt(index);
-  
+
   }
 
   private checkMode(): void {
@@ -129,11 +130,11 @@ export class AnaliseForm implements OnInit {
     if (this.isEditMode()) {
       this.loadAnalise(this.analiseId()!);
     }
-    else {
-      this.api.findExemplar(this.exemplarId()!).subscribe(exemplar => {
-        this.exemplar.set(exemplar);
-      });
-    }
+
+    this.api.findExemplar(this.exemplarId()!).subscribe(exemplar => {
+      this.exemplar.set(exemplar);
+    });
+
 
   }
 
@@ -163,14 +164,15 @@ export class AnaliseForm implements OnInit {
             ataque_fungo: analise.ataque_fungo,
             ataque_bacteria: analise.ataque_bacteria,
             deficiencia_nutricional: analise.deficiencia_nutricional,
-            relatorio: analise.relatorio
+            relatorio: analise.relatorio,
+            fotos: analise.fotos ?? []
           });
 
           this.recomendacoes.clear();
 
-            analise.recomendacoes?.forEach(r =>
-              this.addRecomendacao(r)
-            );
+          analise.recomendacoes?.forEach(r =>
+            this.addRecomendacao(r)
+          );
 
         }
 
@@ -184,13 +186,13 @@ export class AnaliseForm implements OnInit {
       this.form.markAllAsTouched();
       return;
     }
-  
+
     const payload = this.form.getRawValue();
     const recomendacoes = payload.recomendacoes;
-  
+
     delete payload.recomendacoes;
     payload.exemplarId = this.exemplarId();
-  
+
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '360px',
       data: {
@@ -200,72 +202,72 @@ export class AnaliseForm implements OnInit {
         cancelText: 'Cancelar'
       }
     });
-  
+
     dialogRef.afterClosed().subscribe(result => {
-  
+
       if (!result) return;
-  
+
       this.loadingSave.set(true);
-  
+
+      payload.dap = Number(payload.dap)
+      payload.altura = Number(payload.altura)
+
       const request = this.isEditMode()
         ? this.api.updateAnaliseInventario(this.analiseId()!, payload)
         : this.api.addAnaliseInventario(payload);
-  
+
       request.pipe(
         switchMap(analise => this.syncRecomendacoes(analise.id, recomendacoes)),
         finalize(() => this.loadingSave.set(false))
       ).subscribe({
-  
+
         next: () => {
           this.toastr.success('Análise salva com sucesso.');
           this.location.back();
         },
-  
+
         error: err => {
           this.toastr.error(err?.error?.message ?? 'Erro ao salvar análise.');
         }
-  
+
       });
-  
+
     });
-  
+
   }
 
   private syncRecomendacoes(analiseId: string, recomendacoes: any[]): Observable<any> {
 
     const requests: Observable<any>[] = [];
-  
+
     recomendacoes.forEach(rec => {
-  
+
       const payload = {
         titulo: rec.titulo,
         descricao: rec.descricao
       };
-  
+
       if (rec.id) {
         requests.push(this.api.updateRecomendacaoInventario(rec.id, {
           ...payload,
           status: rec.status
         }));
       } else {
-        requests.push(this.api.addRecomendacaoInventario({
-          ...payload,
-          analiseId
-        }));
+        requests.push(this.api.addRecomendacaoInventario(payload, analiseId));
       }
-  
+
     });
-  
+
     this.recomendacoesRemovidas.forEach(id => {
       requests.push(this.api.deleteRecomendacaoInventario(id));
     });
-  
+
     if (!requests.length) {
       return of(null);
     }
-  
+
     return forkJoin(requests);
-  
+
   }
   // apply(): void {
 

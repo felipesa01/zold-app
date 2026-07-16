@@ -1,9 +1,9 @@
 export interface FotoInventario {
     nome: string;
     path: string;
-    user: string;
-    analiseId: string;
-
+    userId: string;
+    analiseId?: string;
+    exemplarId?: string;
 }
 
 export interface UploadFotoDto {

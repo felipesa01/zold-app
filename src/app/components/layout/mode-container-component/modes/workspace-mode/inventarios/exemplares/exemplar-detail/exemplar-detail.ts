@@ -209,7 +209,7 @@ export class ExemplaresDetail implements AfterViewInit {
   }
 
   addAnalise() {
-    console.log(`/workspace?inventario/exemplares/${this.exemplarId()}/analises/new`)
+    console.log(`/workspace/inventario/exemplares/${this.exemplarId()}/analises/new`)
     this.router.navigate([`/workspace/inventario/exemplares/${this.exemplarId()}/analises/new`]);
   }
 
@@ -226,4 +226,12 @@ export class ExemplaresDetail implements AfterViewInit {
   isExpanded(id: string) {
     return this.expandedAnalises().has(id);
   }
+
+
+  editAnalise(idAnalise: string): void {
+    console.log(['/inventario/exemplares', this.exemplarId(), '/analises/edit'])
+    this.router.navigate([`/workspace/inventario/exemplares/${this.exemplarId()}/analises/${idAnalise}/edit`]);
+  }
+
+
 }
