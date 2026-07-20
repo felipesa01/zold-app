@@ -166,6 +166,7 @@ export const routes: Routes = [
                 loadComponent: () =>
                     import('./components/layout/mode-container-component/modes/workspace-mode/inventarios/exemplares/exemplar-detail/exemplar-detail')
                         .then(m => m.ExemplaresDetail),
+                        // data: { reuse: true }
              
             },
             {

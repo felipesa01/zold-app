@@ -24,6 +24,11 @@ import { FotoInventario } from "../../fotos/fotos.model";
 import { NgbCarouselModule } from "@ng-bootstrap/ng-bootstrap";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MapLocationComponent } from "../../../../../../../shared/map-location/map-location.component";
+import { RecomendacaoInventario } from "../../recomendacoes/recomendacoes.model";
+import { FormBuilder, ReactiveFormsModule } from "@angular/forms";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatSelectModule } from "@angular/material/select";
 
 @Component({
   selector: 'app-exemplares-detail',
@@ -34,7 +39,11 @@ import { MapLocationComponent } from "../../../../../../../shared/map-location/m
     RouterModule,
     NgbCarouselModule,
     MatTooltipModule,
-    MapLocationComponent
+    MapLocationComponent,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule
   ],
   templateUrl: './exemplar-detail.html',
   styleUrl: './exemplar-detail.css',
@@ -46,6 +55,11 @@ export class ExemplaresDetail implements AfterViewInit {
   private api = inject(ApiConnectionService);
   private dialog = inject(MatDialog);
   private toastr = inject(ToastrService);
+
+  showRecommendations?: boolean;
+  expandedRecommendations: Record<string, boolean> = {};
+
+  editingRecommendationId: string | null = null;
 
   showPhotos = signal(false);
 
@@ -62,6 +76,7 @@ export class ExemplaresDetail implements AfterViewInit {
   // fotos = signal<FotoInventario[]>([])
 
   expandedAnalises = signal<Set<string>>(new Set());
+
 
 
   analisesOrdenadas = computed(() =>
@@ -227,6 +242,77 @@ export class ExemplaresDetail implements AfterViewInit {
     return this.expandedAnalises().has(id);
   }
 
+  startEditRecommendation(rec: RecomendacaoInventario) {
+
+    this.editingRecommendationId = rec.id;
+
+    this.recommendationForm.patchValue({
+      titulo: rec.titulo,
+      descricao: rec.descricao,
+      status: rec.status
+    });
+
+  }
+
+  cancelEditRecommendation() {
+    this.editingRecommendationId = null;
+  }
+
+  saveRecommendation(id: string): void {
+
+    console.log(id, this.recommendationForm.value);
+  
+    this.cancelEditRecommendation();
+  
+  }
+
+  isEditingRecommendation(id: string) {
+    return this.editingRecommendationId === id;
+  }
+
+  private fb = inject(FormBuilder);
+  recommendationForm = this.fb.group({
+    titulo: [''],
+    descricao: [''],
+    status: ['PENDENTE']
+  });
+
+  canEditRecommendation(): boolean {
+    return true;
+  }
+
+
+  toggleRecommendations(id: string): void {
+    this.expandedRecommendations[id] =
+      !this.expandedRecommendations[id];
+  }
+
+  isRecommendationsExpanded(id: string): boolean {
+    return !!this.expandedRecommendations[id];
+  }
+  getPendingRecommendationsCount(analise: AnaliseInventario): number {
+
+    return analise.recomendacoes?.filter(
+      r => r.status === 'PENDENTE'
+    ).length ?? 0;
+
+  }
+
+  getRecomendacoesOrdenadas(analise: AnaliseInventario): RecomendacaoInventario[] {
+    if (!analise.recomendacoes) {
+      return [];
+    }
+
+    const ordem: Record<string, number> = {
+      PENDENTE: 0,
+      EM_EXECUCAO: 1,
+      EXECUTADA: 2
+    };
+
+    return [...analise.recomendacoes].sort((a, b) => {
+      return ordem[a.status] - ordem[b.status];
+    });
+  }
 
   editAnalise(idAnalise: string): void {
     console.log(['/inventario/exemplares', this.exemplarId(), '/analises/edit'])

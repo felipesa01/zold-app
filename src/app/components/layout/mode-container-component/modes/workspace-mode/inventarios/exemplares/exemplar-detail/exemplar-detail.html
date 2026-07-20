@@ -238,8 +238,25 @@
                     <div class="analysis-header" (click)="toggleAnalise(analise.id)">
                         <div class="analysis-info">
                             <div class="analysis-date">
+
+                                <i class="pi pi-calendar"></i>
+
                                 {{ analise.data | date:'dd/MM/yyyy' }}
+
+                                @if (getPendingRecommendationsCount(analise) > 0) {
+
+                                <span class="analysis-alert">
+
+                                    <i class="pi pi-exclamation-circle"></i>
+
+                                    {{ getPendingRecommendationsCount(analise) }}
+
+                                </span>
+
+                                }
+
                             </div>
+
                             <div class="analysis-preview">
                                 {{ analise.relatorio || 'Sem relatório técnico.' }}
                             </div>
@@ -253,7 +270,7 @@
                             </span>
                             }
 
-                            @if (analise.fotos?.length) {
+                            @if (analise.fotos) {
                             <span class="badge">
                                 <mat-icon>photo_camera</mat-icon>
                                 {{ analise.fotos.length }}
@@ -337,20 +354,168 @@
 
                         </div>
 
-                        @if (analise.recomendacoes) {
+                        <!-- Recomendações -->
+                        @if (analise.recomendacoes?.length) {
+                        <div class="recommendations-section">
 
-                        <div class="recommendations">
-                            <h4>Recomendações</h4>
-                            <div class="recommendation">
-                                <mat-icon color="warn">
-                                    assignment
-                                </mat-icon>
-                                <div>
-                                    {{ analise.recomendacoes }}
+                            <button type="button" class="recommendations-toggle"
+                                (click)="toggleRecommendations(analise.id); $event.stopPropagation()">
+
+                                <div class="recommendations-title">
+                                    <i class="pi pi-list-check"></i>
+
+                                    <span>Recomendações</span>
+
+                                    <span class="recommendations-count">
+                                        {{ analise.recomendacoes.length }}
+                                    </span>
+
+                                    @if (getPendingRecommendationsCount(analise) > 0) {
+                                    <span class="pending-badge">
+                                        {{ getPendingRecommendationsCount(analise) }}
+                                        pendente{{ getPendingRecommendationsCount(analise) > 1 ? 's' : '' }}
+                                    </span>
+                                    }
+
                                 </div>
+
+                                <i class="pi" [class.pi-chevron-down]="!isRecommendationsExpanded(analise.id)"
+                                    [class.pi-chevron-up]="isRecommendationsExpanded(analise.id)">
+                                </i>
+
+                            </button>
+
+                            @if (isRecommendationsExpanded(analise.id)) {
+
+                            <div class="recommendations-list">
+
+                                @for (rec of getRecomendacoesOrdenadas(analise); track rec.id) {
+
+                                    <div class="recommendation-item">
+
+                                        <div class="recommendation-status"
+                                            [class.pending]="rec.status === 'PENDENTE'"
+                                            [class.progress]="rec.status === 'EM_EXECUCAO'"
+                                            [class.done]="rec.status === 'EXECUTADA'">
+                                        </div>
+                                    
+                                        <div class="recommendation-content">
+                                    
+                                            <div class="recommendation-header">
+
+                                                <div class="recommendation-title">
+                                            
+                                                    <strong>{{ rec.titulo }}</strong>
+                                            
+                                                    @if (rec.descricao) {
+                                                        <p>{{ rec.descricao }}</p>
+                                                    }
+                                            
+                                                </div>
+                                            
+                                                @if (!isEditingRecommendation(rec.id)) {
+                                            
+                                                    <div class="recommendation-actions">
+                                            
+                                                        <span
+                                                            class="status-chip"
+                                                            [ngClass]="{
+                                                                pending: rec.status === 'PENDENTE',
+                                                                progress: rec.status === 'EM_EXECUCAO',
+                                                                done: rec.status === 'EXECUTADA'
+                                                            }">
+                                            
+                                                            {{ rec.status | titlecase }}
+                                            
+                                                        </span>
+                                            
+                                                        @if (canEditRecommendation()) {
+                                            
+                                                            <button
+                                                                mat-icon-button
+                                                                type="button"
+                                                                (click)="startEditRecommendation(rec); $event.stopPropagation()">
+                                            
+                                                                <mat-icon>edit</mat-icon>
+                                            
+                                                            </button>
+                                            
+                                                        }
+                                            
+                                                    </div>
+                                            
+                                                }
+                                            
+                                            </div>
+                                            
+                                            @if (isEditingRecommendation(rec.id)) {
+                                            
+                                            <div class="recommendation-editor">
+                                            
+                                                <label class="status-field">
+                                            
+                                                    <span>Status</span>
+                                            
+                                                    <select formControlName="status">
+                                            
+                                                        <option value="PENDENTE">
+                                                            Pendente
+                                                        </option>
+                                            
+                                                        <option value="EM_EXECUCAO">
+                                                            Em execução
+                                                        </option>
+                                            
+                                                        <option value="EXECUTADA">
+                                                            Executada
+                                                        </option>
+                                            
+                                                    </select>
+                                            
+                                                </label>
+                                            
+                                                <div class="editor-actions">
+                                            
+                                                    <button
+                                                        mat-button
+                                                        type="button"
+                                                        (click)="cancelEditRecommendation()">
+                                            
+                                                        Cancelar
+                                            
+                                                    </button>
+                                            
+                                                    <button
+                                                        mat-flat-button
+                                                        color="primary"
+                                                        type="button"
+                                                        (click)="saveRecommendation(rec.id)">
+                                            
+                                                        Salvar
+                                            
+                                                    </button>
+                                            
+                                                </div>
+                                            
+                                            </div>
+                                            
+                                            }
+                                    
+                                        </div>
+                                    
+                                    </div>
+
+                                }
+
                             </div>
+
+                            }
+
                         </div>
+
                         }
+
+
                         <!-- @if (analise.fotos?.length) {
                         <div class="analysis-photos">
                             <h4>Fotos da vistoria</h4>
