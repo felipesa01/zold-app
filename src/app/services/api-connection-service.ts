@@ -263,19 +263,19 @@ export class ApiConnectionService {
 
     addRecomendacaoInventario(dto: CreateRecomendacaoInventario, analiseId: string): Observable<RecomendacaoInventario> {
         return this.http.post<RecomendacaoInventario>(`${this.apiURL}/inventario/recomendacoes/${analiseId}`, dto);
-      }
-      
-      updateRecomendacaoInventario(id: string, dto: UpdateRecomendacaoInventario): Observable<RecomendacaoInventario> {
+    }
+
+    updateRecomendacaoInventario(id: string, dto: UpdateRecomendacaoInventario): Observable<RecomendacaoInventario> {
         return this.http.patch<RecomendacaoInventario>(`${this.apiURL}/inventario/recomendacoes/${id}`, dto);
-      }
-      
-      deleteRecomendacaoInventario(id: string): Observable<void> {
+    }
+
+    deleteRecomendacaoInventario(id: string): Observable<void> {
         return this.http.delete<void>(`${this.apiURL}/inventario/recomendacoes/${id}`);
-      }
-      
-      findRecomendacoesInventario(analiseId: string): Observable<RecomendacaoInventario[]> {
+    }
+
+    findRecomendacoesInventario(analiseId: string): Observable<RecomendacaoInventario[]> {
         return this.http.get<RecomendacaoInventario[]>(`${this.apiURL}/inventario/recomendacoes/analise/${analiseId}`);
-      }
+    }
 
 
 
@@ -466,48 +466,48 @@ export class ApiConnectionService {
     exportarMosquitos(
         projetoId: string
     ): Observable<Blob> {
-    
+
         return this.http.get(
             `${this.apiURL}/dashboard/exportacao/mosquitos/${projetoId}`,
             {
                 responseType: 'blob'
             }
         );
-    
+
     }
 
     uploadImage(
         file: File,
         folder: string
     ) {
-    
+
         const formData = new FormData();
-    
+
         formData.append(
             'file',
             file
         );
-    
+
         formData.append(
             'folder',
             folder
         );
-    
+
         return this.http.post<{
-    
+
             nome: string;
-    
+
             path: string;
-    
+
             mimeType: string;
-    
+
             size: number;
-    
+
         }>(
             `${this.apiURL}/uploads/image`,
             formData
         );
-    
+
     }
 
     public getImageUrl(path?: string): string {
@@ -515,26 +515,26 @@ export class ApiConnectionService {
         if (!path) {
             return '';
         }
-    
+
         // Preview local
         if (path.startsWith('blob:')) {
             return path;
         }
-    
+
         // Fotos antigas do Angular
         if (path.startsWith('./assets')) {
             return path.replace('./', '');
         }
-    
+
         if (path.startsWith('assets/')) {
             return path;
         }
-    
+
         // URL absoluta
         if (path.startsWith('http')) {
             return path;
         }
-    
+
         // Fotos do servidor
         return `${this.filesURL}${path}`;
     }

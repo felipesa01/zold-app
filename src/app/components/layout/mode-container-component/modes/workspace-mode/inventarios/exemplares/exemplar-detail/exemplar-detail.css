@@ -658,12 +658,27 @@ img {
 
 .recommendation {
   display: flex;
-  gap: 14px;
-  align-items: flex-start;
-  border-left: 4px solid #1976d2;
-  background: #f8fafc;
-  padding: 14px;
-  border-radius: 8px;
+  flex-direction: column;
+  gap: 16px;
+
+  padding: 20px;
+  border: 1px solid #dee2e6;
+  border-radius: 10px;
+  background: #fff;
+  height: 100%;
+}
+
+.recommendation-footer {
+  margin-top: auto;
+
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: end;
+}
+  
+.recommendation hr {
+  margin: 0;
 }
 
 .recommendation mat-icon {

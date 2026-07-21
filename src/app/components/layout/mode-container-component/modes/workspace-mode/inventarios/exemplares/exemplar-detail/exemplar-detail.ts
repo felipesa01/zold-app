@@ -15,7 +15,7 @@ import VectorSource from "ol/source/Vector";
 import { ApiConnectionService } from "../../../../../../../../services/api-connection-service";
 import { ConfirmDialogComponent } from "../../../../../../../shared/confirm-dialog-component/confirm-dialog-component";
 import { Exemplar } from "../exemplar.model";
-import { map } from "rxjs";
+import { finalize, map, switchMap } from "rxjs";
 import { defaults as defaultInteractions } from 'ol/interaction';
 import { defaults as defaultControls } from 'ol/control';
 import { Circle, Fill, Stroke, Style } from 'ol/style';
@@ -24,7 +24,7 @@ import { FotoInventario } from "../../fotos/fotos.model";
 import { NgbCarouselModule } from "@ng-bootstrap/ng-bootstrap";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MapLocationComponent } from "../../../../../../../shared/map-location/map-location.component";
-import { RecomendacaoInventario } from "../../recomendacoes/recomendacoes.model";
+import { RecomendacaoInventario, StatusRecomendacao } from "../../recomendacoes/recomendacoes.model";
 import { FormBuilder, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -61,7 +61,7 @@ export class ExemplaresDetail implements AfterViewInit {
 
   editingRecommendationId: string | null = null;
 
-  showPhotos = signal(false);
+  showPhotos = signal<'exemplar' | 'analise' | undefined>(undefined);
 
   exemplarId = toSignal(
     this.route.paramMap.pipe(
@@ -71,7 +71,9 @@ export class ExemplaresDetail implements AfterViewInit {
 
   exemplar = signal<Exemplar | undefined>(undefined);
   analises = computed(() => this.exemplar()?.analises ?? []);
-  fotos = computed(() => this.exemplar()?.fotos ?? []);
+  fotosExemplar = computed(() => this.exemplar()?.fotos ?? []);
+  fotosAnalises = signal<FotoInventario[]>([])
+
   // analises = signal<AnaliseInventario[]>([])
   // fotos = signal<FotoInventario[]>([])
 
@@ -94,44 +96,8 @@ export class ExemplaresDetail implements AfterViewInit {
 
   constructor(private location: Location) {
     effect((onCleanup) => {
-      const id = this.exemplarId();
-
-      if (!id) {
-        this.exemplar.set(undefined);
-        return;
-      }
-
-      const sub = this.api.findExemplar(id).subscribe({
-        next: (exemplar) => {
-          this.exemplar.set(exemplar);
-          this.createLayer(exemplar);
-        },
-        error: () => this.exemplar.set(undefined)
-      });
-
-      // const sub2 = this.api.listarAnalisesByExemplar(id).subscribe({
-      //   next: (analises) => {
-      //     this.analises.set(analises);
-
-      //   },
-      //   error: () => this.analises.set([])
-      // });
-
-      // const sub3 = this.api.listarFotosByExemplar(id).subscribe({
-      //   next: (fotos) => {
-      //     this.fotos.set(fotos);
-
-      //   },
-      //   error: () => this.analises.set([])
-      // });
-
-
-      onCleanup(() => {
-        sub.unsubscribe()
-        // sub2.unsubscribe()
-        // sub3.unsubscribe()
-
-      });
+      const sub = this.loadExemplar();
+      onCleanup(() => sub?.unsubscribe());
     });
 
     this.map = new Map({
@@ -178,10 +144,29 @@ export class ExemplaresDetail implements AfterViewInit {
       zIndex: 99999
     });
 
-    console.log(layer)
+    // console.log(layer)
 
     this.map.addLayer(layer);
     this.map.getView().fit(geom.getGeometry()!, { maxZoom: 18 });
+  }
+
+  private loadExemplar() {
+
+    const id = this.exemplarId();
+
+    if (!id) {
+      this.exemplar.set(undefined);
+      return;
+    }
+
+    return this.api.findExemplar(id).subscribe({
+      next: (exemplar) => {
+        this.exemplar.set(exemplar);
+        this.createLayer(exemplar);
+      },
+      error: () => this.exemplar.set(undefined)
+    });
+
   }
 
   delete() {
@@ -215,8 +200,8 @@ export class ExemplaresDetail implements AfterViewInit {
       .onHidden.subscribe(() => this.voltar());
   }
 
-  togglePhotos() {
-    this.showPhotos.set(!this.showPhotos());
+  togglePhotos(mode: 'exemplar' | 'analise' | undefined) {
+    this.showPhotos.set(mode);
   }
 
   voltar() {
@@ -247,8 +232,6 @@ export class ExemplaresDetail implements AfterViewInit {
     this.editingRecommendationId = rec.id;
 
     this.recommendationForm.patchValue({
-      titulo: rec.titulo,
-      descricao: rec.descricao,
       status: rec.status
     });
 
@@ -261,9 +244,44 @@ export class ExemplaresDetail implements AfterViewInit {
   saveRecommendation(id: string): void {
 
     console.log(id, this.recommendationForm.value);
-  
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '360px',
+      data: {
+        title: 'Editar recomendação',
+        message: 'Deseja continuar?',
+        confirmText: 'Salvar',
+        cancelText: 'Cancelar'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+
+      if (!result) return;
+
+      const payload = this.recommendationForm.getRawValue();
+
+      const request = this.api.updateRecomendacaoInventario(id, payload)
+
+      request.pipe(
+        // finalize(() => this.loadingSave.set(false))
+      ).subscribe({
+
+        next: () => {
+          this.toastr.success('Alteração salva com sucesso.');
+          this.loadExemplar();
+          // this.location.back();
+        },
+
+        error: err => {
+          this.toastr.error(err?.error?.message ?? 'Erro ao salvar recomendação.');
+        }
+
+      });
+    });
+
     this.cancelEditRecommendation();
-  
+
   }
 
   isEditingRecommendation(id: string) {
@@ -271,10 +289,9 @@ export class ExemplaresDetail implements AfterViewInit {
   }
 
   private fb = inject(FormBuilder);
-  recommendationForm = this.fb.group({
-    titulo: [''],
-    descricao: [''],
-    status: ['PENDENTE']
+
+  recommendationForm = this.fb.nonNullable.group({
+    status: StatusRecomendacao.PENDENTE
   });
 
   canEditRecommendation(): boolean {

@@ -20,6 +20,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { ImageUploadComponent } from '../../../../../../../shared/image-upload/image-upload.component';
 import { Exemplar } from '../../exemplares/exemplar.model';
 import { finalize, forkJoin, Observable, of, switchMap } from 'rxjs';
+import { MatButtonModule } from '@angular/material/button';
 
 
 @Component({
@@ -29,7 +30,9 @@ import { finalize, forkJoin, Observable, of, switchMap } from 'rxjs';
     CommonModule,
     ReactiveFormsModule,
     MatIconModule,
-    ImageUploadComponent
+    ImageUploadComponent,
+    MatButtonModule,
+    MatIconModule,
   ],
   templateUrl: './analises-form.html',
   styleUrls: ['./analises-form.css']
