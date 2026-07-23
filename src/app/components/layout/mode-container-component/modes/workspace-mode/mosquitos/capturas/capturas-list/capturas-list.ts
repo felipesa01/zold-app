@@ -21,6 +21,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { compareDatesOnly, datePureToUTCDate, datePureToUTCString } from '../../../../../../../../utils/date-pure-to-UTC';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatTooltip } from "@angular/material/tooltip";
+import { PermissionService } from '../../../../../../../../services/permission-service';
 
 @Component({
   selector: 'app-capturas-list',
@@ -48,6 +49,9 @@ export class CapturasList {
   private projectContext = inject(ProjectContextService);
   selectedProject = this.projectContext.selected;
   private api = inject(ApiConnectionService);
+
+  permissionService = inject(PermissionService)
+
 
   private capturas = signal<Captura[]>([]);
 

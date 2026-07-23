@@ -38,6 +38,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import XYZ from 'ol/source/XYZ';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import Circle from 'ol/style/Circle';
 
 export type MapLayerType = 'osm' | 'satellite';
 
@@ -66,6 +67,8 @@ export class MapLocationComponent implements AfterViewInit {
     readonly lon = input<number | null>(null);
     readonly editable = input(true);
 
+    readonly showMyLocation = input(false);
+
     readonly latChange = output<number | null>();
     readonly lonChange = output<number | null>();
 
@@ -78,6 +81,12 @@ export class MapLocationComponent implements AfterViewInit {
     private map!: Map;
 
     private readonly marker = new Feature<Point>();
+
+    private readonly myLocationMarker = new Feature<Point>();
+
+    private myLocationAdded = false;
+    private watchId?: number;   
+    
 
     private readonly vectorSource = new VectorSource();
     private markerAdded = false;
@@ -95,10 +104,20 @@ export class MapLocationComponent implements AfterViewInit {
 
         this.marker.setStyle(
             new Style({
+                image: new Circle({
+                    radius: 8,
+                    fill: new Fill({ color: 'rgba(34, 197, 94, 0.6)' }),
+                    stroke: new Stroke({ color: '#fff', width: 2 })
+                })
+            })
+        );
+
+        this.myLocationMarker.setStyle(
+            new Style({
                 image: new CircleStyle({
                     radius: 7,
                     fill: new Fill({
-                        color: '#e53935'
+                        color: '#1976d2'
                     }),
                     stroke: new Stroke({
                         color: '#ffffff',
@@ -108,15 +127,71 @@ export class MapLocationComponent implements AfterViewInit {
             })
         );
 
+        effect((onCleanup) => {
+
+            if (!this.showMyLocation()) {
+        
+                if (this.watchId != null) {
+                    navigator.geolocation.clearWatch(this.watchId);
+                    this.watchId = undefined;
+                }
+        
+                if (this.myLocationAdded) {
+                    this.vectorSource.removeFeature(this.myLocationMarker);
+                    this.myLocationAdded = false;
+                }
+        
+                return;
+            }
+        
+            if (!navigator.geolocation)
+                return;
+        
+            this.watchId = navigator.geolocation.watchPosition(position => {
+        
+                this.updateMyLocationMarker(
+                    position.coords.latitude,
+                    position.coords.longitude
+                );
+        
+            });
+        
+            onCleanup(() => {
+        
+                if (this.watchId != null) {
+                    navigator.geolocation.clearWatch(this.watchId);
+                    this.watchId = undefined;
+                }
+        
+            });
+        
+        });
+
+        effect(() => {
+            if (!this.showMyLocation()) {
+                if (this.myLocationAdded) {
+                    this.vectorSource.removeFeature(this.myLocationMarker);
+                    this.myLocationAdded = false;
+                }
+                return;
+            }
+            if (!navigator.geolocation)
+                return;
+            navigator.geolocation.getCurrentPosition(position => {
+                this.updateMyLocationMarker(
+                    position.coords.latitude,
+                    position.coords.longitude
+                );
+            });
+        });
+
         effect(() => {
             const lat = this.lat();
             const lon = this.lon();
             if (lat == null || lon == null)
                 return;
             this.updateMarker(lat, lon);
-
         });
-
     }
 
     ngAfterViewInit(): void {
@@ -149,11 +224,14 @@ export class MapLocationComponent implements AfterViewInit {
 
         if (this.baseLayerInput() == 'osm') {
             this.baseLayer.setSource(new OSM());
+            this.layerType.set('osm');
+
         }
         else {
-            this.baseLayer.setSource(new OSM());
+            this.baseLayer.setSource(new XYZ({ url: 'http://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}', attributions: '© Google' }))
+            this.layerType.set('satellite');
         }
-       
+
 
         this.map.updateSize();
     }
@@ -167,14 +245,14 @@ export class MapLocationComponent implements AfterViewInit {
                     attributions: '© Google'
                 })
             );
-    
+
             this.layerType.set('satellite');
-    
+
         } else {
             this.baseLayer.setSource(new OSM());
             this.layerType.set('osm');
         }
-    
+
     }
 
 
@@ -272,5 +350,25 @@ export class MapLocationComponent implements AfterViewInit {
 
     }
 
+
+    private updateMyLocationMarker(latitude: number, longitude: number): void {
+
+        if (!this.map) return;
+
+        const coordinate = fromLonLat([longitude, latitude]);
+
+        this.myLocationMarker.setGeometry(
+            new Point(coordinate)
+        );
+
+        if (!this.myLocationAdded) {
+
+            this.vectorSource.addFeature(this.myLocationMarker);
+
+            this.myLocationAdded = true;
+
+        }
+
+    }
 }
 

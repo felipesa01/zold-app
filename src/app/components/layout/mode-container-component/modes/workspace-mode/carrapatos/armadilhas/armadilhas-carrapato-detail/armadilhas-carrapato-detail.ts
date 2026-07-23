@@ -26,6 +26,7 @@ import { ProjectContextService } from "../../../../../../../../services/project-
 import { ConfirmDialogComponent } from "../../../../../../../shared/confirm-dialog-component/confirm-dialog-component";
 import { ArmadilhaCarrapato } from "../armadilha-carrapato.model";
 import { CapturaCarrapato } from "../../capturas/captura-carrapato.model";
+import { PermissionService } from "../../../../../../../../services/permission-service";
 
 @Component({
     selector: 'app-armadilhas-carrapato-detail',
@@ -45,6 +46,9 @@ export class ArmadilhasCarrapatoDetail implements AfterViewInit {
     private route = inject(ActivatedRoute);
     private router = inject(Router);
     toastr = inject(ToastrService);
+
+  permissionService = inject(PermissionService)
+
   
 
     loadingRemove = signal(false);

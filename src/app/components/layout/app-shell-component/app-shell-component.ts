@@ -51,7 +51,8 @@ export class AppShellComponent {
       .subscribe(() => {
 
         this.isLoginPage.set(
-          this.router.url.startsWith('/login')
+          this.router.url.startsWith('/login') 
+          // || this.router.url.startsWith('/alterar-senha')
         );
 
       });

@@ -29,6 +29,7 @@ import { FormBuilder, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
+import { PermissionService } from "../../../../../../../../services/permission-service";
 
 @Component({
   selector: 'app-exemplares-detail',
@@ -55,6 +56,8 @@ export class ExemplaresDetail implements AfterViewInit {
   private api = inject(ApiConnectionService);
   private dialog = inject(MatDialog);
   private toastr = inject(ToastrService);
+  permissionService = inject(PermissionService)
+  
 
   showRecommendations?: boolean;
   expandedRecommendations: Record<string, boolean> = {};

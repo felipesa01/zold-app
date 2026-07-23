@@ -11,6 +11,8 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { Router } from "@angular/router";
 import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
+import { defaults as defaultControls } from 'ol/control';
+
 import { XYZ } from "ol/source";
 import VectorSource from "ol/source/Vector";
 import { Style, Fill, Stroke, Circle } from "ol/style";
@@ -20,6 +22,7 @@ import { Exemplar } from "../exemplar.model";
 import { Feature, Map, View } from 'ol';
 import { Point } from "ol/geom";
 import { AuthService } from "../../../../../../../../../auth/services/auth.service";
+import { PermissionService } from "../../../../../../../../services/permission-service";
 
 @Component({
     selector: 'app-exemplares-list',
@@ -43,7 +46,10 @@ export class ExemplaresList implements AfterViewInit {
     private api = inject(ApiConnectionService);
     private zone = inject(NgZone);
     private readonly authService = inject(AuthService);
-    
+
+    permissionService = inject(PermissionService)
+
+
     public readonly user = this.authService.currentUser;
 
     selectedProject = this.projectContext.selected;
@@ -185,8 +191,8 @@ export class ExemplaresList implements AfterViewInit {
 
             if (features.length) {
                 map.getView().fit(this.source.getExtent()!, {
-                    padding: [100, 100, 100, 100],
-                    maxZoom: 18
+                    padding: [10, 80, 10, 80],
+                    maxZoom: 24
                 });
             }
         });
@@ -203,13 +209,13 @@ export class ExemplaresList implements AfterViewInit {
 
         if (this.map()) {
             const map = this.map()!;
-        
+
             setTimeout(() => {
                 map.setTarget(this.mapElement.nativeElement);
                 map.updateSize();
                 map.renderSync();
             });
-        
+
             return;
         }
 
@@ -226,7 +232,8 @@ export class ExemplaresList implements AfterViewInit {
                 projection: 'EPSG:4326',
                 center: [-46.92, -23.45],
                 zoom: 10
-            })
+            }),
+            controls: defaultControls({ attribution: false, zoom: false, rotate: false })
         });
 
         map.setTarget(this.mapElement.nativeElement);
@@ -258,8 +265,8 @@ export class ExemplaresList implements AfterViewInit {
         this.api.listarExemplaresByProjeto(project.id).subscribe({
             next: data => {
                 this.exemplares.set(data);
-                this.loading.set(false);  
-                
+                this.loading.set(false);
+
                 setTimeout(() => {
                     this.map()?.setTarget(this.mapElement.nativeElement);
                     this.map()?.updateSize();
@@ -272,7 +279,7 @@ export class ExemplaresList implements AfterViewInit {
             }
         });
 
- 
+
     }
 
     nmComum = signal<string | null>(null);

@@ -12,6 +12,7 @@ import { ApiConnectionService } from '../../../../../../../../services/api-conne
 import { ConfirmDialogComponent } from '../../../../../../../shared/confirm-dialog-component/confirm-dialog-component';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
+import { PermissionService } from '../../../../../../../../services/permission-service';
 
 @Component({
   selector: 'app-capturas-detail',
@@ -22,6 +23,8 @@ import { ToastrService } from 'ngx-toastr';
 export class CapturasDetail {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  permissionService = inject(PermissionService)
+
 
   toastr = inject(ToastrService);
   loadingRemove = signal(false);

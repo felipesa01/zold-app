@@ -41,7 +41,7 @@ export class LoginComponent {
 
     });
 
-    constructor( ) { }
+    constructor() { }
 
     public login(): void {
 
@@ -58,14 +58,19 @@ export class LoginComponent {
             )
             .subscribe({
 
-                next: () => {
+                next: loginResponse => {
 
-                    this.authService.loadUser()
-                        .subscribe(() => {
-
+                    if (loginResponse.mustChangePassword) {
+                        this.router.navigate(['/alterar-senha']);
+                    }
+                    else {
+                        this.authService.loadUser()
+                        .subscribe(user => {
                             this.router.navigate(['/']);
-
                         });
+                    }
+
+
 
                 },
 

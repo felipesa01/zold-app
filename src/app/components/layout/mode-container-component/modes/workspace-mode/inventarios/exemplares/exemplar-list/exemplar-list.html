@@ -10,10 +10,13 @@
       <h1>Exemplares</h1>
     </div>
 
-    <button mat-flat-button color="primary" (click)="create()" [disabled]="['CLIENTE_ADMIN', 'CLIENTE_EXECUTOR'].includes(user?.role!)">
+    @if (this.permissionService.has('exemplar.create')) {
+    <button mat-flat-button color="primary" (click)="create()">
       <mat-icon>add</mat-icon>
       Novo exemplar
     </button>
+    }
+
   </div>
 
   <!-- BUSCA -->
@@ -84,7 +87,7 @@
           </ng-container>
 
           <ng-container matColumnDef="nm_cientifico">
-            <th mat-header-cell *matHeaderCellDef  mat-sort-header>Nome científico</th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Nome científico</th>
             <td mat-cell *matCellDef="let e">{{ e.nm_cientifico }}</td>
           </ng-container>
 

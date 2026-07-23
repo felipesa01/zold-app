@@ -41,17 +41,23 @@
             </mat-chip>
         </div>
 
+
         <div class="d-flex align-content-center">
+            @if (this.permissionService.has('captura-mosquito.update')) {
             <button mat-flat-button color="primary" class="edit-btn" [routerLink]="['edit']">
                 <mat-icon>edit</mat-icon>
                 Editar
             </button>
+            }
+            @if (this.permissionService.has('captura-mosquito.delete')) {
 
             <button class="btn btn-outline-danger d-flex" style="border-radius: 2em;" (click)="delete()">
                 <mat-icon>delete</mat-icon>
                 Excluir
             </button>
+            }
         </div>
+
 
     </section>
 

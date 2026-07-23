@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, catchError, Observable, of, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
 
@@ -30,7 +30,7 @@ export class AuthService {
     constructor(
         private readonly http: HttpClient,
         private readonly tokenService: TokenService
-    ) {}
+    ) { }
 
     public login(request: LoginRequest): Observable<LoginResponse> {
         return this.http
@@ -62,6 +62,31 @@ export class AuthService {
     }
 
     public isAuthenticated(): boolean {
-        return this.currentUserSubject.value !== null;
+        return this.tokenService.hasToken();
+    }
+
+    public restoreSession(): Observable<AuthUser | null> {
+
+        if (!this.tokenService.hasToken()) {
+            return of(null);
+        }
+
+        return this.loadUser().pipe(
+            catchError(() => {
+                this.logout();
+                return of(null);
+            })
+        );
+    }
+
+    changePassword(data: {
+        currentPassword: string;
+        newPassword: string;
+        confirmPassword: string;
+    }) {
+        return this.http.patch(
+            `${this.api}/change-password`,
+            data
+        );
     }
 }

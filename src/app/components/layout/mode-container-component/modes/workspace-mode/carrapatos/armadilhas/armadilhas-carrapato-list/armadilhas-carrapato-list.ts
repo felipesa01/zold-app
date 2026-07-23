@@ -21,6 +21,7 @@ import { XYZ } from "ol/source";
 import VectorSource from "ol/source/Vector";
 import { Style, Fill, Stroke, Circle, Text } from "ol/style";
 import { filter } from "rxjs";
+import { PermissionService } from "../../../../../../../../services/permission-service";
 
 @Component({
     selector: 'app-armadilhas-carrapato-list',
@@ -45,6 +46,8 @@ import { filter } from "rxjs";
 
   private armadilhas = signal<ArmadilhaCarrapato[]>([]);
   private zone = inject(NgZone)
+
+  permissionService = inject(PermissionService)
 
   @ViewChild('mapElement') mapElement!: ElementRef<HTMLDivElement>;
 

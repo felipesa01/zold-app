@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../../../../auth/services/auth.service';
 import { LayoutService } from '../../../../../services/layout-service';
 
@@ -10,7 +10,8 @@ import { LayoutService } from '../../../../../services/layout-service';
     selector: 'app-account-sidebar',
     standalone: true,
     imports: [
-        CommonModule
+        CommonModule,
+        RouterModule
     ],
     templateUrl: './account-sidebar.component.html',
     styleUrl: './account-sidebar.component.css'

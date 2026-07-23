@@ -539,4 +539,18 @@ export class ApiConnectionService {
         return `${this.filesURL}${path}`;
     }
 
+
+
+
+    changePassword(data: {
+        currentPassword: string;
+        newPassword: string;
+        confirmPassword: string;
+    }) {
+        return this.http.patch(
+            `${this.apiURL}/auth/change-password`,
+            data
+        );
+    }
+
 }

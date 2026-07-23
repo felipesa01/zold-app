@@ -107,35 +107,26 @@ h2 {
 }
 
 .menu-item {
-
     height: 54px;
-
     border: none;
-
     background: transparent;
-
     display: flex;
-
     align-items: center;
-
     gap: 16px;
-
     padding: 0 28px;
-
     cursor: pointer;
-
     font-size: 15px;
-
     color: #243447;
-
     transition: .15s;
-
 }
 
-.menu-item:hover {
+.menu-item:disabled {
+    color: #888a8b;
+    cursor:default
+}
 
+.menu-item:hover:not(:disabled) {
     background: #f4f7fb;
-
 }
 
 .menu-item i {
@@ -260,50 +251,4 @@ h2 {
 
 }
 
-.menu-item {
 
-    height: 54px;
-
-    border: none;
-
-    background: transparent;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 16px;
-
-    padding: 0 28px;
-
-    cursor: pointer;
-
-    font-size: 15px;
-
-    color: #243447;
-
-    transition: .15s;
-
-}
-
-.menu-item:hover {
-
-    background: #f4f7fb;
-
-}
-
-.menu-item i {
-
-    width: 22px;
-
-}
-
-.logout {
-
-    margin-top: auto;
-
-    color: #d32f2f;
-
-    border-top: 1px solid #e6ebf2;
-
-}

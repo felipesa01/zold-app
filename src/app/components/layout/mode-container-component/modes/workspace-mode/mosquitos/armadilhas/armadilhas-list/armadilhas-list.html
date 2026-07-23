@@ -12,11 +12,13 @@
     </div>
 
 
-
+    @if (this.permissionService.has('armadilha-mosquito.create')) {
     <button mat-flat-button color="primary" (click)="create()">
       <mat-icon>add</mat-icon>
       Nova armadilha
     </button>
+    }
+
   </div>
 
   <!-- BUSCA MODERNA -->
@@ -116,7 +118,8 @@
 
   } -->
 
-  <mat-tab-group class="entities-tabs" (selectedIndexChange)="onTabChange($event)" [selectedIndex]="selectedTab()" preserveContent>
+  <mat-tab-group class="entities-tabs" (selectedIndexChange)="onTabChange($event)" [selectedIndex]="selectedTab()"
+    preserveContent>
 
     <!-- ABA TABELA -->
     <mat-tab label="Tabela">

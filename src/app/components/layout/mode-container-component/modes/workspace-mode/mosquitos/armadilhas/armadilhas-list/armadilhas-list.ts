@@ -30,6 +30,7 @@ import { Captura } from '../../capturas/captura.model';
 import { NgZone } from '@angular/core';
 import { take } from 'rxjs/operators';
 import Text from 'ol/style/Text';
+import { PermissionService } from '../../../../../../../../services/permission-service';
 
 @Component({
   selector: 'app-armadilhas-list',
@@ -54,6 +55,8 @@ export class ArmadilhasList implements AfterViewInit {
 
   private armadilhas = signal<Armadilha[]>([]);
   private zone = inject(NgZone)
+
+  permissionService = inject(PermissionService)
 
   @ViewChild('mapElement') mapElement!: ElementRef<HTMLDivElement>;
 

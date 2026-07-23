@@ -36,6 +36,10 @@
     bottom: 1px;
     z-index: 1;
     margin: 1em;
+
+    background: #ffffff;
+    padding: .5em;
+    border-radius: 1em;
 }
 
 .ol-viewport {

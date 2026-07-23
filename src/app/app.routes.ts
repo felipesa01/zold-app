@@ -6,6 +6,8 @@ import { AppShellComponent } from './components/layout/app-shell-component/app-s
 import { LoginComponent } from '../auth/pages/login/login.component';
 import { guestGuard } from '../auth/guards/guest.guard';
 import { authGuard } from '../auth/guards/auth.guard';
+import { AppPermissions } from './services/permission-service';
+import { ChangePassword } from '../auth/pages/change-password/change-password.component';
 
 export const routes: Routes = [
     {
@@ -13,6 +15,12 @@ export const routes: Routes = [
         component: LoginComponent,
         canActivate: [guestGuard]
     },
+    {
+        path: 'alterar-senha',
+        component: ChangePassword,
+        canActivate: [authGuard]
+    },
+    
     {
         path: 'scan/:codigo',
         component: QrScanComponent
@@ -166,8 +174,8 @@ export const routes: Routes = [
                 loadComponent: () =>
                     import('./components/layout/mode-container-component/modes/workspace-mode/inventarios/exemplares/exemplar-detail/exemplar-detail')
                         .then(m => m.ExemplaresDetail),
-                        // data: { reuse: true }
-             
+                // data: { reuse: true }
+
             },
             {
                 path: 'inventario/exemplares/:id/edit',
@@ -191,7 +199,10 @@ export const routes: Routes = [
                 path: 'inventario/exemplares/:exemplarId/analises/new',
                 loadComponent: () =>
                     import('./components/layout/mode-container-component/modes/workspace-mode/inventarios/analises/analises-form/analises-form')
-                        .then(m => m.AnaliseForm)
+                        .then(m => m.AnaliseForm),
+                data: {
+                    permissions: [AppPermissions.RECOMENDACAO_UPDATE]
+                }
             },
             {
                 path: 'inventario/exemplares/:exemplarId/analises/:id/edit',

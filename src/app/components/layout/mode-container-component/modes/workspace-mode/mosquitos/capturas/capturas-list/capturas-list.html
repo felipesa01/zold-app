@@ -11,10 +11,12 @@
       <h1>Capturas de mosquitos</h1>
     </div>
 
+    @if (this.permissionService.has('captura-mosquito.create')) {
     <button mat-flat-button color="primary" (click)="create()">
       <mat-icon>add</mat-icon>
       Nova captura
     </button>
+  }
 
   </div>
 
