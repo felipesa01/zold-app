@@ -1,9 +1,25 @@
 <div class="image-upload">
 
-    <input #fileInput hidden type="file" multiple accept="image/*" capture="environment" (change)="selectFiles($event)"
-        [disabled]="disabled">
+    <!-- <input #fileInput type="file" accept="image/*" multiple style="display:none" (change)="selectFiles($event)"
+        [disabled]="disabled"> -->
 
-    @if(images().length === 0){
+    <input #cameraInput type="file" accept="image/*" capture="environment" style="display:none"
+        (change)="selectFiles($event)">
+
+
+    <input #galleryInput type="file" accept="image/*" multiple style="display:none" (change)="selectFiles($event)">
+
+    <button mat-raised-button (click)="cameraInput.click()">
+    <mat-icon>photo_camera</mat-icon>
+    Tirar foto
+    </button>
+
+    <button mat-raised-button (click)="galleryInput.click()">
+        <mat-icon>photo_library</mat-icon>
+        Escolher da galeria
+    </button>
+
+    <!-- @if(images().length === 0){
 
     <label class="drop-zone" (click)="fileInput.click()">
 
@@ -14,6 +30,7 @@
         <p>{{ description }}</p>
 
     </label>
+
 
     } @else {
 
@@ -29,7 +46,7 @@
 
     </div>
 
-    }
+    } -->
 
     @if(images().length){
 
@@ -77,7 +94,7 @@
 
 <section class="photo-overlay">
 
-    <button class="photo-close" (click)="closeGallery()"  type="button">
+    <button class="photo-close" (click)="closeGallery()" type="button">
 
         ✕
 

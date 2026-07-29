@@ -57,9 +57,7 @@ export class LoginComponent {
                 finalize(() => this.loading = false)
             )
             .subscribe({
-
                 next: loginResponse => {
-
                     if (loginResponse.mustChangePassword) {
                         this.router.navigate(['/alterar-senha']);
                     }
@@ -69,15 +67,9 @@ export class LoginComponent {
                             this.router.navigate(['/']);
                         });
                     }
-
-
-
                 },
-
-                error: () => {
-
-                    this.error = 'Email ou senha inválidos.';
-
+                error: (e) => {
+                    this.error = e.error?.message ?? 'Erro ao realizar login';
                 }
 
             });

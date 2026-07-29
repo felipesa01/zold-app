@@ -4,26 +4,24 @@
 
     <div class="toolbar-title">
       <h2>Dashboard</h2>
-  
+
       <span>
         Visualização e exportação dos dados de monitoramento
       </span>
     </div>
-  
-    <button
-      class="export-button"
-      (click)="handleExportarMosquitos()"
-      [disabled]="loadingExportacao"
-    >
-  
+
+    @if (this.permissionService.has('dashboards.export')) {
+    <button class="export-button" (click)="handleExportarMosquitos()" [disabled]="loadingExportacao">
+
       @if (loadingExportacao) {
-        Exportando...
+      Exportando...
       } @else {
-        Exportar dados
+      Exportar dados
       }
-  
+
     </button>
-  
+    }
+
   </header>
 
   <!-- KPIs -->

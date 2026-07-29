@@ -13,6 +13,7 @@ import { TotalArmadilhaBarraMapaComponent } from "./components/total-armadilha-b
 import { TotalArmadilhaMapaComponent } from "./components/total-armadilha-mapa/total-armadilha-mapa.component";
 import { ApiConnectionService } from "../../../../../../services/api-connection-service";
 import { ProjectContextService } from "../../../../../../services/project-context.service";
+import { PermissionService } from "../../../../../../services/permission-service";
 
 @Component({
   selector: 'app-dashboard-component',
@@ -35,6 +36,8 @@ export class DashboardComponent {
 
   private projectContext = inject(ProjectContextService);
   selectedProject = this.projectContext.selected;
+
+  permissionService = inject(PermissionService)
 
   loadingExportacao = false;
 

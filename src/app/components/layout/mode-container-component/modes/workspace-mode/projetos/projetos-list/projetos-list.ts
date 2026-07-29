@@ -12,6 +12,7 @@ import { catchError, filter, of } from "rxjs";
 import { ApiConnectionService } from "../../../../../../../services/api-connection-service";
 import { Projeto } from "../projetos.model";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { PermissionService } from "../../../../../../../services/permission-service";
 
 @Component({
   selector: 'app-projetos-list',
@@ -35,6 +36,7 @@ export class ProjetosList {
 
   private api = inject(ApiConnectionService);
   private router = inject(Router);
+  permissionService = inject(PermissionService)
 
   projetos = signal<Projeto[]>([]);
   loading = signal(false);

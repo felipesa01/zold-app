@@ -12,6 +12,7 @@ import { map, finalize } from "rxjs";
 import { ApiConnectionService, ProjetoServico, ProjetoServicosAtivos, ProjetoServicosDisponiveis } from "../../../../../../../services/api-connection-service";
 import { ConfirmDialogComponent } from "../../../../../../shared/confirm-dialog-component/confirm-dialog-component";
 import { Projeto } from "../projetos.model";
+import { PermissionService } from "../../../../../../../services/permission-service";
 
 @Component({
   selector: 'app-projetos-detail',
@@ -31,6 +32,7 @@ export class ProjetosDetail {
 
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  permissionService = inject(PermissionService)
 
   toastr = inject(ToastrService);
 

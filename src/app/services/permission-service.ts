@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { AuthService } from "../../auth/services/auth.service";
+import { App } from "../app";
 
 export const AppPermissions = {
     // Exemplares
@@ -40,8 +41,11 @@ export const AppPermissions = {
     // Administração
     USUARIOS_MANAGE: 'usuarios.manage',
 
+    PROJETOS_MANAGE: 'projetos.manage',
+
     // Dashboards
     DASHBOARDS_VIEW: 'dashboards.view',
+    DASHBOARDS_EXPORT: 'dashboards.export',
 } as const;
 
 export type AppPermission =
@@ -94,8 +98,10 @@ export class PermissionService {
 
             
             AppPermissions.USUARIOS_MANAGE,
+            AppPermissions.PROJETOS_MANAGE,
 
-            AppPermissions.DASHBOARDS_VIEW
+            AppPermissions.DASHBOARDS_VIEW,
+            AppPermissions.DASHBOARDS_EXPORT
         ],
     
         COORDENADOR: [   
@@ -106,7 +112,11 @@ export class PermissionService {
             AppPermissions.RECOMENDACAO_UPDATE,
 
             AppPermissions.USUARIOS_MANAGE,
-            AppPermissions.DASHBOARDS_VIEW
+            AppPermissions.PROJETOS_MANAGE,
+
+            AppPermissions.DASHBOARDS_VIEW,
+            AppPermissions.DASHBOARDS_EXPORT,
+            
         ],
     
         TECNICO: [

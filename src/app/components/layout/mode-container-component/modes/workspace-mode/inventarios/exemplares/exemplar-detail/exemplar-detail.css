@@ -935,7 +935,7 @@ img {
 
 }
 
-.recommendation-status.progress {
+.recommendation-status.inprogress {
 
   background: #3b82f6;
 
@@ -986,7 +986,7 @@ img {
   color: #8b5e00;
 }
 
-.status-chip.progress {
+.status-chip.inprogress {
   background: #dbeafe;
   color: #1d4ed8;
 }

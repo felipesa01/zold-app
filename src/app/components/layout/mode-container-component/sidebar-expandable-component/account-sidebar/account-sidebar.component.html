@@ -3,15 +3,11 @@
     <h2>Minha Conta</h2>
 
     <div class="profile">
-
         <div class="avatar">
-
             {{ user?.nome?.charAt(0) }}
-
         </div>
 
         <div class="info">
-
             <span class="name">
                 {{ user?.nome }}
             </span>
@@ -23,27 +19,18 @@
             <span class="email">
                 {{ user?.email }}
             </span>
-
         </div>
-
     </div>
-
     <div class="divider"></div>
 
     <button class="menu-item" disabled>
-
         <i class="fa-solid fa-user"></i>
-
         Meu Perfil
-
     </button>
 
     <button class="menu-item" routerLink="/alterar-senha" disabled>
-
         <i class="fa-solid fa-key"></i>
-
         Alterar senha
-
     </button>
 
     <div class="divider"></div>
@@ -53,9 +40,7 @@
         (click)="logout()">
 
         <i class="fa-solid fa-right-from-bracket"></i>
-
         Sair
-
     </button>
 
 </div>

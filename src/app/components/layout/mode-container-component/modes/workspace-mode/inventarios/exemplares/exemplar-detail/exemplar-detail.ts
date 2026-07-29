@@ -30,6 +30,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
 import { PermissionService } from "../../../../../../../../services/permission-service";
+import { E } from "@angular/cdk/keycodes";
 
 @Component({
   selector: 'app-exemplares-detail',
@@ -76,6 +77,15 @@ export class ExemplaresDetail implements AfterViewInit {
   analises = computed(() => this.exemplar()?.analises ?? []);
   fotosExemplar = computed(() => this.exemplar()?.fotos ?? []);
   fotosAnalises = signal<FotoInventario[]>([])
+
+  public getFotosAnalise(id: string): FotoInventario[] | undefined {
+
+    const analise =  this.exemplar()?.analises?.filter(e => e.id == 'id')[0]
+
+    if (!analise) return
+
+    return analise.fotos
+}
 
   // analises = signal<AnaliseInventario[]>([])
   // fotos = signal<FotoInventario[]>([])
@@ -212,7 +222,7 @@ export class ExemplaresDetail implements AfterViewInit {
   }
 
   addAnalise() {
-    console.log(`/workspace/inventario/exemplares/${this.exemplarId()}/analises/new`)
+    // console.log(`/workspace/inventario/exemplares/${this.exemplarId()}/analises/new`)
     this.router.navigate([`/workspace/inventario/exemplares/${this.exemplarId()}/analises/new`]);
   }
 

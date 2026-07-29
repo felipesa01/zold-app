@@ -4,35 +4,26 @@
 
     <div class="header-top">
 
-      <button
-        mat-button
-        class="back-btn"
-        (click)="voltar()"
-      >
+      <button mat-button class="back-btn" (click)="voltar()">
         <mat-icon>arrow_back</mat-icon>
         Voltar
       </button>
 
+      @if (this.permissionService.has('projetos.manage')) {
       <div class="header-actions">
 
-        <button
-          mat-flat-button
-          color="primary"
-          [routerLink]="['edit']"
-        >
+        <button mat-flat-button color="primary" [routerLink]="['edit']">
           <mat-icon>edit</mat-icon>
           Editar
         </button>
 
-        <button
-          class="btn-delete"
-          (click)="delete()"
-        >
+        <button class="btn-delete" (click)="delete()">
           <mat-icon>delete</mat-icon>
           Excluir
         </button>
 
       </div>
+      }
 
     </div>
 
@@ -52,10 +43,7 @@
 
       <div class="status-area">
 
-        <mat-chip
-          [color]="statusColor(projeto()!.status)"
-          selected
-        >
+        <mat-chip [color]="statusColor(projeto()!.status)" selected>
           {{ projeto()?.status }}
         </mat-chip>
 
@@ -97,6 +85,7 @@
 
   </header>
 
+  @if (this.permissionService.has('projetos.manage')) {
   <section class="content-card">
 
     <div class="section-header">
@@ -114,10 +103,7 @@
 
     <div class="services-list">
 
-      <div
-        class="service-item"
-        *ngFor="let servico of servicosDisponiveis()?.servicos"
-      >
+      <div class="service-item" *ngFor="let servico of servicosDisponiveis()?.servicos">
 
         <div class="service-left">
 
@@ -168,18 +154,15 @@
             <span class="toggle-label">
 
               {{
-                isServicoHabilitado(servico.id)
-                  ? 'Habilitado'
-                  : 'Desabilitado'
+              isServicoHabilitado(servico.id)
+              ? 'Habilitado'
+              : 'Desabilitado'
               }}
 
             </span>
 
-            <mat-slide-toggle
-              color="primary"
-              [checked]="isServicoHabilitado(servico.id)"
-              (change)="toggleServico(servico, $event.checked)"
-            >
+            <mat-slide-toggle color="primary" [checked]="isServicoHabilitado(servico.id)"
+              (change)="toggleServico(servico, $event.checked)">
             </mat-slide-toggle>
 
           </div>
@@ -191,5 +174,6 @@
     </div>
 
   </section>
+  }
 
 </div>

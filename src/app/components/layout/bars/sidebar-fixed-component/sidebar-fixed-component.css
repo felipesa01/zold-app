@@ -38,11 +38,19 @@
 
         &.active {
             border-left: #43b408 solid 3px;
-            background: #f6fff8;
+            background: #b3dcbc;
         }
     }
 
     .span {
         margin-left: 1em;
     }
+
+
+    nav {
+        display: flex;
+        flex-direction: column;
+        height: 100vh; /* ou 100% se o pai possuir altura */
+    }
 }
+

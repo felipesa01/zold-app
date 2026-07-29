@@ -129,11 +129,14 @@
 
             <!-- FOTOS -->
 
-            <section class="section" *ngIf="fotosExemplar().length">
+            @if (fotosExemplar().length) {
+            <section class="section">
                 <button mat-raised-button color="primary" (click)="togglePhotos('exemplar')">
                     Ver fotos
                 </button>
             </section>
+            }
+
 
 
             @if (showPhotos()) {
@@ -154,13 +157,8 @@
         </div>
 
         <!-- Mapa -->
-        <app-map-location 
-            [lat]="exemplar()?.lat ?? null" 
-            [lon]="exemplar()?.lon ?? null" 
-            [editable]="false"
-            [showMyLocation]="true"
-            baseLayerInput="satellite"
-            >
+        <app-map-location [lat]="exemplar()?.lat ?? null" [lon]="exemplar()?.lon ?? null" [editable]="false"
+            [showMyLocation]="true" baseLayerInput="satellite">
         </app-map-location>
         <!-- <div id="map-exemplar-detail" class="map-container"></div> -->
 
@@ -331,12 +329,14 @@
                         </div>
 
                         <!-- FOTOS -->
-
-                        <section class="section" *ngIf="fotosExemplar().length">
-                            <button mat-raised-button color="primary" (click)="togglePhotos('exemplar')">
+                        @if (getFotosAnalise(analise.id)?.length) {
+                        <section class="section">
+                            <button mat-raised-button color="primary" (click)="togglePhotos('analise')">
                                 Ver fotos
                             </button>
                         </section>
+                        }
+
 
                         <!-- Recomendações -->
                         @if (analise.recomendacoes?.length) {
@@ -371,7 +371,7 @@
                                 <div class="recommendation-item">
 
                                     <div class="recommendation-status" [class.pending]="rec.status === 'PENDENTE'"
-                                        [class.progress]="rec.status === 'EM_EXECUCAO'"
+                                        [class.inprogress]="rec.status === 'EM_EXECUCAO'"
                                         [class.done]="rec.status === 'EXECUTADA'">
                                     </div>
 
@@ -393,7 +393,7 @@
 
                                                 <span class="status-chip" [ngClass]="{
                                                                 pending: rec.status === 'PENDENTE',
-                                                                progress: rec.status === 'EM_EXECUCAO',
+                                                                inprogress: rec.status === 'EM_EXECUCAO',
                                                                 done: rec.status === 'EXECUTADA'
                                                             }">
 
