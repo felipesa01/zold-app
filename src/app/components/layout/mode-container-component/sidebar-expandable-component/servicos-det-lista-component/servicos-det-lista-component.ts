@@ -8,6 +8,7 @@ import { ModeService } from "../../../../../services/mode-service";
 import { ProjectContextService } from "../../../../../services/project-context.service";
 import { ResponsiveService } from "../../../../../services/responsive-service";
 import { forkJoin } from "rxjs";
+import { PermissionService } from "../../../../../services/permission-service";
 
 @Component({
   selector: 'app-servicos-det-lista-component',
@@ -22,6 +23,7 @@ export class ServicosDetListaComponent implements AfterViewInit {
   private sidebarControls = inject(LayoutService);
   private responsive = inject(ResponsiveService);
   private projectContext = inject(ProjectContextService);
+  private permissions = inject(PermissionService);
 
   isMobile = computed(() => this.responsive.isSmallScreen());
 
@@ -119,7 +121,7 @@ export class ServicosDetListaComponent implements AfterViewInit {
         const servicos =
           result.disponiveis.servicos.filter(
             servico =>
-              servico.dashboard &&
+              servico.dashboard && this.permissions.has('dashboards.view') &&
               servicosAtivosIds.includes(servico.id)
           );
 

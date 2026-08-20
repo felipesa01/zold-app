@@ -8,6 +8,7 @@ import { guestGuard } from '../auth/guards/guest.guard';
 import { authGuard } from '../auth/guards/auth.guard';
 import { AppPermissions } from './services/permission-service';
 import { ChangePassword } from '../auth/pages/change-password/change-password.component';
+import { permissionGuard } from './guards/permission-guard';
 
 export const routes: Routes = [
     {
@@ -20,7 +21,7 @@ export const routes: Routes = [
         component: ChangePassword,
         canActivate: [authGuard]
     },
-    
+
     {
         path: 'scan/:codigo',
         component: QrScanComponent
@@ -61,14 +62,19 @@ export const routes: Routes = [
             },
             {
                 path: 'mosquitos/capturas/new',
+                canActivate: [permissionGuard],
                 loadComponent: () =>
                     import('./components/layout/mode-container-component/modes/workspace-mode/mosquitos/capturas/capturas-form/capturas-form')
-                        .then(m => m.CapturasForm)
-            }, {
+                        .then(m => m.CapturasForm),
+                data: { permissions: [AppPermissions.CAPTURA_MOSQUITO_CREATE] }
+            }, 
+            {
                 path: 'carrapatos/capturas-carrapatos/new',
+                canActivate: [permissionGuard],
                 loadComponent: () =>
                     import('./components/layout/mode-container-component/modes/workspace-mode/carrapatos/capturas/capturas-carrapato-form/capturas-carrapato-form')
-                        .then(m => m.CapturasCarrapatosForm)
+                        .then(m => m.CapturasCarrapatosForm),
+                data: { permissions: [AppPermissions.CAPTURA_CARRAPATO_CREATE] }
             },
             {
                 path: 'mosquitos/capturas/:id',
@@ -78,9 +84,11 @@ export const routes: Routes = [
             },
             {
                 path: 'mosquitos/capturas/:id/edit',
+                canActivate: [permissionGuard],
                 loadComponent: () =>
                     import('./components/layout/mode-container-component/modes/workspace-mode/mosquitos/capturas/capturas-form/capturas-form')
-                        .then(m => m.CapturasForm)
+                        .then(m => m.CapturasForm),
+                data: { permissions: [AppPermissions.CAPTURA_MOSQUITO_UPDATE] }
             },
             {
                 path: 'carrapatos/capturas-carrapatos/:id',
@@ -90,9 +98,11 @@ export const routes: Routes = [
             },
             {
                 path: 'carrapatos/capturas-carrapatos/:id/edit',
+                canActivate: [permissionGuard],
                 loadComponent: () =>
                     import('./components/layout/mode-container-component/modes/workspace-mode/carrapatos/capturas/capturas-carrapato-form/capturas-carrapato-form')
-                        .then(m => m.CapturasCarrapatosForm)
+                        .then(m => m.CapturasCarrapatosForm),
+                data: { permissions: [AppPermissions.CAPTURA_CARRAPATO_UPDATE] }
             },
             {
                 path: 'mosquitos/armadilhas',
@@ -110,15 +120,19 @@ export const routes: Routes = [
             },
             {
                 path: 'mosquitos/armadilhas/new',
+                canActivate: [permissionGuard],
                 loadComponent: () =>
                     import('./components/layout/mode-container-component/modes/workspace-mode/mosquitos/armadilhas/armadilhas-form/armadilhas-form')
-                        .then(m => m.ArmadilhasForm)
+                        .then(m => m.ArmadilhasForm),
+                data: { permissions: [AppPermissions.ARMADILHA_MOSQUITO_CREATE] }
             },
             {
                 path: 'carrapatos/armadilhas-carrapatos/new',
+                canActivate: [permissionGuard],
                 loadComponent: () =>
                     import('./components/layout/mode-container-component/modes/workspace-mode/carrapatos/armadilhas/armadilhas-carrapato-form/armadilhas-carrapato-form')
-                        .then(m => m.ArmadilhasCarrapatosForm)
+                        .then(m => m.ArmadilhasCarrapatosForm),
+                data: { permissions: [AppPermissions.ARMADILHA_CARRAPATO_CREATE] }
             },
             {
                 path: 'mosquitos/armadilhas/:id',
@@ -134,15 +148,19 @@ export const routes: Routes = [
             },
             {
                 path: 'mosquitos/armadilhas/:id/edit',
+                canActivate: [permissionGuard],
                 loadComponent: () =>
                     import('./components/layout/mode-container-component/modes/workspace-mode/mosquitos/armadilhas/armadilhas-form/armadilhas-form')
-                        .then(m => m.ArmadilhasForm)
+                        .then(m => m.ArmadilhasForm),
+                data: { permissions: [AppPermissions.ARMADILHA_MOSQUITO_UPDATE] }
             },
             {
                 path: 'carrapatos/armadilhas-carrapatos/:id/edit',
+                canActivate: [permissionGuard],
                 loadComponent: () =>
                     import('./components/layout/mode-container-component/modes/workspace-mode/carrapatos/armadilhas/armadilhas-carrapato-form/armadilhas-carrapato-form')
-                        .then(m => m.ArmadilhasCarrapatosForm)
+                        .then(m => m.ArmadilhasCarrapatosForm),
+                data: { permissions: [AppPermissions.ARMADILHA_CARRAPATO_UPDATE] }
             },
             {
                 path: 'mosquitos/armadilhas/new',
@@ -152,9 +170,11 @@ export const routes: Routes = [
             },
             {
                 path: 'carrapatos/capturas-carrapatos/new',
+                canActivate: [permissionGuard],
                 loadComponent: () =>
                     import('./components/layout/mode-container-component/modes/workspace-mode/carrapatos/capturas/capturas-carrapato-form/capturas-carrapato-form')
-                        .then(m => m.CapturasCarrapatosForm)
+                        .then(m => m.CapturasCarrapatosForm),
+                data: { permissions: [AppPermissions.CAPTURA_CARRAPATO_CREATE] }
             },
             {
                 path: 'inventario/exemplares',
@@ -165,9 +185,11 @@ export const routes: Routes = [
             },
             {
                 path: 'inventario/exemplares/new',
+                canActivate: [permissionGuard],
                 loadComponent: () =>
                     import('./components/layout/mode-container-component/modes/workspace-mode/inventarios/exemplares/exemplar-form/exemplar-form')
-                        .then(m => m.ExemplaresForm)
+                        .then(m => m.ExemplaresForm),
+                data: { permissions: [AppPermissions.EXEMPLAR_CREATE] }
             },
             {
                 path: 'inventario/exemplares/:id',
@@ -179,9 +201,11 @@ export const routes: Routes = [
             },
             {
                 path: 'inventario/exemplares/:id/edit',
+                canActivate: [permissionGuard],
                 loadComponent: () =>
                     import('./components/layout/mode-container-component/modes/workspace-mode/inventarios/exemplares/exemplar-form/exemplar-form')
-                        .then(m => m.ExemplaresForm)
+                        .then(m => m.ExemplaresForm),
+                data: { permissions: [AppPermissions.EXEMPLAR_UPDATE] }
             },
             {
                 path: 'inventario/analises',
@@ -191,12 +215,15 @@ export const routes: Routes = [
             },
             {
                 path: 'inventario/analises/:id/edit',
+                canActivate: [permissionGuard],
                 loadComponent: () =>
                     import('./components/layout/mode-container-component/modes/workspace-mode/inventarios/analises/analises-form/analises-form')
-                        .then(m => m.AnaliseForm)
+                        .then(m => m.AnaliseForm),
+                data: { permissions: [AppPermissions.ANALISE_UPDATE] }
             },
             {
                 path: 'inventario/exemplares/:exemplarId/analises/new',
+                canActivate: [permissionGuard],
                 loadComponent: () =>
                     import('./components/layout/mode-container-component/modes/workspace-mode/inventarios/analises/analises-form/analises-form')
                         .then(m => m.AnaliseForm),
@@ -206,9 +233,21 @@ export const routes: Routes = [
             },
             {
                 path: 'inventario/exemplares/:exemplarId/analises/:id/edit',
+                canActivate: [permissionGuard],
                 loadComponent: () =>
                     import('./components/layout/mode-container-component/modes/workspace-mode/inventarios/analises/analises-form/analises-form')
-                        .then(m => m.AnaliseForm)
+                        .then(m => m.AnaliseForm),
+                data: { permissions: [AppPermissions.ANALISE_UPDATE] }
+            },
+            {
+                path: 'inventario/recomendacoes',
+                loadComponent: () =>
+                    import('./components/layout/mode-container-component/modes/workspace-mode/inventarios/recomendacoes/recomendacoes-list/recomendacoes-list')
+                        .then(m => m.RecomendacoesList),
+                data: {
+                    reuse: true,
+                    reloadOnAttach: true
+                }
             },
             {
                 path: 'projetos',
@@ -219,9 +258,11 @@ export const routes: Routes = [
             },
             {
                 path: 'projetos/new',
+                canActivate: [permissionGuard],
                 loadComponent: () =>
                     import('./components/layout/mode-container-component/modes/workspace-mode/projetos/projetos-form/projetos-form')
-                        .then(m => m.ProjetosForm)
+                        .then(m => m.ProjetosForm),
+                data: { permissions: [AppPermissions.PROJETOS_MANAGE] }
             },
             {
                 path: 'projetos/:id',
@@ -231,15 +272,11 @@ export const routes: Routes = [
             },
             {
                 path: 'projetos/:id/edit',
+                canActivate: [permissionGuard],
                 loadComponent: () =>
                     import('./components/layout/mode-container-component/modes/workspace-mode/projetos/projetos-form/projetos-form')
-                        .then(m => m.ProjetosForm)
-            },
-            {
-                path: 'projetos/new',
-                loadComponent: () =>
-                    import('./components/layout/mode-container-component/modes/workspace-mode/projetos/projetos-form/projetos-form')
-                        .then(m => m.ProjetosForm)
+                        .then(m => m.ProjetosForm),
+                data: { permissions: [AppPermissions.PROJETOS_MANAGE] }
             },
             {
                 path: 'mosquitos/dashboard',

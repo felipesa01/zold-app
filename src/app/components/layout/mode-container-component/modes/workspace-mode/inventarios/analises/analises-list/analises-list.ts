@@ -108,9 +108,20 @@ export class AnalisesList {
         return this.exemplarMap().get(id);
     }
 
-    open(a: AnaliseInventario, e?: Event) {
-        e?.stopPropagation();
-        this.router.navigate(['/workspace/inventario/analises', a.id]);
+
+
+    open(
+        analise: AnaliseInventario,
+        event?: Event
+    ) {
+
+        event?.stopPropagation();
+        this.router.navigate(['/workspace/inventario/exemplares', analise.exemplarId],
+            {
+                queryParams: {
+                    go2analise: analise.id
+                }
+            });
     }
 
     goBack() {
@@ -263,4 +274,6 @@ export class AnalisesList {
     // hasProblemas(a: AnaliseInventario) {
     //     return a.deficiencia_nutricional;
     // }
+
+
 }

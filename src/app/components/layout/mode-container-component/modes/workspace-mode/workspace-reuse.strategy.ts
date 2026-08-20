@@ -6,11 +6,13 @@ import {
 
 import { effect, inject } from '@angular/core';
 import { ReuseCacheService } from './reuse-cache.service';
+import { ListReloadService } from '../../../../../services/list-reload-service';
 
 export class WorkspaceReuseStrategy implements RouteReuseStrategy {
 
   private cache = new Map<string, DetachedRouteHandle>();
   private reuseCache = inject(ReuseCacheService);
+  private listReload = inject(ListReloadService);
 
   constructor() {
     effect(() => {
@@ -42,7 +44,13 @@ export class WorkspaceReuseStrategy implements RouteReuseStrategy {
 
   retrieve(route: ActivatedRouteSnapshot): DetachedRouteHandle | null {
     const key = this.getKey(route);
-    return this.cache.get(key) || null;
+    const handle = this.cache.get(key) || null;
+
+    if (handle && route.data?.['reloadOnAttach']) {
+      this.listReload.trigger();
+    }
+
+    return handle;
   }
 
   shouldReuseRoute(future: ActivatedRouteSnapshot, curr: ActivatedRouteSnapshot): boolean {

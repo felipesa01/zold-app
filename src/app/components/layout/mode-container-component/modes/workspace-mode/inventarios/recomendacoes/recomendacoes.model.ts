@@ -22,14 +22,33 @@ export interface RecomendacaoInventario {
     tenantId?: string;
 }
 
+export interface RecomendacaoInventarioList {
+    id: string;
+    titulo: string;
+    descricao: string;
+    status: StatusRecomendacao;
+    analiseId: string;
+    dataAnalise: Date;
+    endereco: string;
+    lat: string;
+    lon: string;
+    nm_comum: string;
+    exemplarId: string;
+    createdAt?: Date;
+    updatedAt?: Date;
+    deletedAt?: Date;
+    tenantId?: string;
+}
+
+
 export interface CreateRecomendacaoInventario {
     titulo: string;
     descricao?: string;
     status?: StatusRecomendacao;
-  }
-  
-  export interface UpdateRecomendacaoInventario {
+}
+
+export interface UpdateRecomendacaoInventario {
     titulo?: string;
     descricao?: string;
     status?: StatusRecomendacao;
-  }
+}

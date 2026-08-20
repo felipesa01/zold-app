@@ -26,6 +26,7 @@ import { ProjectContextService } from '../../../../../../../../services/project-
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../../../../../shared/confirm-dialog-component/confirm-dialog-component';
 import { ToastrService } from 'ngx-toastr';
+import { PermissionService } from '../../../../../../../../services/permission-service';
 
 @Component({
   selector: 'app-armadilhas-detail',
@@ -39,6 +40,8 @@ export class ArmadilhasDetail implements AfterViewInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   toastr = inject(ToastrService);
+  permissionService = inject(PermissionService);
+
 
   showRefil = signal(true);
   showAtrativo = signal(true);
@@ -365,7 +368,7 @@ export class ArmadilhasDetail implements AfterViewInit {
         intersect: true
       },
       plugins: {
-        datalabels: {display: false},
+        datalabels: { display: false },
         tooltip: {
           callbacks: {
             label: (ctx) => {

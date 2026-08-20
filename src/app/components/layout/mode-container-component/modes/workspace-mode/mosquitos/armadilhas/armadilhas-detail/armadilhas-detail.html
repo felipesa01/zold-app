@@ -1,5 +1,4 @@
 <div class="page">
-
   <!-- Header -->
   <div class="page-header">
     <button mat-button class="back-btn" (click)="voltar()">
@@ -8,42 +7,34 @@
     </button>
 
     <div class="title">
-      <h1>Armadilha {{ armadilha()?.nome || ''}}</h1>
-      <span class="subtitle">
-        {{ armadilha()?.regiao }} · {{ armadilha()?.referencia }}
-      </span>
+      <h1>Armadilha {{ armadilha()?.nome || '' }}</h1>
+      <span class="subtitle"> {{ armadilha()?.regiao }} · {{ armadilha()?.referencia }} </span>
     </div>
   </div>
 
   <!-- Meta -->
   <section class="meta">
-    <div>
-      <strong>Latitude:</strong> {{ armadilha()?.lat }}
-    </div>
-    <div>
-      <strong>Longitude:</strong> {{ armadilha()?.lon }}
-    </div>
-    <div>
-      <strong>Criada em:</strong> {{ armadilha()?.createdAt }}
-    </div>
+    <div><strong>Latitude:</strong> {{ armadilha()?.lat }}</div>
+    <div><strong>Longitude:</strong> {{ armadilha()?.lon }}</div>
+    <div><strong>Criada em:</strong> {{ armadilha()?.createdAt }}</div>
 
-    <div class="d-flex align-content-center">
-      <button mat-flat-button color="primary" class="edit-btn" [routerLink]="['edit']">
-        <mat-icon>edit</mat-icon>
-        Editar
-      </button>
+    @if (this.permissionService.has('armadilha-mosquito.update')) {
+      <div class="d-flex align-content-center">
+        <button mat-flat-button color="primary" class="edit-btn" [routerLink]="['edit']">
+          <mat-icon>edit</mat-icon>
+          Editar
+        </button>
 
-      <button class="btn btn-outline-danger d-flex" style="border-radius: 2em;" (click)="delete()">
-        <mat-icon>delete</mat-icon>
-        Excluir
-      </button>
-    </div>
-
+        <button class="btn btn-outline-danger d-flex" style="border-radius: 2em" (click)="delete()">
+          <mat-icon>delete</mat-icon>
+          Excluir
+        </button>
+      </div>
+    }
   </section>
 
   <!-- Visual section -->
   <section class="visual-grid">
-
     <!-- Mapa -->
     <div id="map-armadilha-detail" class="map-container"></div>
 
@@ -52,12 +43,9 @@
       <div class="placeholder">
         <mat-icon>photo_camera</mat-icon>
         <div class="placeholder-title">Foto da armadilha</div>
-        <div class="placeholder-subtitle">
-          Registro visual da instalação
-        </div>
+        <div class="placeholder-subtitle">Registro visual da instalação</div>
       </div>
     </div>
-
   </section>
 
   <!-- Gráfico -->
@@ -73,18 +61,19 @@
         Mostrar troca de atrativo
       </mat-checkbox>
 
-      <button class="ms-auto" mat-stroked-button (click)="resetZoom()">
-        Resetar zoom
-      </button>
+      <button class="ms-auto" mat-stroked-button (click)="resetZoom()">Resetar zoom</button>
     </div>
 
-
-
     <div class="chart-wrapper">
-      <canvas baseChart  class="chart-md" [data]="chartData()" [options]="chartOptions()" [type]="chartType" (chartClick)="onChartClick($event)">
+      <canvas
+        baseChart
+        class="chart-md"
+        [data]="chartData()"
+        [options]="chartOptions()"
+        [type]="chartType"
+        (chartClick)="onChartClick($event)"
+      >
       </canvas>
     </div>
   </section>
-
-
 </div>

@@ -1,170 +1,184 @@
 <div class="page">
+  <!-- Header -->
+  <div class="page-header">
+    <button mat-button class="back-btn" (click)="voltar()">
+      <mat-icon>arrow_back</mat-icon>
+      Voltar
+    </button>
+  </div>
 
-    <!-- Header -->
-    <div class="page-header">
-        <button mat-button class="back-btn" (click)="voltar()">
-            <mat-icon>arrow_back</mat-icon>
-            Voltar
-        </button>
-
+  <!-- Meta -->
+  <section class="meta">
+    <div class="title">
+      <h1>{{ exemplar()?.nm_comum }}</h1>
+      <span class="subtitle">
+        {{ exemplar()?.nm_cientifico }}
+      </span>
     </div>
 
-    <!-- Meta -->
-    <section class="meta">
+    <div class="d-flex align-content-center ms-auto">
+      @if (this.permissionService.has('exemplar.update')) {
+        <button mat-flat-button color="primary" [routerLink]="['edit']">
+          <mat-icon>edit</mat-icon>
+          Editar
+        </button>
+      }
 
-        <div class="title">
-            <h1>{{ exemplar()?.nm_comum }}</h1>
-            <span class="subtitle">
-                {{ exemplar()?.nm_cientifico }}
-            </span>
+      @if (this.permissionService.has('exemplar.delete')) {
+        <button class="btn btn-outline-danger d-flex" style="border-radius: 2em" (click)="delete()">
+          <mat-icon>delete</mat-icon>
+          Excluir
+        </button>
+      }
+    </div>
+  </section>
+
+  <!-- Visual -->
+  <section class="visual-grid">
+    <div class="modal-container">
+      <!-- DADOS DO EXEMPLAR -->
+      <section class="section">
+        <h3>Dados do exemplar</h3>
+
+        <div class="info-grid">
+          <div class="label">ID</div>
+          <div class="value">{{ exemplar()!.id }}</div>
+
+          <div class="label">Endereço</div>
+          <div class="value">{{ exemplar()!.endereco }}</div>
+
+          <div class="label">Origem</div>
+          <div class="value">{{ exemplar()!.origem_esp }}</div>
+
+          <div class="label">Floração</div>
+          <div class="value">{{ exemplar()!.floracao }}</div>
+
+          <div class="label">Cor da flor</div>
+          <div class="value">{{ exemplar()!.cor_flor }}</div>
+
+          <div class="label">Idade aproximada</div>
+          <div class="value">{{ exemplar()!.idade_aproximada }}</div>
+
+          <div class="label">Valor</div>
+          <div class="value">R$ {{ exemplar()!.valor }}</div>
+
+          @if (ultimaAnalise()) {
+            <div class="label">DAP</div>
+            <div class="value">{{ ultimaAnalise()?.dap }} cm</div>
+            <div class="label">Altura</div>
+            <div class="value">{{ ultimaAnalise()?.altura }} m</div>
+          }
         </div>
+      </section>
 
-        <div class="d-flex align-content-center ms-auto">
+      <!-- AVALIAÇÃO -->
+      <section class="section">
+        <h3>Avaliação mais recente do exemplar</h3>
 
-            @if (this.permissionService.has('exemplar.update')) {
-            <button mat-flat-button color="primary" [routerLink]="['edit']">
-                <mat-icon>edit</mat-icon>
-                Editar
-            </button>
-            }
+        @if (ultimaAnalise(); as av) {
+          <span style="font-size: 12px">
+            {{ ultimaAnalise()?.data | date: 'dd/MM/yyyy' }}
+          </span>
 
-            @if (this.permissionService.has('exemplar.delete')) {
-            <button class="btn btn-outline-danger d-flex" style="border-radius: 2em;" (click)="delete()">
-                <mat-icon>delete</mat-icon>
-                Excluir
-            </button>
-            }
-        </div>
-    </section>
+          <div class="info-grid">
+            <div class="label">Copa</div>
+            <div class="value">{{ av.copa_descricao }}</div>
 
+            <div class="label">Tronco</div>
+            <div class="value">{{ av.tronco_descricao }}</div>
 
-    <!-- Visual -->
-    <section class="visual-grid">
-        <div class="modal-container">
-            <!-- DADOS DO EXEMPLAR -->
-            <section class="section">
-                <h3>Dados do exemplar</h3>
+            <div class="label">Sistema radicular</div>
+            <div class="value">{{ av.sistema_radicular_descricao }}</div>
 
-                <div class="info-grid">
-                    <div class="label">ID</div>
-                    <div class="value">{{ exemplar()!.id }}</div>
+            <div class="label">Pragas</div>
+            <div class="value">
+              <span
+                class="material-symbols-outlined"
+                [matTooltip]="!av.ataque_praga ? 'Saudável' : 'Infectado'"
+                matTooltipPosition="after"
+              >
+                {{ !av.ataque_praga ? 'health_and_safety' : 'warning' }}
+              </span>
+            </div>
 
-                    <div class="label">Endereço</div>
-                    <div class="value">{{ exemplar()!.endereco }}</div>
+            <div class="label">Fungos</div>
+            <div class="value">
+              <span
+                class="material-symbols-outlined"
+                [matTooltip]="!av.ataque_fungo ? 'Saudável' : 'Infectado'"
+                matTooltipPosition="after"
+              >
+                {{ !av.ataque_fungo ? 'health_and_safety' : 'warning' }}
+              </span>
+            </div>
 
-                    <div class="label">Origem</div>
-                    <div class="value">{{ exemplar()!.origem_esp }}</div>
+            <div class="label">Bactérias</div>
+            <div class="value">
+              <span
+                class="material-symbols-outlined"
+                [matTooltip]="!av.ataque_bacteria ? 'Saudável' : 'Infectado'"
+                matTooltipPosition="after"
+              >
+                {{ !av.ataque_bacteria ? 'health_and_safety' : 'warning' }}
+              </span>
+            </div>
 
-                    <div class="label">Floração</div>
-                    <div class="value">{{ exemplar()!.floracao }}</div>
+            <div class="label">Deficiência nutricional</div>
+            <div class="value">
+              <span
+                class="material-symbols-outlined"
+                [matTooltip]="!av.deficiencia_nutricional ? 'Saudável' : 'Deficiente'"
+                matTooltipPosition="after"
+              >
+                {{ !av.deficiencia_nutricional ? 'health_and_safety' : 'warning' }}
+              </span>
+            </div>
+          </div>
+        }
+      </section>
 
-                    <div class="label">Cor da flor</div>
-                    <div class="value">{{ exemplar()!.cor_flor }}</div>
+      <!-- FOTOS -->
 
-                    @if (ultimaAnalise()) {
-                    <div class="label">DAP</div>
-                    <div class="value">{{
-                        ultimaAnalise()?.dap }} cm</div>
-                    <div class="label">Altura</div>
-                    <div class="value">{{ultimaAnalise()?.altura }} m</div>
-                    }
+      @if (fotosExemplar().length) {
+        <section class="section">
+          <button mat-raised-button color="primary" (click)="togglePhotos('exemplar')">
+            Ver fotos
+          </button>
+        </section>
+      }
+
+      @if (showPhotos()) {
+        <section class="photo-overlay">
+          <button class="photo-close" (click)="togglePhotos(undefined)">✕</button>
+          <ngb-carousel>
+            @for (
+              foto of showPhotos() == 'exemplar' ? fotosExemplar() : fotosAnalises();
+              track foto
+            ) {
+              <ng-template ngbSlide>
+                <div class="picsum-img-wrapper">
+                  <img [src]="foto.path" />
                 </div>
-            </section>
-
-            <!-- AVALIAÇÃO -->
-            <section class="section">
-                <h3>Avaliação mais recente do exemplar</h3>
-
-                @if (ultimaAnalise(); as av) {
-                <span style="font-size:12px;">
-                    {{ultimaAnalise()?.data | date:'dd/MM/yyyy'}}
-                </span>
-
-                <div class="info-grid">
-
-                    <div class="label">Copa</div>
-                    <div class="value">{{ av.copa_descricao }}</div>
-
-                    <div class="label">Tronco</div>
-                    <div class="value">{{ av.tronco_descricao }}</div>
-
-                    <div class="label">Sistema radicular</div>
-                    <div class="value">{{ av.sistema_radicular_descricao }}</div>
-
-                    <div class="label">Pragas</div>
-                    <div class="value">
-                        <span class="material-symbols-outlined"
-                            [matTooltip]="!av.ataque_praga ? 'Saudável' : 'Infectado'" matTooltipPosition="after">
-                            {{ !av.ataque_praga ? 'health_and_safety' : 'warning'}}
-                        </span>
-                    </div>
-
-                    <div class="label">Fungos</div>
-                    <div class="value">
-                        <span class="material-symbols-outlined"
-                            [matTooltip]="!av.ataque_fungo ? 'Saudável' : 'Infectado'" matTooltipPosition="after">
-                            {{ !av.ataque_fungo ? 'health_and_safety' : 'warning'}}
-                        </span>
-                    </div>
-
-                    <div class="label">Bactérias</div>
-                    <div class="value">
-                        <span class="material-symbols-outlined"
-                            [matTooltip]="!av.ataque_bacteria ? 'Saudável' : 'Infectado'" matTooltipPosition="after">
-                            {{ !av.ataque_bacteria ? 'health_and_safety' : 'warning'}}
-                        </span>
-                    </div>
-
-                    <div class="label">Deficiência nutricional</div>
-                    <div class="value">
-                        <span class="material-symbols-outlined"
-                            [matTooltip]="!av.deficiencia_nutricional ? 'Saudável' : 'Deficiente'"
-                            matTooltipPosition="after">
-                            {{ !av.deficiencia_nutricional ? 'health_and_safety' : 'warning'}}
-                        </span>
-                    </div>
-                </div>
-                }
-            </section>
-
-            <!-- FOTOS -->
-
-            @if (fotosExemplar().length) {
-            <section class="section">
-                <button mat-raised-button color="primary" (click)="togglePhotos('exemplar')">
-                    Ver fotos
-                </button>
-            </section>
+              </ng-template>
             }
+          </ngb-carousel>
+        </section>
+      }
+    </div>
 
+    <!-- Mapa -->
+    <app-map-location
+      [lat]="exemplar()?.lat ?? null"
+      [lon]="exemplar()?.lon ?? null"
+      [editable]="false"
+      [showMyLocation]="true"
+      baseLayerInput="satellite"
+    >
+    </app-map-location>
+    <!-- <div id="map-exemplar-detail" class="map-container"></div> -->
+  </section>
 
-
-            @if (showPhotos()) {
-            <section class="photo-overlay">
-                <button class="photo-close" (click)="togglePhotos(undefined)">✕</button>
-                <ngb-carousel>
-                    @for (foto of (showPhotos() == 'exemplar' ? fotosExemplar() : fotosAnalises()); track foto) {
-                    <ng-template ngbSlide>
-                        <div class="picsum-img-wrapper">
-                            <img [src]="foto.path">
-                        </div>
-                    </ng-template>
-                    }
-                </ngb-carousel>
-            </section>
-            }
-
-        </div>
-
-        <!-- Mapa -->
-        <app-map-location [lat]="exemplar()?.lat ?? null" [lon]="exemplar()?.lon ?? null" [editable]="false"
-            [showMyLocation]="true" baseLayerInput="satellite">
-        </app-map-location>
-        <!-- <div id="map-exemplar-detail" class="map-container"></div> -->
-
-    </section>
-
-    <!-- <div class="modal-container">
+  <!-- <div class="modal-container">
 
         <section class="section">
             <h3>Relatórios técnicos</h3>
@@ -195,52 +209,57 @@
         </section>
     </div> -->
 
-    <!-- HISTÓRICO DE ANÁLISES -->
+  <!-- HISTÓRICO DE ANÁLISES -->
 
-    <section class="section">
-        <div class="section" style="flex-direction: row; align-items: center;">
-            <h3>Histórico de análises</h3>
-            <!-- <button class="ms-auto" (click)="addAnalise()">Adicionar vistoria</button> -->
+  <section class="section">
+    <div class="section" style="flex-direction: row; align-items: center">
+      <h3>Histórico de análises</h3>
+      <!-- <button class="ms-auto" (click)="addAnalise()">Adicionar vistoria</button> -->
 
-            @if (this.permissionService.has('analise.create')) {
-            <button mat-flat-button color="primary" class="ms-auto" (click)="addAnalise()">
-                <mat-icon>edit</mat-icon>
-                Adicionar análise
-            </button>
-            }
-        </div>
+      @if (this.permissionService.has('analise.create')) {
+        <button mat-flat-button color="primary" class="ms-auto" (click)="addAnalise()">
+          <mat-icon>edit</mat-icon>
+          Adicionar análise
+        </button>
+      }
+    </div>
 
-        <div class="timeline">
-            @for (analise of analisesOrdenadas(); track analise.id) {
-            <div class="timeline-item">
+    <div class="timeline">
+      @for (analise of analisesOrdenadas(); track analise.id) {
+        <div
+          class="timeline-item"
+          [id]="'analise-' + analise.id"
+          [class.deep-link-highlight]="highlightedAnaliseId() === analise.id"
+        >
+          <div class="timeline-dot"></div>
+          <div class="analysis-card">
+            <!-- Cabeçalho -->
+            <div class="analysis-header" (click)="toggleAnalise(analise.id)">
+              <div class="analysis-info">
+                <div class="analysis-date">
+                  <i class="pi pi-calendar"></i>
+                  {{ analise.data | date: 'dd/MM/yyyy' }}
 
-                <div class="timeline-dot"></div>
-                <div class="analysis-card">
+                  @if (getPendingRecommendationsCount(analise) > 0) {
+                    <span class="pending-badge">
+                      {{ getPendingRecommendationsCount(analise) }}
+                      {{
+                        getPendingRecommendationsCount(analise) > 1
+                          ? 'recomendações'
+                          : 'recomendação'
+                      }}
+                      pendente{{ getPendingRecommendationsCount(analise) > 1 ? 's' : '' }}
+                    </span>
+                  }
+                </div>
 
-                    <!-- Cabeçalho -->
-                    <div class="analysis-header" (click)="toggleAnalise(analise.id)">
-                        <div class="analysis-info">
-                            <div class="analysis-date">
+                <div class="analysis-preview">
+                  {{ analise.relatorio || 'Sem relatório técnico.' }}
+                </div>
+              </div>
 
-                                <i class="pi pi-calendar"></i>
-                                {{ analise.data | date:'dd/MM/yyyy' }}
-
-                                @if (getPendingRecommendationsCount(analise) > 0) {
-                                <span class="pending-badge">
-                                    {{ getPendingRecommendationsCount(analise) }} {{
-                                    getPendingRecommendationsCount(analise) > 1 ? 'recomendações' : 'recomendação' }}
-                                    pendente{{ getPendingRecommendationsCount(analise) > 1 ? 's' : '' }}
-                                </span>
-                                }
-                            </div>
-
-                            <div class="analysis-preview">
-                                {{ analise.relatorio || 'Sem relatório técnico.' }}
-                            </div>
-                        </div>
-
-                        <div class="analysis-actions">
-                            <!-- @if (analise.recomendacoes) {
+              <div class="analysis-actions">
+                <!-- @if (analise.recomendacoes) {
                             <span class="badge badge-warning">
                                 <mat-icon>assignment</mat-icon>
                                 Recomendações
@@ -254,202 +273,219 @@
                             </span>
                             } -->
 
-                            @if (isExpanded(analise.id)) {
-                            <button mat-icon-button type="button" (click)="editAnalise(analise.id)"
-                                matTooltip="Editar análise">
-                                <mat-icon>edit</mat-icon>
-                            </button>
-                            }
+                @if (isExpanded(analise.id) && this.permissionService.has('analise.update')) {
+                  <button
+                    mat-icon-button
+                    type="button"
+                    (click)="editAnalise(analise.id)"
+                    matTooltip="Editar análise"
+                  >
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                }
 
-                            <mat-icon>
-                                {{ isExpanded(analise.id)
-                                ? 'expand_less'
-                                : 'expand_more'
-                                }}
-                            </mat-icon>
+                <mat-icon>
+                  {{ isExpanded(analise.id) ? 'expand_less' : 'expand_more' }}
+                </mat-icon>
+              </div>
+            </div>
 
-                        </div>
+            <!-- Corpo -->
 
-                    </div>
+            @if (isExpanded(analise.id)) {
+              <div class="analysis-body">
+                <div class="analysis-info-list">
+                  <div class="info-row">
+                    <span class="label">DAP</span>
+                    <span class="value">{{ analise.dap }} cm</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Altura</span>
+                    <span class="value">{{ analise.altura }} m</span>
+                  </div>
 
-                    <!-- Corpo -->
+                  <div class="info-row">
+                    <span class="label">Copa</span>
+                    <span class="value">{{ analise.copa_descricao }}</span>
+                  </div>
 
-                    @if (isExpanded(analise.id)) {
+                  <div class="info-row">
+                    <span class="label">Tronco</span>
+                    <span class="value">{{ analise.tronco_descricao }}</span>
+                  </div>
 
-                    <div class="analysis-body">
-                        <div class="analysis-info-list">
-                            <div class="info-row">
-                                <span class="label">DAP</span>
-                                <span class="value">{{ analise.dap }} cm</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="label">Altura</span>
-                                <span class="value">{{ analise.altura }} m</span>
-                            </div>
+                  <div class="info-row">
+                    <span class="label">Sistema radicular</span>
+                    <span class="value">{{ analise.sistema_radicular_descricao }}</span>
+                  </div>
+                </div>
 
-                            <div class="info-row">
-                                <span class="label">Copa</span>
-                                <span class="value">{{ analise.copa_descricao }}</span>
-                            </div>
+                <div class="analysis-status">
+                  <span
+                    class="status"
+                    [class.ok]="!analise.ataque_praga"
+                    [class.alerta]="analise.ataque_praga"
+                  >
+                    {{ analise.ataque_praga ? 'Pragas detectadas' : 'Sem pragas' }}
+                  </span>
 
-                            <div class="info-row">
-                                <span class="label">Tronco</span>
-                                <span class="value">{{ analise.tronco_descricao }}</span>
-                            </div>
+                  <span
+                    class="status"
+                    [class.ok]="!analise.ataque_fungo"
+                    [class.alerta]="analise.ataque_fungo"
+                  >
+                    {{ analise.ataque_fungo ? 'Fungos detectados' : 'Sem fungos' }}
+                  </span>
 
-                            <div class="info-row">
-                                <span class="label">Sistema radicular</span>
-                                <span class="value">{{ analise.sistema_radicular_descricao }}</span>
-                            </div>
-                        </div>
+                  <span
+                    class="status"
+                    [class.ok]="!analise.ataque_bacteria"
+                    [class.alerta]="analise.ataque_bacteria"
+                  >
+                    {{ analise.ataque_bacteria ? 'Bactérias detectadas' : 'Sem bactérias' }}
+                  </span>
 
+                  <span
+                    class="status"
+                    [class.ok]="!analise.deficiencia_nutricional"
+                    [class.alerta]="analise.deficiencia_nutricional"
+                  >
+                    {{
+                      analise.deficiencia_nutricional
+                        ? 'Deficiência nutricional'
+                        : 'Nutrição adequada'
+                    }}
+                  </span>
+                </div>
 
-                        <div class="analysis-status">
+                <!-- FOTOS -->
+                @if (getFotosAnalise(analise.id)?.length) {
+                  <section class="section">
+                    <button mat-raised-button color="primary" (click)="togglePhotos('analise')">
+                      Ver fotos
+                    </button>
+                  </section>
+                }
 
-                            <span class="status" [class.ok]="!analise.ataque_praga"
-                                [class.alerta]="analise.ataque_praga">
-                                {{ analise.ataque_praga ? 'Pragas detectadas' : 'Sem pragas' }}
-                            </span>
+                <!-- Recomendações -->
+                @if (analise.recomendacoes?.length) {
+                  <div class="recommendations-section">
+                    <button
+                      type="button"
+                      class="recommendations-toggle"
+                      (click)="toggleRecommendations(analise.id); $event.stopPropagation()"
+                    >
+                      <div class="recommendations-title">
+                        <i class="pi pi-list-check"></i>
 
-                            <span class="status" [class.ok]="!analise.ataque_fungo"
-                                [class.alerta]="analise.ataque_fungo">
-                                {{ analise.ataque_fungo ? 'Fungos detectados' : 'Sem fungos' }}
-                            </span>
+                        <span>Recomendações</span>
 
-                            <span class="status" [class.ok]="!analise.ataque_bacteria"
-                                [class.alerta]="analise.ataque_bacteria">
-                                {{ analise.ataque_bacteria ? 'Bactérias detectadas' : 'Sem bactérias' }}
-                            </span>
+                        <span class="recommendations-count">
+                          {{ analise.recomendacoes.length }}
+                        </span>
+                      </div>
 
-                            <span class="status" [class.ok]="!analise.deficiencia_nutricional"
-                                [class.alerta]="analise.deficiencia_nutricional">
-                                {{ analise.deficiencia_nutricional ? 'Deficiência nutricional' : 'Nutrição adequada' }}
-                            </span>
+                      <i
+                        class="pi"
+                        [class.pi-chevron-down]="!isRecommendationsExpanded(analise.id)"
+                        [class.pi-chevron-up]="isRecommendationsExpanded(analise.id)"
+                      >
+                      </i>
+                    </button>
 
-                        </div>
+                    @if (isRecommendationsExpanded(analise.id)) {
+                      <div class="recommendations-list">
+                        @for (rec of getRecomendacoesOrdenadas(analise); track rec.id) {
+                          <div
+                            class="recommendation-item"
+                            [id]="'recomendacao-' + rec.id"
+                            [class.deep-link-highlight]="highlightedRecommendationId() === rec.id"
+                          >
+                            <div
+                              class="recommendation-status"
+                              [class.pending]="rec.status === 'PENDENTE'"
+                              [class.inprogress]="rec.status === 'EM_EXECUCAO'"
+                              [class.done]="rec.status === 'EXECUTADA'"
+                            ></div>
 
-                        <!-- FOTOS -->
-                        @if (getFotosAnalise(analise.id)?.length) {
-                        <section class="section">
-                            <button mat-raised-button color="primary" (click)="togglePhotos('analise')">
-                                Ver fotos
-                            </button>
-                        </section>
-                        }
+                            <div class="recommendation-content">
+                              <div class="recommendation-header">
+                                <div class="recommendation-title">
+                                  <strong>{{ rec.titulo }}</strong>
 
+                                  @if (rec.descricao) {
+                                    <p>{{ rec.descricao }}</p>
+                                  }
+                                </div>
 
-                        <!-- Recomendações -->
-                        @if (analise.recomendacoes?.length) {
-                        <div class="recommendations-section">
-
-                            <button type="button" class="recommendations-toggle"
-                                (click)="toggleRecommendations(analise.id); $event.stopPropagation()">
-
-                                <div class="recommendations-title">
-                                    <i class="pi pi-list-check"></i>
-
-                                    <span>Recomendações</span>
-
-                                    <span class="recommendations-count">
-                                        {{ analise.recomendacoes.length }}
+                                @if (!isEditingRecommendation(rec.id)) {
+                                  <div class="recommendation-actions">
+                                    <span
+                                      class="status-chip"
+                                      [ngClass]="{
+                                        pending: rec.status === 'PENDENTE',
+                                        inprogress: rec.status === 'EM_EXECUCAO',
+                                        done: rec.status === 'EXECUTADA',
+                                      }"
+                                    >
+                                      {{ rec.status | titlecase }}
                                     </span>
 
-                                </div>
-
-                                <i class="pi" [class.pi-chevron-down]="!isRecommendationsExpanded(analise.id)"
-                                    [class.pi-chevron-up]="isRecommendationsExpanded(analise.id)">
-                                </i>
-
-                            </button>
-
-                            @if (isRecommendationsExpanded(analise.id)) {
-
-                            <div class="recommendations-list">
-
-                                @for (rec of getRecomendacoesOrdenadas(analise); track rec.id) {
-
-                                <div class="recommendation-item">
-
-                                    <div class="recommendation-status" [class.pending]="rec.status === 'PENDENTE'"
-                                        [class.inprogress]="rec.status === 'EM_EXECUCAO'"
-                                        [class.done]="rec.status === 'EXECUTADA'">
-                                    </div>
-
-                                    <div class="recommendation-content">
-                                        <div class="recommendation-header">
-                                            <div class="recommendation-title">
-
-                                                <strong>{{ rec.titulo }}</strong>
-
-                                                @if (rec.descricao) {
-                                                <p>{{ rec.descricao }}</p>
-                                                }
-
-                                            </div>
-
-                                            @if (!isEditingRecommendation(rec.id)) {
-
-                                            <div class="recommendation-actions">
-
-                                                <span class="status-chip" [ngClass]="{
-                                                                pending: rec.status === 'PENDENTE',
-                                                                inprogress: rec.status === 'EM_EXECUCAO',
-                                                                done: rec.status === 'EXECUTADA'
-                                                            }">
-
-                                                    {{ rec.status | titlecase }}
-                                                </span>
-
-                                                @if (this.permissionService.has('recomendacao.update')) {
-
-                                                <button mat-icon-button type="button"
-                                                    (click)="startEditRecommendation(rec); $event.stopPropagation()">
-                                                    <mat-icon>edit</mat-icon>
-                                                </button>
-                                                }
-                                            </div>
-                                            }
-                                        </div>
-
-                                        @if (isEditingRecommendation(rec.id)) {
-                                        <div class="recommendation-editor" [formGroup]="recommendationForm">
-                                            <label class="status-field">
-                                                <span>Status</span>
-                                                <select formControlName="status">
-                                                    <option value="PENDENTE">
-                                                        Pendente
-                                                    </option>
-                                                    <option value="EM_EXECUCAO">
-                                                        Em execução
-                                                    </option>
-                                                    <option value="EXECUTADA">
-                                                        Executada
-                                                    </option>
-                                                </select>
-
-                                            </label>
-
-                                            <div class="editor-actions">
-                                                <button mat-button type="button" (click)="cancelEditRecommendation()">
-                                                    Cancelar
-                                                </button>
-
-                                                <button mat-flat-button color="primary" type="button"
-                                                    (click)="saveRecommendation(rec.id)">
-                                                    Salvar
-                                                </button>
-                                            </div>
-                                        </div>
-                                        }
-                                    </div>
-                                </div>
+                                    @if (this.permissionService.has('recomendacao.update')) {
+                                      <button
+                                        mat-icon-button
+                                        type="button"
+                                        (click)="
+                                          startEditRecommendation(rec); $event.stopPropagation()
+                                        "
+                                      >
+                                        <mat-icon>edit</mat-icon>
+                                      </button>
+                                    }
+                                  </div>
                                 }
-                            </div>
-                            }
-                        </div>
-                        }
+                              </div>
 
-                        <!-- @if (analise.fotos?.length) {
+                              @if (isEditingRecommendation(rec.id)) {
+                                <div class="recommendation-editor" [formGroup]="recommendationForm">
+                                  <label class="status-field">
+                                    <span>Status</span>
+                                    <select formControlName="status">
+                                      <option value="PENDENTE">Pendente</option>
+                                      <option value="EM_EXECUCAO">Em execução</option>
+                                      <option value="EXECUTADA">Executada</option>
+                                    </select>
+                                  </label>
+
+                                  <div class="editor-actions">
+                                    <button
+                                      mat-button
+                                      type="button"
+                                      (click)="cancelEditRecommendation()"
+                                    >
+                                      Cancelar
+                                    </button>
+
+                                    <button
+                                      mat-flat-button
+                                      color="primary"
+                                      type="button"
+                                      (click)="saveRecommendation(rec.id)"
+                                    >
+                                      Salvar
+                                    </button>
+                                  </div>
+                                </div>
+                              }
+                            </div>
+                          </div>
+                        }
+                      </div>
+                    }
+                  </div>
+                }
+
+                <!-- @if (analise.fotos?.length) {
                         <div class="analysis-photos">
                             <h4>Fotos da vistoria</h4>
                             <div class="photo-list">
@@ -459,11 +495,11 @@
                             </div>
                         </div>
                         } -->
-                    </div>
-                    }
-                </div>
-            </div>
+              </div>
             }
+          </div>
         </div>
-    </section>
+      }
+    </div>
+  </section>
 </div>

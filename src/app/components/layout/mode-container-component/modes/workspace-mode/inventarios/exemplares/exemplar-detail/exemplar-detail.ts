@@ -58,7 +58,10 @@ export class ExemplaresDetail implements AfterViewInit {
   private dialog = inject(MatDialog);
   private toastr = inject(ToastrService);
   permissionService = inject(PermissionService)
-  
+
+  highlightedAnaliseId = signal<string | null>(null);
+  highlightedRecommendationId = signal<string | null>(null);
+
 
   showRecommendations?: boolean;
   expandedRecommendations: Record<string, boolean> = {};
@@ -80,12 +83,12 @@ export class ExemplaresDetail implements AfterViewInit {
 
   public getFotosAnalise(id: string): FotoInventario[] | undefined {
 
-    const analise =  this.exemplar()?.analises?.filter(e => e.id == 'id')[0]
+    const analise = this.exemplar()?.analises?.find(
+      e => e.id === id
+    );
 
-    if (!analise) return
-
-    return analise.fotos
-}
+    return analise?.fotos;
+  }
 
   // analises = signal<AnaliseInventario[]>([])
   // fotos = signal<FotoInventario[]>([])
@@ -138,6 +141,114 @@ export class ExemplaresDetail implements AfterViewInit {
     this.map.updateSize();
   }
 
+  private handleDeepLink(): void {
+
+    const queryParams = this.route.snapshot.queryParamMap;
+
+    const go2Analise = queryParams.get('go2analise');
+
+    // Aceita tanto "go2recomendacao" quanto "go2recomendação"
+    const go2Recomendacao =
+      queryParams.get('go2recomendacao') ??
+      queryParams.get('go2recomendação');
+
+    if (go2Analise) {
+      this.openAnaliseFromLink(go2Analise);
+      return;
+    }
+
+    if (go2Recomendacao) {
+      this.openRecommendationFromLink(go2Recomendacao);
+    }
+  }
+
+  private openAnaliseFromLink(id: string): void {
+
+    const analise = this.analises().find(a => a.id === id);
+
+    if (!analise) {
+      return;
+    }
+
+    // Abre a análise
+    const expanded = new Set(this.expandedAnalises());
+    expanded.add(analise.id);
+    this.expandedAnalises.set(expanded);
+
+    // Destaca
+    this.highlightedAnaliseId.set(analise.id);
+
+    // Aguarda o Angular renderizar o acordeon
+    setTimeout(() => {
+      const element = document.getElementById(`analise-${analise.id}`);
+
+      element?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+    });
+
+    // Remove o destaque depois de alguns segundos
+    setTimeout(() => {
+      this.highlightedAnaliseId.set(null);
+    }, 4000);
+  }
+
+  private openRecommendationFromLink(id: string): void {
+
+    let analiseEncontrada: AnaliseInventario | undefined;
+    let recomendacaoEncontrada: RecomendacaoInventario | undefined;
+
+    for (const analise of this.analises()) {
+
+      const recomendacao = analise.recomendacoes?.find(
+        r => r.id === id
+      );
+
+      if (recomendacao) {
+        analiseEncontrada = analise;
+        recomendacaoEncontrada = recomendacao;
+        break;
+      }
+    }
+
+    if (!analiseEncontrada || !recomendacaoEncontrada) {
+      return;
+    }
+
+    // 1. Abre a análise
+    const expandedAnalises = new Set(this.expandedAnalises());
+    expandedAnalises.add(analiseEncontrada.id);
+    this.expandedAnalises.set(expandedAnalises);
+
+    // 2. Abre as recomendações
+    this.expandedRecommendations[analiseEncontrada.id] = true;
+
+    // 3. Destaca a análise e a recomendação
+    // this.highlightedAnaliseId.set(analiseEncontrada.id);
+    this.highlightedRecommendationId.set(recomendacaoEncontrada.id);
+
+    // 4. Aguarda o Angular renderizar tudo
+    setTimeout(() => {
+
+      const element = document.getElementById(
+        `recomendacao-${recomendacaoEncontrada!.id}`
+      );
+
+      element?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+
+    });
+
+    // 5. Remove o destaque
+    setTimeout(() => {
+      this.highlightedAnaliseId.set(null);
+      this.highlightedRecommendationId.set(null);
+    }, 5000);
+  }
+
   createLayer(exemplar?: Exemplar) {
     if (!exemplar) return;
 
@@ -176,6 +287,11 @@ export class ExemplaresDetail implements AfterViewInit {
       next: (exemplar) => {
         this.exemplar.set(exemplar);
         this.createLayer(exemplar);
+
+        // Aguarda os signals/computed e o template serem atualizados
+        setTimeout(() => {
+          this.handleDeepLink();
+        });
       },
       error: () => this.exemplar.set(undefined)
     });

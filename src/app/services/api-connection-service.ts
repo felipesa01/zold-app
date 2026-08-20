@@ -11,7 +11,7 @@ import { AnaliseInventario, CreateAnaliseInventario } from "../components/layout
 import { FotoInventario } from "../components/layout/mode-container-component/modes/workspace-mode/inventarios/fotos/fotos.model";
 import { ArmadilhaCarrapato } from "../components/layout/mode-container-component/modes/workspace-mode/carrapatos/armadilhas/armadilha-carrapato.model";
 import { CapturaCarrapato, CreateCapturaCarrapato } from "../components/layout/mode-container-component/modes/workspace-mode/carrapatos/capturas/captura-carrapato.model";
-import { CreateRecomendacaoInventario, RecomendacaoInventario, UpdateRecomendacaoInventario } from "../components/layout/mode-container-component/modes/workspace-mode/inventarios/recomendacoes/recomendacoes.model";
+import { CreateRecomendacaoInventario, RecomendacaoInventario, RecomendacaoInventarioList, UpdateRecomendacaoInventario } from "../components/layout/mode-container-component/modes/workspace-mode/inventarios/recomendacoes/recomendacoes.model";
 
 
 export interface Projeto {
@@ -127,6 +127,17 @@ export class ApiConnectionService {
     listarAnalisesByProjeto(projetoId: string): Observable<AnaliseInventario[]> {
         return this.http.get<AnaliseInventario[]>(`${this.apiURL}/projetos/${projetoId}/analises`).pipe(
             // delay(2000)
+        )
+    }
+
+    listarRecomendacoesByProjeto(projetoId: string): Observable<RecomendacaoInventarioList[]> {
+        return this.http.get<RecomendacaoInventarioList[]>(`${this.apiURL}/projetos/${projetoId}/recomendacoes`).pipe(
+            map(result => {
+                console.log(result)
+                return result
+            })
+            // delay(2000)
+            
         )
     }
 
