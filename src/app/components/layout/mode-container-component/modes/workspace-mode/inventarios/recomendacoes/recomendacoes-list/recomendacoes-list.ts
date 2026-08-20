@@ -363,27 +363,37 @@ export class RecomendacoesList implements AfterViewInit {
 
     private source = new VectorSource();
 
-    private layer = new VectorLayer({
+private layer = new VectorLayer({
+  source: this.source,
 
-        source: this.source,
+  style: (feature) => {
 
-        style: new Style({
+    const status = feature.get('status');
 
-            image: new Circle({
+    const colors: Record<string, string> = {
+      PENDENTE: 'rgba(245, 158, 11, 0.65)',      // âmbar
+      EM_EXECUCAO: 'rgba(59, 130, 246, 0.65)',   // azul
+      EXECUTADA: 'rgba(34, 197, 94, 0.65)',      // verde
+      VALIDADA: 'rgba(139, 92, 246, 0.65)',      // roxo
+      CANCELADA: 'rgba(239, 68, 68, 0.65)'       // vermelho
+    };
 
-                radius: 8,
+    return new Style({
+      image: new Circle({
+        radius: 8,
 
-                fill: new Fill({
-                    color: 'rgba(34, 197, 94, 0.6)'
-                }),
+        fill: new Fill({
+          color: colors[status] ?? 'rgba(107, 114, 128, 0.65)'
+        }),
 
-                stroke: new Stroke({
-                    color: '#fff',
-                    width: 2
-                })
-            })
+        stroke: new Stroke({
+          color: '#fff',
+          width: 2
         })
+      })
     });
+  }
+});
 
 
     selectedTab = signal(0);
@@ -472,15 +482,7 @@ export class RecomendacoesList implements AfterViewInit {
 
                     map.getView().fit(
                         extent,
-                        {
-                            padding: [
-                                10,
-                                80,
-                                10,
-                                80
-                            ],
-                            maxZoom: 24
-                        }
+                        { padding: [100, 100, 100, 100], maxZoom: 18, duration: 500 }
                     );
                 }
             }

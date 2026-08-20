@@ -158,7 +158,7 @@ import { PermissionService } from "../../../../../../../../services/permission-s
 
       map.getView().fit(
         this.armadilhaSource.getExtent()!,
-        { padding: [100, 100, 100, 100], maxZoom: 18 }
+        { padding: [100, 100, 100, 100], maxZoom: 18, duration: 500 }
       );
 
     });

@@ -132,10 +132,10 @@ export class ApiConnectionService {
 
     listarRecomendacoesByProjeto(projetoId: string): Observable<RecomendacaoInventarioList[]> {
         return this.http.get<RecomendacaoInventarioList[]>(`${this.apiURL}/projetos/${projetoId}/recomendacoes`).pipe(
-            map(result => {
-                console.log(result)
-                return result
-            })
+            // map(result => {
+            //     console.log(result)
+            //     return result
+            // })
             // delay(2000)
             
         )

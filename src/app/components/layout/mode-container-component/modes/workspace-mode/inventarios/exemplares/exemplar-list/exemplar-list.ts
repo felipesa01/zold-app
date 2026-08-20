@@ -190,10 +190,8 @@ export class ExemplaresList implements AfterViewInit {
             this.source.addFeatures(features);
 
             if (features.length) {
-                map.getView().fit(this.source.getExtent()!, {
-                    padding: [10, 80, 10, 80],
-                    maxZoom: 24
-                });
+                map.getView().fit(this.source.getExtent()!, 
+            { padding: [100, 100, 100, 100], maxZoom: 18, duration: 500 });
             }
         });
 
